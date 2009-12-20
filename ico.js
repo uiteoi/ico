@@ -1,7 +1,7 @@
-/* Ico Graph Prototype/Raphaël library
+/* Ico Graph Prototype/Raphael library
  *
  * Copyright (c) 2009, Jean Vincent
- * Copyright (c) 2009 Alex R. Young
+ * Copyright (c) 2009, Alex R. Young
  * Licensed under the MIT license: http://github.com/alexyoung/ico/blob/master/MIT-LICENSE
  */
 var Ico = {
