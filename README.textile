@@ -2,7 +2,7 @@ h2. Introduction
 
 Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to draw and Prototype. This means it can draw charts in multiple browsers, using VML in IE, and SVG in all other browsers. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
 
-The original version was written by Alex Young. The current version features a new API, mainly due to componentization of all graph features, many bug fixes, new features, most importantly implements bullet graphs, inclined labels, gradient backgrounds, proper negative bar grpahs rendering.
+The original version was written by Alex Young. The current version features a new API, mainly due to componentization of all graph features, many bug fixes, new features, most importantly implements bullet graphs, angled labels, gradient backgrounds, proper negative bar grpahs rendering.
 
 To see a demo of the possibilities of the current version, check <a href="http://ser2.dialink.com:8080/">the current test suite</a> which is a rendering of index.html.
 
@@ -51,7 +51,7 @@ Bullet graph with 3 graph background colors and gradient transtitions:
 );
 </code></pre>
 
-Line graph with 2 lines, inclined labels, $ units, meanline, mouse pointer, mouse-over value in status bar, and grid:
+Line graph with 2 lines, angled labels, $ units, meanline, mouse pointer, mouse-over value in status bar, and grid:
 <pre><code>var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 new Ico.LineGraph( $( 'gross_profit_id' ),
   {                                                   // The 2 series
@@ -116,8 +116,8 @@ Graph features are driven by components. Each graph type defines different defau
 
 h2. Tested web browsers, known issues
 
-* Firefox: best compromize of quality and speed, some rendering problems of inclined fonts
-* IE: best inclined fonts rendering, slowest by far
+* Firefox: best compromize of quality and speed, some rendering problems of angled fonts
+* IE: best angled fonts rendering, slowest by far
 * Safari: fastest, bugs: while zooming
 * Google Chrome: good quality, bugs: while zooming
 * iPhone (Safari): pretty amazing, try it
