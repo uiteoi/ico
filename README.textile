@@ -31,7 +31,7 @@ h3. Examples
 
 Simple sparkline, no decoration:
 <pre><code>new Ico.SparkLine(
-  $( 'market_trend_id' ),                           // The id of the html element when the sparkline is rendered
+  $( 'market_trend_id' ),                           // The id of the html element where the sparkline is rendered
   [5, 2, -1, 17, 23, 15, 7, 6, -5, -2, 4, 7, 3, 9]  // List of values for market trend
 );
 </code></pre>
@@ -55,7 +55,6 @@ Bullet graph with 3 graph background colors and gradient transtitions:
 
 Line graph with 2 lines, inclined labels, $ units, meanline, mouse pointer, mouse-over value in status bar, and grid:
 <pre><code>var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
 new Ico.LineGraph( $( 'gross_profit_id' ),
   {                                                   // The 2 series
     actual: [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
