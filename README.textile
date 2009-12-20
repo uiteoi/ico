@@ -86,22 +86,61 @@ h3. Graph classes
 
 Graph classes provide defaults components appropriate for each type of graph:
 
-* Ico.Base : base class for all graphs, provides components architecture
-* Ico.SparkLine: expected to be rendered as an inline-block
-* Ico.SparkBar: expected to be rendered as an inline-block
-* Ico.BulletGraph: expected to be rendered as an inline-block
-* Ico.BaseGraph (deprecated) : base for line and bar graphs, expected to be unified into Ico.Base
-* Ico.LineGraph
-* Ico.BarGraph
-* Ico.HorizontalBarGraph
+<table>
+  <tr>
+    <td>Class name</td>
+    <td>Base class</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>Ico.Base</td>
+    <td>n/a</td>
+    <td>base class for all graphs, provides components architecture</td>
+  </tr>
+  <tr>
+    <td>Ico.SparkLine</td>
+    <td>Ico.Base</td>
+    <td>Draw a single serie as a line. Expected to be rendered as an inline-block</td>
+  </tr>
+  <tr>
+    <td>Ico.SparkBar</td>
+    <td>Ico.SparkLine</td>
+    <td>Draw a single serie of vertical bars. Expected to be rendered as an inline-block</td>
+  </tr>
+  <tr>
+    <td>Ico.BulletGraph</td>
+    <td>Ico.Base</td>
+    <td>Draw a single value as a horizontal bar. Expected to be rendered as an inline-block</td>
+  </tr>
+  <tr>
+    <td>Ico.BaseGraph</td>
+    <td>Ico.Base</td>
+    <td>Base class for line and bar graphs</td>
+  </tr>
+  <tr>
+    <td>Ico.LineGraph</td>
+    <td>Ico.BaseGraph</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Ico.BarGraph</td>
+    <td>Ico.BaseGraph</td>
+    <td>Horizontal Bar Graph</td>
+  </tr>
+  <tr>
+    <td>Ico.HorizontalBarGraph</td>
+    <td>Ico.BarGraph</td>
+    <td></td>
+  </tr>
+</table>
 
 To create a graph, call new Ico.graph_type, providing three parameters:
 * the DOM element where the graph will be rendered
 * a value, an area of values, or hash of value sets, for the data series
 * options hash where each key is an option or set of options for a component
-
+<br />
 h4. Ico.Base options
-
+These options are shared by all graphs
 <table>
   <tr>
     <td>Option name</td>
@@ -136,7 +175,27 @@ h4. Ico.Base options
   <tr>
     <td>orientation</td>
     <td>0</td>
-    <td>): horizontal, 1:vertical</td>
+    <td>0: horizontal, 1:vertical</td>
+  </tr>
+</table>
+
+<br />
+h4. Ico.SparkLine options
+<table>
+  <tr>
+    <td>Option name</td>
+    <td>Default value</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>highlight</td>
+    <td>false</td>
+    <td>true: highlight last value, hash: provide additional options</td>
+  </tr>
+  <tr>
+    <td>highlight.index</td>
+    <td>n/a</td>
+    <td>index of the value to index in data serie</td>
   </tr>
 </table>
 
