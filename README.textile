@@ -95,7 +95,7 @@ Graph classes provide defaults components appropriate for each type of graph:
 * Ico.BarGraph
 * Ico.HorizontalBarGraph
 
-To create a graph, call new Ico.<desired graph type>, providing three parameters:
+To create a graph, call new Ico.graph_type, providing three parameters:
 * the DOM element where the graph is to be rendered, and which width and height define the actual graph dimensions
 * the value, values, or sets of values, for the data series
 * graph component options
