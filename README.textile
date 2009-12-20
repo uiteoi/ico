@@ -140,10 +140,12 @@ To create and render a graph, call new <strong>Ico.desired_graph_type</strong>, 
 * Options
 
 Example creating and rendering a line graph:
-<pre><code>new Ico.LineGraph( dom_element, data_series, graph_options )</pre></code>
+<pre><code>new Ico.LineGraph( dom_element, data_series, graph_options )
+</pre></code>
 
 The DOM element is typically referenced by its id and fetched this way with the Prototype library:
-<pre><code>dom_element = $( 'element_id' )</pre></code>
+<pre><code>dom_element = $( 'element_id' )
+</pre></code>
 
 Data series can be:
 * A single value (for a bullet graph only)
@@ -180,7 +182,8 @@ Example of options:
   grid: true,                                       // Display a grid from labels and value labels
   mouse_pointer: true,                              // Display a cross mouse pointer in graph area
   status_bar : true,                                // Display status bar to show values on mouse over
-}</pre></code>
+}
+</pre></code>
 
 h3. Ico.Base options
 
