@@ -1,4 +1,3 @@
-Release notes for Ico
 Ico 0.94
     Upgrade Raphael to version 1.2.8, remove path-methods as recommended from version 1.0
     Allow to clear grpah canvas, typically to redraw in the same div.
@@ -33,21 +32,4 @@ Ico 0.94
     Remove sort used to determine longuest labels, iterate through array instead.
     Fix sort comparison function to determine longuest labels.
     Numerous other bug fixes
-    
-Wish list:
- - Terminate options componentization
- - Componentize series to allow bars and lines in the same graph
- - Zoom-in spark lines, spark bars, and bullet graphs on-mouse-over.
- - Display full graph of spark lines and spark bars on mouse-click
- - Multiple series columns with 1/3 overlap
- - Title
- - Legend
- - Display values in tooltips instead of status bar, tooltips implemented w/ an external DOM library to
-   enable out-of-the-canvas tooltips 
- - Allow user events on graph elements
- - Draw labels on top (or right if orientation) if all values are negative
- - Remove prototype dependency, should also work w/ jQuery, Mootools
-   sh/could probably become js library agnostic as most of the browser specific code is in Raphael itself
- - API: Provide series-specific-attributes as keys from serie hash, series becomes an array of hash where
-   each represents a serie if a hash is provided instead of an array then assume there is only one
-   serie.
+
