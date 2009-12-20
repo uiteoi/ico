@@ -140,7 +140,8 @@ To create a graph, call new Ico.graph_type, providing three parameters:
 * options hash where each key is an option or set of options for a component
 
 h3. Ico.Base options
-These options are shared by all graphs:
+
+The following are options shared by all graphs:
 <table>
   <tr>
     <td>Option name</td>
@@ -180,6 +181,7 @@ These options are shared by all graphs:
 </table>
 
 h3. Ico.SparkLine options
+
 <table>
   <tr>
     <td>Option name</td>
