@@ -31,7 +31,7 @@ Simple sparkline, no decoration:
 <pre><code>new Ico.SparkLine(
   $( 'market_trend_id' ),                           // The id of the DOM element where the sparkline is rendered
   [5, 2, -1, 17, 23, 15, 7, 6, -5, -2, 4, 7, 3, 9]  // List of values for market trend
-);</code></pre>
+)</code></pre>
 
 Bullet graph with 3 graph background colors and gradient transtitions:
 <pre><code>new Ico.BulletGraph(
@@ -47,11 +47,12 @@ Bullet graph with 3 graph background colors and gradient transtitions:
       colors_transition: 10               // 10% Gradient transition between the different zones
     }
   }
-);</code></pre>
+)</code></pre>
 
 Line graph with 2 lines, angled labels, $ units, meanline, mouse pointer, mouse-over value in status bar, and grid:
 <pre><code>var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-new Ico.LineGraph( $( 'gross_profit_id' ),
+new Ico.LineGraph(
+  $( 'gross_profit_id' ),                             // div where the graph will be rendered
   {                                                   // The 2 series
     actual: [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
     forecast: [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
@@ -73,7 +74,7 @@ new Ico.LineGraph( $( 'gross_profit_id' ),
     mouse_pointer: true,                              // Display a cross mouse pointer in graph area
     status_bar : true,                                // Display status bar to show values on mouse over
   }
-</code></pre>
+)</code></pre>
 
 See index.html for more examples.
 
@@ -160,7 +161,7 @@ Options are provided as a hash of options where each key is the option name and 
 Many options are "Raphael attributes":http://raphaeljs.com/reference.html#attr which rely on the "SVG Specification":http://www.w3.org/TR/SVG/ so please refer to these documents when further information is needed.
 
 Example of options:
-<pre><code>graph_options = {                        // Graph components' options
+<pre><code>graph_options = {                                   // Graph components' options
   colors: { actual:'#228899', forecast:'#339933' }, // Series' colors
   curve_amount: 10,                                 // Slightly curve series' lines path
   mouseover_attributes: { stroke: 'green' },        // When hovering over values
