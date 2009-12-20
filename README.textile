@@ -30,26 +30,53 @@ h2. Documentation
 h3. Examples
 
 Simple sparkline, no decoration:
-<pre><code>new Ico.SparkLine( $( 'sparkline' ), [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9] );
+<pre><code>new Ico.SparkLine(
+  $( 'market_trend_id' ),                           // The id of the html element when the sparkline is rendered
+  [5, 2, -1, 17, 23, 15, 7, 6, -5, -2, 4, 7, 3, 9]  // List of values for market trend
+);
+</code></pre>
+
+Bullet graph with 3 graph background colors and gradient transtitions:
+<pre><code>new Ico.BulletGraph(
+  $( 'gross_profit_id' ), // The id of the html element where the bullet graph will be rendered
+  85,                     // Actual gross profit for current period as a percentage of gross revenues
+  {                       // Bullet graph options
+    min: 0,               // Minimum gross profit value
+    max: 100,             // Maximum gross profit value
+    target: 65,           // Forecasted gross profit value
+    graph_background: {   // Defines graph background for gross profit
+      key_values: [50, 75],               // Less than 50% is bad, more than 75% is good, in between is ok
+      key_colors: ['#555','#999','#ddd'], // The 3 colors representing the 3 quality zones
+      colors_transition: 10               // 10% Gradient transition between the different zones
+    }
+  }
+);
 </code></pre>
 
 Line graph with 2 lines, inclined labels, $ units, meanline, mouse pointer, mouse-over value in status bar, and grid:
-<pre><code>new Ico.LineGraph( $( 'graph3' ),
-  { actual: [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
+<pre><code>var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+new Ico.LineGraph( $( 'gross_profit_id' ),
+  {                                                   // The 2 series
+    actual: [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
     forecast: [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
   },
-  {   font_size: 16
-    , labels: { values: months, angle: 30 }
-    , value_labels: { units: '$', units_position: 0 }
-    , x_padding_right: 40
-    , colors: { actual:'#228899', forecast:'#339933' }
-    , mouseover_attributes: { stroke: 'green' }
-    , background: { color: '#ccf', corners: 5 }
-    , curve_amount: 10
-    , meanline: true
-    , grid: true
-    , mouse_pointer: true
-    , status_bar : true
+  {                                                   // Graph components' options
+    colors: { actual:'#228899', forecast:'#339933' }, // Series' colors
+    curve_amount: 10,                                 // Slightly curve series' lines path
+    mouseover_attributes: { stroke: 'green' },        // When hovering over values
+    font_size: 16,                                    // for both labels and value labels
+    labels: { values: months, angle: 30 },            // Set labels at a 30 degres angle
+    x_padding_right: 40,                              // Make more room on the right to properly display labels
+    value_labels: {
+      units: '$',                                     // Value labels units are $
+      units_position: 0                               // Will be rendered before value labels
+    },
+    background: { color: '#ccf', corners: 5 },        // Set entire div background color and corner size 
+    meanline: true,                                   // Display mean value of all series
+    grid: true,                                       // Display a grid from labels and value labels
+    mouse_pointer: true,                              // Display a cross mouse pointer in graph area
+    status_bar : true,                                // Display status bar to show values on mouse over
   }
 );
 </code></pre>
