@@ -30,7 +30,55 @@ These goals are based on recommendations in Stephen Few's books:
 
 Which was generally in turn based on Edward Tufte's work.
 
-h3. Tested web browsers, known issues
+h2. Documentation
+
+h3. Examples
+
+Simple sparkline, no decoration:
+<pre><code>
+new Ico.SparkLine( $( 'sparkline' ), [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9] );
+</code></pre>
+
+Line graph with 2 lines, inclined labels, $ units, meanline, mouse pointer, mouse-over value in status bar, and grid:
+<pre><code>
+new Ico.LineGraph( $( 'graph3' ),
+  { actual: [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
+    forecast: [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
+  },
+  {   font_size: 16
+    , labels: { values: months, angle: 30 }
+    , value_labels: { units: '$', units_position: 0 }
+    , x_padding_right: 40
+    , colors: { actual:'#228899', forecast:'#339933' }
+    , mouseover_attributes: { stroke: 'green' }
+    , background: { color: '#ccf', corners: 5 }
+    , curve_amount: 10
+    , meanline: true
+    , grid: true
+    , mouse_pointer: true
+    , status_bar : true
+  }
+);
+</code></pre>
+
+See index.html for more examples.
+
+h3. Components
+
+Grpahs features are driven by components. Each graph type defines different default components and graph orientation (horizontal or vertical).
+Default components can be disabled by explicitly setting the property to false.
+
+* Labels
+* Value labels
+* Grpah Background
+* Background
+* Axis
+* Meanline
+* Focus hint
+* Mouse Pointer
+* Status Bar
+
+h2. Tested web browsers, known issues
 
 * Firefox: best compromize of quality and speed, some rendering problems of inclined fonts
 * IE: best inclined fonts rendering, slowest by far
@@ -39,7 +87,7 @@ h3. Tested web browsers, known issues
 * iPhone (Safari): pretty amazing, try it
 * Opera: good fonts rendering, bugs: zoom, mouse-over while scrolling
 
-h3. ToDo / Wish list
+h2. ToDo / Wish list
 
 * Add Legend component
 * Add Title component
@@ -61,10 +109,6 @@ h3. API changes that might come
 Provide series-specific-attributes as keys from serie hash, series becomes an array of hash where
 each represents a serie if a hash is provided instead of an array then assume there is only one
 serie.
-
-h2. Examples
-
-See index.html for current API usage.
 
 h2. Requirements
 
