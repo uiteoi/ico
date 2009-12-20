@@ -25,9 +25,7 @@ These goals are based on recommendations in Stephen Few's books:
 
 Which was generally in turn based on Edward Tufte's work.
 
-h2. Documentation
-
-h3. Examples
+h2. Examples
 
 Simple sparkline, no decoration:
 <pre><code>new Ico.SparkLine(
@@ -82,9 +80,29 @@ new Ico.LineGraph( $( 'gross_profit_id' ),
 
 See index.html for more examples.
 
+h2. Documentation
+
+h3. Graph classes
+
+Graph classes provide defaults components appropriate for each type of graph:
+
+* Ico.Base : base class for all graphs, provides components architecture
+* Ico.SparkLine: expected to be rendered as an inline-block
+* Ico.SparkBar: expected to be rendered as an inline-block
+* Ico.BulletGraph: expected to be rendered as an inline-block
+* Ico.BaseGraph (deprecated) : base for line and bar graphs, expected to be unified into Ico.Base
+* Ico.LineGraph
+* Ico.BarGraph
+* Ico.HorizontalBarGraph
+
+To create a graph, call new Ico.<desired graph type>, providing three parameters:
+* the DOM element where the graph is to be rendered, and which width and height define the actual graph dimensions
+* the value, values, or sets of values, for the data series
+* graph component options
+
 h3. Components
 
-Grpahs features are driven by components. Each graph type defines different default components and graph orientation (horizontal or vertical). Default components can be disabled by explicitly setting the property to false.
+Graph features are driven by components. Each graph type defines different default components and graph orientation (horizontal or vertical). Default components can be disabled by explicitly setting the property to false.
 
 * Labels
 * Value labels
@@ -110,7 +128,7 @@ h2. ToDo / Wish list
 * Add Legend component
 * Add Title component
 * Display values in tooltips instead of status bar, tooltips implemented w/ an external DOM library to enable out-of-the-canvas tooltips
-* Documentation
+* Improve Documentation
 * Terminate options componentization
 * Componentize series to allow bars and lines in the same graph
 * Zoom-in spark lines, spark bars, and bullet graphs on-mouse-over.
@@ -119,8 +137,10 @@ h2. ToDo / Wish list
 * Allow user events on graph elements
 * Draw labels on top (or right if orientation) if all values are negative
 * Remove prototype dependency, should also work w/ jQuery, Mootools sh/could probably become js library agnostic as most of the browser specific code is in Raphael itself
-  
+
 h3. API changes that might come
+
+The API still needs to be finalized, expect non-backward compatible changes until version 1.0 is released.
 
 Provide series-specific-attributes as keys from serie hash, series becomes an array of hash where each represents a serie if a hash is provided instead of an array then assume there is only one serie.
 
