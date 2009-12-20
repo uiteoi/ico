@@ -96,9 +96,49 @@ Graph classes provide defaults components appropriate for each type of graph:
 * Ico.HorizontalBarGraph
 
 To create a graph, call new Ico.graph_type, providing three parameters:
-* the DOM element where the graph is to be rendered, and which width and height define the actual graph dimensions
-* the value, values, or sets of values, for the data series
-* graph component options
+* the DOM element where the graph will be rendered
+* a value, an area of values, or hash of value sets, for the data series
+* options hash where each key is an option or set of options for a component
+
+h4. Ico.Base options
+
+<table>
+  <tr>
+    <td>Option name</td>
+    <td>Default value</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>width</td>
+    <td>DOM element width</td>
+    <td>Canvas width</td>
+  </tr>
+  <tr>
+    <td>height</td>
+    <td>DOM element height</td>
+    <td>Canvas height</td>
+  </tr>
+  <tr>
+    <td>color</td>
+    <td>DOM element color</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>mouseover_attributes</td>
+    <td>see bellow</td>
+    <td>Mouseover attributes for data series</td>
+  </tr>
+  <tr>
+    <td>mouseover_attributes.stroke</td>
+    <td>red</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>orientation</td>
+    <td>0</td>
+    <td>): horizontal, 1:vertical</td>
+  </tr>
+</table>
 
 h3. Components
 
@@ -163,16 +203,20 @@ Each component is shown witht the name of its options attribute hash:
   </tr>
 </table>
 
-h3. Options
+h3. Component Options
 
-h4. Ico.Base options
-
-* width: canvas width, defaults to DOM element width
-* height: canvas height, defaults to DOM element height
-* color: defaults to DOM element color
-* mouseover_attributes: for data elements
-** stroke: color, defaults to 'red'
-* orientation: 0 for vertical (default), 1 for horizontal
+<table>
+  <tr>
+    <td>Option name</td>
+    <td>Default value</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
 
 h2. Tested web browsers, known issues
 
