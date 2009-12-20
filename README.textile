@@ -142,6 +142,7 @@ To create a graph, call new Ico.graph_type, providing three parameters:
 h3. Ico.Base options
 
 The following are options shared by all graphs:
+
 <table>
   <tr>
     <td>Option name</td>
