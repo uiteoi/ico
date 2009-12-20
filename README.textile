@@ -95,7 +95,7 @@ Graph classes provide defaults components appropriate for each type of graph:
   <tr>
     <td>Ico.Base</td>
     <td>n/a</td>
-    <td>base class for all graphs, provides components architecture</td>
+    <td>Base class for all graphs, provides components architecture</td>
   </tr>
   <tr>
     <td>Ico.SparkLine</td>
@@ -120,17 +120,17 @@ Graph classes provide defaults components appropriate for each type of graph:
   <tr>
     <td>Ico.LineGraph</td>
     <td>Ico.BaseGraph</td>
-    <td></td>
+    <td>Repensent series as lines</td>
   </tr>
   <tr>
     <td>Ico.BarGraph</td>
     <td>Ico.BaseGraph</td>
-    <td>Horizontal Bar Graph</td>
+    <td>Vertical Bars Graph</td>
   </tr>
   <tr>
     <td>Ico.HorizontalBarGraph</td>
     <td>Ico.BarGraph</td>
-    <td></td>
+    <td>Horizontal Bars Graph</td>
   </tr>
 </table>
 
@@ -138,9 +138,9 @@ To create a graph, call new Ico.graph_type, providing three parameters:
 * the DOM element where the graph will be rendered
 * a value, an area of values, or hash of value sets, for the data series
 * options hash where each key is an option or set of options for a component
-<br />
-h4. Ico.Base options
-These options are shared by all graphs
+
+h3. Ico.Base options
+These options are shared by all graphs:
 <table>
   <tr>
     <td>Option name</td>
@@ -179,8 +179,7 @@ These options are shared by all graphs
   </tr>
 </table>
 
-<br />
-h4. Ico.SparkLine options
+h3. Ico.SparkLine options
 <table>
   <tr>
     <td>Option name</td>
