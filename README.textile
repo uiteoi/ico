@@ -31,8 +31,7 @@ Simple sparkline, no decoration:
 <pre><code>new Ico.SparkLine(
   $( 'market_trend_id' ),                           // The id of the DOM element where the sparkline is rendered
   [5, 2, -1, 17, 23, 15, 7, 6, -5, -2, 4, 7, 3, 9]  // List of values for market trend
-);
-</code></pre>
+);</code></pre>
 
 Bullet graph with 3 graph background colors and gradient transtitions:
 <pre><code>new Ico.BulletGraph(
@@ -48,8 +47,7 @@ Bullet graph with 3 graph background colors and gradient transtitions:
       colors_transition: 10               // 10% Gradient transition between the different zones
     }
   }
-);
-</code></pre>
+);</code></pre>
 
 Line graph with 2 lines, angled labels, $ units, meanline, mouse pointer, mouse-over value in status bar, and grid:
 <pre><code>var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -75,7 +73,6 @@ new Ico.LineGraph( $( 'gross_profit_id' ),
     mouse_pointer: true,                              // Display a cross mouse pointer in graph area
     status_bar : true,                                // Display status bar to show values on mouse over
   }
-);
 </code></pre>
 
 See index.html for more examples.
@@ -140,12 +137,10 @@ To create and render a graph, call new <strong>Ico.desired_graph_type</strong>, 
 * Options
 
 Example creating and rendering a line graph:
-<pre><code>new Ico.LineGraph( dom_element, data_series, graph_options )
-</pre></code>
+<pre><code>new Ico.LineGraph( dom_element, data_series, graph_options )</code></pre>
 
 The DOM element is typically referenced by its id and fetched this way with the Prototype library:
-<pre><code>dom_element = $( 'element_id' )
-</pre></code>
+<pre><code>dom_element = $( 'element_id' )</code></pre>
 
 Data series can be:
 * A single value (for a bullet graph only)
@@ -158,8 +153,7 @@ Example of hash with two data series:
 <pre><code>data_series = {
   actual: [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
   forecast: [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
-},
-</pre></code>
+}</code></pre>
 
 Options are provided as a hash of options where each key is the option name and each value is the option value. Options hashes can be nested typically to group options by components.
 
@@ -182,8 +176,7 @@ Example of options:
   grid: true,                                       // Display a grid from labels and value labels
   mouse_pointer: true,                              // Display a cross mouse pointer in graph area
   status_bar : true,                                // Display status bar to show values on mouse over
-}
-</pre></code>
+}</code></pre>
 
 h3. Ico.Base options
 
