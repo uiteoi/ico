@@ -1,18 +1,18 @@
-h2. Introduction
+h1. Introduction
 
-Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to render graphics as well as the "Prototype.js":http://prototypejs.org JavaScript framework. This means it can draw charts in multiple browsers, using VML in IE, and SVG:http://www.w3.org/TR/SVG/ in all other browsers. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
+Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to render graphics as well as the "Prototype.js":http://prototypejs.org JavaScript framework. This means it can draw charts in multiple browsers, using VML in IE, and "SVG":http://www.w3.org/TR/SVG/ in all other browsers. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
 
 The original version was written by "Alex Young":http://github.com/alexyoung. The current version features a new API, mainly due to componentization of all graph features, many bug fixes, new features, most importantly implements bullet graphs, angled labels, gradient backgrounds, proper negative bar graphs rendering.
 
 To see a demo of the possibilities of the current version, check <a href="http://ser2.dialink.com:8080/">the current test suite</a> which is a rendering of index.html.
 
-h3. Targeted graph types
+h2. Targeted graph types
 
 * Sparklines, Sparbars, and Bullet Graphs
 * Line graphs
 * Bar graphs, Horizontal, Vertical
 
-h3. Design considerations and goals
+h2. Design considerations and goals
 
 * Clarity: Use of white-space to help lend clarity to graphs, nominal scale vs. ordinal scale
 * Simplicity: Minimal use of decorations and lines, reliance on the Gestalt principle of closure
@@ -25,7 +25,7 @@ These goals are based on recommendations in Stephen Few's books:
 
 Which was generally in turn based on Edward Tufte's work.
 
-h2. Examples
+h1. Examples
 
 Simple sparkline, no decoration:
 <pre><code>new Ico.SparkLine(
@@ -80,9 +80,9 @@ new Ico.LineGraph( $( 'gross_profit_id' ),
 
 See index.html for more examples.
 
-h2. Documentation
+h1. Documentation
 
-h3. Graph classes
+h2. Graph classes
 
 Graph classes provide defaults components appropriate for each type of graph:
 
@@ -120,7 +120,7 @@ Graph classes provide defaults components appropriate for each type of graph:
   <tr>
     <td>Ico.LineGraph</td>
     <td>Ico.BaseGraph</td>
-    <td>Repensent series as lines</td>
+    <td>Represent series as lines</td>
   </tr>
   <tr>
     <td>Ico.BarGraph</td>
@@ -134,12 +134,53 @@ Graph classes provide defaults components appropriate for each type of graph:
   </tr>
 </table>
 
-To create a graph, call new Ico.graph_type, providing three parameters:
-* the DOM element where the graph will be rendered
-* a value, an area of values, or hash of value sets, for the data series
-* options hash where each key is an option or set of options for a component
+To create and render a graph, call new <strong>Ico.desired_graph_type</strong>, providing three parameters:
+* The DOM element where the graph will be rendered
+* Data series
+* Options
+
+Example creating and rendering a line graph:
+<pre><code>new Ico.LineGraph( dom_element, data_series, graph_options )</pre></code>
+
+The DOM element is typically referenced by its id and fetched this way with the Prototype library:
+<pre><code>dom_element = $( 'element_id' )</pre></code>
+
+Data series can be:
+* A single value (for a bullet graph only)
+* An array of values for a single data serie
+* A hash where:
+** each key is the name of the serie
+** value is an array containing the list of values
+
+Example of hash with two data series:
+<pre><code>data_series = {
+  actual: [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
+  forecast: [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
+},
+</pre></code>
+
+Options are provided as a hash of options where each key is the option name and each value is the option value. Options hashes can be nested typically to group options by components.
 
 Many options are "Raphael attributes":http://raphaeljs.com/reference.html#attr which rely on the "SVG Specification":http://www.w3.org/TR/SVG/ so please refer to these documents when further information is needed.
+
+Example of options:
+<pre><code>graph_options = {                        // Graph components' options
+  colors: { actual:'#228899', forecast:'#339933' }, // Series' colors
+  curve_amount: 10,                                 // Slightly curve series' lines path
+  mouseover_attributes: { stroke: 'green' },        // When hovering over values
+  font_size: 16,                                    // for both labels and value labels
+  labels: { values: months, angle: 30 },            // Set labels at a 30 degres angle
+  x_padding_right: 40,                              // Make more room on the right to properly display labels
+  value_labels: {
+    units: '$',                                     // Value labels units are $
+    units_position: 0                               // Will be rendered before value labels
+  },
+  background: { color: '#ccf', corners: 5 },        // Set entire div background color and corner size 
+  meanline: true,                                   // Display mean value of all series
+  grid: true,                                       // Display a grid from labels and value labels
+  mouse_pointer: true,                              // Display a cross mouse pointer in graph area
+  status_bar : true,                                // Display status bar to show values on mouse over
+}</pre></code>
 
 h3. Ico.Base options
 
@@ -154,12 +195,12 @@ The following are options shared by all graphs:
   <tr>
     <td>width</td>
     <td>DOM element width</td>
-    <td>Canvas width</td>
+    <td>Raphael Canvas width</td>
   </tr>
   <tr>
     <td>height</td>
     <td>DOM element height</td>
-    <td>Canvas height</td>
+    <td>Raphael Canvas height</td>
   </tr>
   <tr>
     <td>color</td>
@@ -203,7 +244,42 @@ h3. Ico.SparkLine options
   </tr>
 </table>
 
-h3. Components
+h3. Ico.BulletGraph options
+
+<table>
+  <tr>
+    <td>Option name</td>
+    <td>Default value</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>0</td>
+    <td>Minimum (start) value</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>100</td>
+    <td>Maximum (stop) value</td>
+  </tr>
+  <tr>
+    <td>color</td>
+    <td>'#33e' (blue)</td>
+    <td>Color for value bar</td>
+  </tr>
+  <tr>
+    <td>target_color</td>
+    <td>'#666' (dark grey)</td>
+    <td>Color for target vertical bar</td>
+  </tr>
+  <tr>
+    <td>graph_background</td>
+    <td>see Component.Graph defaults</td>
+    <td>Include graph background component</td>
+  </tr>
+</table>
+
+h2. Components
 
 Graph features are driven by components. Each graph type defines different default components and graph orientation (horizontal or vertical). Default components can be disabled by explicitly setting their option to false.
 Each component is shown witht the name of its options attribute hash:
