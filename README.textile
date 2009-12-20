@@ -102,17 +102,76 @@ To create a graph, call new Ico.graph_type, providing three parameters:
 
 h3. Components
 
-Graph features are driven by components. Each graph type defines different default components and graph orientation (horizontal or vertical). Default components can be disabled by explicitly setting the property to false.
+Graph features are driven by components. Each graph type defines different default components and graph orientation (horizontal or vertical). Default components can be disabled by explicitly setting their option to false.
+Each component is shown witht the name of its options attribute hash:
 
-* Labels
-* Value labels
-* Grpah Background
-* Background
-* Axis
-* Meanline
-* Focus hint
-* Mouse Pointer
-* Status Bar
+<table>
+  <tr>
+    <td>Component Class</td>
+    <td>Option Attribute Name</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>Ico.Component</td>
+    <td>n/a</td>
+    <td>base class of all components</td>
+  </tr>
+  <tr>
+    <td>Ico.Component.Labels</td>
+    <td>labels</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Ico.Component.ValueLabels<td></td>
+    <td>value_labels</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Ico.Component.Graph</td>
+    <td>graph_background</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Ico.Component.Background</td>
+    <td>background</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Ico.Component.Axis</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Ico.Component.Meanline</td>
+    <td>meanline</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Ico.Component.FocusHint</td>
+    <td>focus_hint</td>
+    <td></td>
+  </tr> 
+  <tr>
+    <td>Ico.Component.MousePointer</td>
+    <td>mouse_pointer</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Ico.Component.StatusBar</td>
+    <td>status_bar</td>
+    <td></td>
+  </tr>
+</table>
+
+h3. Options
+
+h4. Ico.Base options
+* width: canvas width, defaults to DOM element width
+* height: canvas height, defaults to DOM element height
+* color: defaults to DOM element color
+* mouseover_attributes: for data elements
+**stroke: color, defaults to 'red'
+* orientation: 0 for vertical (default), 1 for horizontal
 
 h2. Tested web browsers, known issues
 
