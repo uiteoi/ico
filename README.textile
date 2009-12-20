@@ -1,6 +1,6 @@
 h2. Introduction
 
-Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to render graphics as well as the "Prototype.js":http://prototypejs.org JavaScript framework. This means it can draw charts in multiple browsers, using VML in IE, and SVG in all other browsers. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
+Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to render graphics as well as the "Prototype.js":http://prototypejs.org JavaScript framework. This means it can draw charts in multiple browsers, using VML in IE, and SVG:http://www.w3.org/TR/SVG/ in all other browsers. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
 
 The original version was written by "Alex Young":http://github.com/alexyoung. The current version features a new API, mainly due to componentization of all graph features, many bug fixes, new features, most importantly implements bullet graphs, angled labels, gradient backgrounds, proper negative bar graphs rendering.
 
@@ -139,6 +139,8 @@ To create a graph, call new Ico.graph_type, providing three parameters:
 * a value, an area of values, or hash of value sets, for the data series
 * options hash where each key is an option or set of options for a component
 
+Many options are "Raphael attributes":http://raphaeljs.com/reference.html#attr which rely on the "SVG Specification":http://www.w3.org/TR/SVG/ so please refer to these documents when further information is needed.
+
 h3. Ico.Base options
 
 The following are options shared by all graphs:
@@ -172,7 +174,7 @@ The following are options shared by all graphs:
   <tr>
     <td>mouseover_attributes.stroke</td>
     <td>red</td>
-    <td></td>
+    <td>SVG stroke color</td>
   </tr>
   <tr>
     <td>orientation</td>
