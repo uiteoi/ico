@@ -1,16 +1,21 @@
 h2. Introduction
 
-Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to draw.  This means it can draw charts in multiple browsers.
+Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to draw and Prototype.
+This means it can draw charts in multiple browsers, using VML in IE, and SVG in all other browsers.
+Also because this does not rely on Flash, it works well (and is tested) on iPhone.
 
-The current version is a basic implementation to test out the feasibility of the concept.
+The original version was written by Alex Young. The current version features a new API, mainly due
+to componentization of all graph features, many bug fixes, new features, most importantly implements
+bullet graphs, inclined labels, gradient backgrounds, proper negative bar grpahs rendering.
 
-<a href="http://dl.getdropbox.com/u/221414/graphs.png"><img src="http://dl.getdropbox.com/u/221414/graphs.png" width="200" /></a>
+To see a demo of the possibilities of the current version, check
+<a href="http://ser2.dialink.com:8080/">the current test suite</a> which is a rendering of index.html.
 
 h3. Targeted graph types
 
-* Sparklines
+* Sparklines, Sparbars, and Bullet Graphs
 * Line graphs
-* Bar graphs
+* Bar graphs, Horizontal, Vertical
 
 h3. Design considerations and goals
 
@@ -25,25 +30,43 @@ These goals are based on recommendations in Stephen Few's books:
 
 Which was generally in turn based on Edward Tufte's work.
 
-h3. Test-Driven
+h3. Tested web browsers, known issues
 
-I've been rebuilding sections of the library with <code>unittest.js</code> from scriptaculous.  Unit tests can be run in a browser by loading the HTML files.  I'm also using these tests to help profile the library and improve performance. 
+* Firefox: best compromize of quality and speed, some rendering problems of inclined fonts
+* IE: best inclined fonts rendering, slowest by far
+* Safari: fastest, bugs: while zooming
+* Google Chrome: good quality, bugs: while zooming
+* iPhone (Safari): pretty amazing, try it
+* Opera: good fonts rendering, bugs: zoom, mouse-over while scrolling
 
-h3. Todo
+h3. ToDo / Wish list
 
-* Remove JavaScript library dependency
-* Package more normalisation code
-* Humanize labels: rather than showing 1,000,000 optionally show "1m"
+* Add Legend component
+* Add Title component
+* Display values in tooltips instead of status bar, tooltips implemented w/ an external DOM library
+to enable out-of-the-canvas tooltips
+* Documentation
+* Terminate options componentization
+* Componentize series to allow bars and lines in the same graph
+* Zoom-in spark lines, spark bars, and bullet graphs on-mouse-over.
+* Display full graph of spark lines and spark bars on mouse-click, possibly in a tooltip
+* Bar graphs: multiple series columns with 1/3 overlap
+* Allow user events on graph elements
+* Draw labels on top (or right if orientation) if all values are negative
+* Remove prototype dependency, should also work w/ jQuery, Mootools sh/could probably become js library
+agnostic as most of the browser specific code is in Raphael itself
+  
+h3. API changes that might come
+
+Provide series-specific-attributes as keys from serie hash, series becomes an array of hash where
+each represents a serie if a hash is provided instead of an array then assume there is only one
+serie.
 
 h2. Examples
 
-See index.html for current API usage.  This will change as I evolve the API to support the targeted graph types.
+See index.html for current API usage.
 
 h2. Requirements
 
-* "Prototype":http://prototypejs.org
 * "Raphael":http://raphaeljs.com
-
-h2. Library style
-
-I've added semicolons to line endings to make compressing/obscuring the library easier (if you do that sort of thing).
+* "Prototype":http://prototypejs.org
