@@ -239,7 +239,7 @@ h3. Ico.SparkLine options
   <tr>
     <td>highlight.index</td>
     <td>n/a</td>
-    <td>index of the value to index in data serie</td>
+    <td>index of the value to highlight in data serie</td>
   </tr>
 </table>
 
@@ -278,7 +278,7 @@ h3. Ico.BulletGraph options
   </tr>
   <tr>
     <td>graph_background</td>
-    <td>see Component.Graph defaults</td>
+    <td>see Component.Graph</td>
     <td>Include graph background component</td>
   </tr>
 </table>
@@ -331,7 +331,7 @@ These options apply for bar and Line graphs:
   <tr>
     <td>labels_font.fill</td>
     <td>'#666' || options.labels_color</td>
-    <td></td>
+    <td>Fill color for labels font</td>
   </tr>
   <tr>
     <td>labels_font['font-size']</td>
@@ -340,12 +340,12 @@ These options apply for bar and Line graphs:
   </tr>
   <tr>
     <td>marker_size</td>
-    <td></td>
+    <td>5 pixels</td>
     <td>Size of label markers, 0 to disable markers</td>
   </tr>
   <tr>
     <td>markers_attributes.stroke</td>
-    <td>labels_font.fill</td>
+    <td>options.labels_font.fill</td>
     <td>Stroke color for label markers</td>
   </tr>
   <tr>
@@ -391,32 +391,32 @@ h3. Ico.LineGraph options
   <tr>
     <td>colors[serie_key]</td>
     <td>options.color || random color</td>
-    <td>Line color for line graphs</td>
+    <td>Line color for serie 'serie_key'</td>
   </tr>
   <tr>
     <td>dot_radius</td>
     <td>5 pixels</td>
-    <td>Radius of dots for line graphs</td>
+    <td>Radius of dots for values</td>
   </tr>
   <tr>
     <td>dot_attributes</td>
     <td>See bellow</td>
-    <td>Hash by data series key for line graphs dots</td>
+    <td>Dot attributes hash by data series</td>
   </tr>
   <tr>
     <td>dot_attributes[serie_key]['stroke-width']</td>
     <td>1 pixel</td>
-    <td>Dot stroke width for line serie</td>
+    <td>Dot stroke width for serie_key</td>
   </tr>
   <tr>
     <td>dot_attributes[serie_key].stroke</td>
-    <td>background color || options.color</td>
-    <td>Dot color for line serie</td>
+    <td>Background component color || options.color</td>
+    <td>Dot color for serie_key</td>
   </tr>
   <tr>
     <td>dot_attributes[serie_key].fill</td>
-    <td></td>
-    <td>Dot fill color for line series</td>
+    <td>options.color</td>
+    <td>Dot fill color for serie_key</td>
   </tr>
 </table>
 
