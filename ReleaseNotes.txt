@@ -1,0 +1,53 @@
+Release notes for Ico
+Ico 0.94
+    Upgrade Raphael to version 1.2.8, remove path-methods as recommended from version 1.0
+    Allow to clear grpah canvas, typically to redraw in the same div.
+    Display value label units, optional units_position allows to set units before values
+    Define components layers for calculations and drawing
+    Allow graph area background to display bad, satisfactory and good attributes as a gradient
+    Implement Stephen Few Bullet Graphs
+    Reorganize code, componentize grpah elements, remove redundant code
+    Allow all (path, labels, grid, background, meanline, ...)-attributes configuration
+    Display mouse pointer as a cross when in graph area
+    Display data values and mean value on mouse over in status area
+    Change data and meanline stroke attribute on mouse over
+    Provide svg_path class method to round pixel values and add separators only when needed 
+    Test suite
+        Perform all tests on IE 8.0, Firefox 3.5, Opera 10.0, Chrome, Safari
+    API Changes
+    Fix and optimize value labels range / start and stop calculations
+        Always display zero value when in value range
+        Find best (step, number of steps) pairs to minimize display range and emphasize data values
+        Design significant digits calculation class method with options rounding anomymous function
+            and optional string output to prevent float precision conversion errors
+        Build value labels as strings instead of float
+        Fix value step to one significant digit
+        Fix value labels to two significant digits
+        Fix value labels precision to maximum precision of all value labels
+        Determine number of maximum steps based on actual graph width and labels size
+        Provide scale attribute to scale values to actual graph height
+    Fix bars base value to start at zero when in range and display negative values in reverse direction
+    Allow labels at an angle
+    Design function to properly calculate text display size in pixels
+    Fix bottom and left offset calculations using actual text size
+    Remove sort used to determine longuest labels, iterate through array instead.
+    Fix sort comparison function to determine longuest labels.
+    Numerous other bug fixes
+    
+Wish list:
+ - Terminate options componentization
+ - Componentize series to allow bars and lines in the same graph
+ - Zoom-in spark lines, spark bars, and bullet graphs on-mouse-over.
+ - Display full graph of spark lines and spark bars on mouse-click
+ - Multiple series columns with 1/3 overlap
+ - Title
+ - Legend
+ - Display values in tooltips instead of status bar, tooltips implemented w/ an external DOM library to
+   enable out-of-the-canvas tooltips 
+ - Allow user events on graph elements
+ - Draw labels on top (or right if orientation) if all values are negative
+ - Remove prototype dependency, should also work w/ jQuery, Mootools
+   sh/could probably become js library agnostic as most of the browser specific code is in Raphael itself
+ - API: Provide series-specific-attributes as keys from serie hash, series becomes an array of hash where
+   each represents a serie if a hash is provided instead of an array then assume there is only one
+   serie.
