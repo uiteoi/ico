@@ -1,8 +1,8 @@
 h2. Introduction
 
-Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to draw and Prototype. This means it can draw charts in multiple browsers, using VML in IE, and SVG in all other browsers. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
+Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to render graphics as well as the "Prototype.js":http://prototypejs.org JavaScript framework. This means it can draw charts in multiple browsers, using VML in IE, and SVG in all other browsers. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
 
-The original version was written by Alex Young. The current version features a new API, mainly due to componentization of all graph features, many bug fixes, new features, most importantly implements bullet graphs, angled labels, gradient backgrounds, proper negative bar grpahs rendering.
+The original version was written by "Alex Young":http://github.com/alexyoung. The current version features a new API, mainly due to componentization of all graph features, many bug fixes, new features, most importantly implements bullet graphs, angled labels, gradient backgrounds, proper negative bar graphs rendering.
 
 To see a demo of the possibilities of the current version, check <a href="http://ser2.dialink.com:8080/">the current test suite</a> which is a rendering of index.html.
 
@@ -29,14 +29,14 @@ h2. Examples
 
 Simple sparkline, no decoration:
 <pre><code>new Ico.SparkLine(
-  $( 'market_trend_id' ),                           // The id of the html element where the sparkline is rendered
+  $( 'market_trend_id' ),                           // The id of the DOM element where the sparkline is rendered
   [5, 2, -1, 17, 23, 15, 7, 6, -5, -2, 4, 7, 3, 9]  // List of values for market trend
 );
 </code></pre>
 
 Bullet graph with 3 graph background colors and gradient transtitions:
 <pre><code>new Ico.BulletGraph(
-  $( 'gross_profit_id' ), // The id of the html element where the bullet graph will be rendered
+  $( 'gross_profit_id' ), // The id of the DOM element where the bullet graph will be rendered
   85,                     // Actual gross profit for current period as a percentage of gross revenues
   {                       // Bullet graph options
     min: 0,               // Minimum gross profit value
