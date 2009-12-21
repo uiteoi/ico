@@ -1,27 +1,22 @@
 h1. Introduction
 
-Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to render graphics as well as the "Prototype.js":http://prototypejs.org JavaScript framework. This means it can render charts in the majority of modern web browsers, using VML in IE, and "SVG":http://www.w3.org/TR/SVG/ in SVG standard-compliant web browsers such as Firefox, Apple Safari, Google Chrome, Opera, and Konqueror for Linux. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
+Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to render graphics as well as the "Prototype":http://prototypejs.org JavaScript framework. This means Ico can render charts in the vast majority of modern web browsers, using "VML":http://en.wikipedia.org/wiki/Vml in IE, or "SVG":http://www.w3.org/TR/SVG/ in SVG standard-compliant web browsers such as Firefox, Apple Safari, Google Chrome, Opera, and Konqueror for Linux. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
 
-The original version was written by "Alex Young":http://github.com/alexyoung. The current version features a new API, mainly due to componentization of many graph features, comprehensive documentation, many bug fixes, new features, most importantly implements bullet graphs, angled labels, gradient backgrounds, proper negative bar graphs rendering. For a complete list of modifications read the "release notes":http://github.com/uiteoi/ico/blob/master/ReleaseNotes.txt.
+Ico's goal is to provide effective visual reprensentation of data according to the work of "Stephen Few":http://www.perceptualedge.com/blog/ and "Edward Tufte":http://en.wikipedia.org/wiki/Edward_Tufte. In particular, Ico provides an implementatino of Edward tufte's "Sparklines":http://en.wikipedia.org/wiki/Sparkline and Stephen Few's "Bullet Graphs":http://en.wikipedia.org/wiki/Bullet_graph.
 
-h3. Targeted graph types
-
-* Sparklines, Sparbars, and Bullet Graphs
-* Line graphs
-* Bar graphs, Horizontal, Vertical
-
-h3. Design considerations and goals
-
+Effective visual reprensentation of data can be achieved by following the Stephen Few's graph design considerations: 
 * Clarity: Use of white-space to help lend clarity to graphs, nominal scale vs. ordinal scale
 * Simplicity: Minimal use of decorations and lines, reliance on the Gestalt principle of closure
 * Conciseness: Avoidance of graph types that don't efficiently present data (pie charts, radar maps)
 
-These goals are based on recommendations in Stephen Few's books:
+Ico's core provides the set of graphs and features to achieve this goal: 
+* Sparklines, Sparbars, and Bullet Graphs
+* Line graphs
+* Horizontal and Vertical Bar Graphs
 
-* Show Me the Numbers: Designing Tables and Graphs to Enlighten
-* Information Dashboard Design
+This version of Ico is designed to be extensible beyond its core by providing either new graph types or new graph components. A graph component automatically becomes available to all graph types.
 
-Which was generally in turn based on Edward Tufte's work.
+The original version of Ico was written by "Alex Young":http://github.com/alexyoung. The current version features a new API, mainly due to componentization of many graph features, comprehensive documentation, many bug fixes, new features, most importantly implements bullet graphs, angled labels, gradient backgrounds, proper negative bar graphs rendering. For a complete list of modifications read the "release notes":http://github.com/uiteoi/ico/blob/master/ReleaseNotes.txt.
 
 h1. Demonstration, test suite
 
