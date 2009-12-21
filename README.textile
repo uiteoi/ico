@@ -1,16 +1,16 @@
 h1. Introduction
 
-Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to render graphics as well as the "Prototype.js":http://prototypejs.org JavaScript framework. This means it can draw charts in multiple browsers, using VML in IE, and "SVG":http://www.w3.org/TR/SVG/ in all other browsers. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
+Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to render graphics as well as the "Prototype.js":http://prototypejs.org JavaScript framework. This means it can render charts in the majority of modern web browsers, using VML in IE, and "SVG":http://www.w3.org/TR/SVG/ in SVG standard-compliant web browsers such as Firefox, Apple Safari, Google Chrome, Opera, and Konqueror for Linux. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
 
-The original version was written by "Alex Young":http://github.com/alexyoung. The current version features a new API, mainly due to componentization of all graph features, comprehensive documentation, many bug fixes, new features, most importantly implements bullet graphs, angled labels, gradient backgrounds, proper negative bar graphs rendering. For a complete list of modifications read the "release notes":http://github.com/uiteoi/ico/blob/master/ReleaseNotes.txt.
+The original version was written by "Alex Young":http://github.com/alexyoung. The current version features a new API, mainly due to componentization of many graph features, comprehensive documentation, many bug fixes, new features, most importantly implements bullet graphs, angled labels, gradient backgrounds, proper negative bar graphs rendering. For a complete list of modifications read the "release notes":http://github.com/uiteoi/ico/blob/master/ReleaseNotes.txt.
 
-h2. Targeted graph types
+h3. Targeted graph types
 
 * Sparklines, Sparbars, and Bullet Graphs
 * Line graphs
 * Bar graphs, Horizontal, Vertical
 
-h2. Design considerations and goals
+h3. Design considerations and goals
 
 * Clarity: Use of white-space to help lend clarity to graphs, nominal scale vs. ordinal scale
 * Simplicity: Minimal use of decorations and lines, reliance on the Gestalt principle of closure
@@ -26,6 +26,12 @@ Which was generally in turn based on Edward Tufte's work.
 h1. Demonstration, test suite
 
 To see a demonstration of the possibilities of the current version, check <a href="http://ser2.dialink.com:8080/">the current test suite</a> which is a rendering of "index.html":http://github.com/uiteoi/ico/blob/master/index.html.
+
+Unfortunatly tests cannot be automated because it is primaraly about rendering in supported web browsers, most of which do not provide an API suitable for test suites. The test suite is a set of graphs showing most of Ico features. This test suite is meant to be viewed in all supported web browsers where the following tests are performed:
+* scroll up and down, mouse over graphs
+* zoom page, mouse over graphs
+* check for font display defects such as characters mis-alignments
+* measure the time to render the entire test suite page
 
 h1. Examples
 
