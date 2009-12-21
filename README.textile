@@ -475,7 +475,7 @@ Each component is shown with the name of its options attribute hash:
   </tr>
   <tr>
     <td>Ico.Component.Labels</td>
-    <td>Ico.Component<td>
+    <td>Ico.Component</td>
     <td>labels</td>
     <td>Labels along the data series</td>
   </tr>
@@ -519,7 +519,7 @@ Each component is shown with the name of its options attribute hash:
     <td>Ico.Component.MousePointer</td>
     <td>Ico.Component</td>
     <td>mouse_pointer</td>
-    <td>Display the mouse pointer as cross when in graph area</td>
+    <td>Display the mouse pointer as a cross when in graph area</td>
   </tr>
   <tr>
     <td>Ico.Component.StatusBar</td>
@@ -529,14 +529,14 @@ Each component is shown with the name of its options attribute hash:
   </tr>
 </table>
 
-h3. Components options
+h3. Component option attributes
 
 Component options can be set with the following types of values:
 * false => disable feature, useful when a graph type sets the option by default
 * true  => get default options for the component
 * hash  => attributes for the component
 
-If a hash is provided and one of the options name is <strong>'attributes'</strong>, this represents a "Raphael attribute":http://raphaeljs.com/reference.html#attr. The tables bellow define only the subset of default options for Raphael attributes but all valid Raphael attributes can be used.
+If a hash is provided and one of the options name is <strong>'attributes'</strong>, it is a hash of "Raphael attributes":http://raphaeljs.com/reference.html#attr. Attribute option tables bellow define only the subset of Ico default attributes although all valid Raphael attributes can be used.
 
 h3. 'labels' option attribute
 
