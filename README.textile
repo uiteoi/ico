@@ -2,7 +2,7 @@ h1. Introduction
 
 Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to render graphics as well as the "Prototype.js":http://prototypejs.org JavaScript framework. This means it can draw charts in multiple browsers, using VML in IE, and "SVG":http://www.w3.org/TR/SVG/ in all other browsers. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
 
-The original version was written by "Alex Young":http://github.com/alexyoung. The current version features a new API, mainly due to componentization of all graph features, comprehensive documentation, many bug fixes, new features, most importantly implements bullet graphs, angled labels, gradient backgrounds, proper negative bar graphs rendering.
+The original version was written by "Alex Young":http://github.com/alexyoung. The current version features a new API, mainly due to componentization of all graph features, comprehensive documentation, many bug fixes, new features, most importantly implements bullet graphs, angled labels, gradient backgrounds, proper negative bar graphs rendering. For a complete list of modifications read the "release notes":http://github.com/uiteoi/ico/blob/master/ReleaseNotes.txt.
 
 h2. Targeted graph types
 
@@ -23,7 +23,7 @@ These goals are based on recommendations in Stephen Few's books:
 
 Which was generally in turn based on Edward Tufte's work.
 
-h1 Demonstration, test suite
+h1. Demonstration, test suite
 
 To see a demonstration of the possibilities of the current version, check <a href="http://ser2.dialink.com:8080/">the current test suite</a> which is a rendering of "index.html":http://github.com/uiteoi/ico/blob/master/index.html.
 
@@ -31,13 +31,13 @@ h1. Examples
 
 Simple sparkline, no decoration:
 <pre><code>new Ico.SparkLine(
-  $( 'market_trend_id' ),                           // The id of the DOM element where the sparkline is rendered
+  $( 'market_trend_id' ),                           // DOM element where the sparkline is rendered
   [5, 2, -1, 17, 23, 15, 7, 6, -5, -2, 4, 7, 3, 9]  // List of values for market trend
 )</code></pre>
 
 Bullet graph with 3 graph background colors and gradient transtitions:
 <pre><code>new Ico.BulletGraph(
-  $( 'gross_profit_id' ), // The id of the DOM element where the bullet graph will be rendered
+  $( 'gross_profit_id' ), // DOM element where the bullet graph will be rendered
   85,                     // Actual gross profit for current period as a percentage of gross revenues
   {                       // Bullet graph options
     min: 0,               // Minimum gross profit value
@@ -54,7 +54,7 @@ Bullet graph with 3 graph background colors and gradient transtitions:
 Line graph with 2 lines, angled labels, $ units, meanline, mouse pointer, mouse-over value in status bar, and grid:
 <pre><code>var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 new Ico.LineGraph(
-  $( 'gross_profit_id' ),                             // div where the graph will be rendered
+  $( 'gross_profit_id' ),                             // DOM element where the graph will be rendered
   {                                                   // The 2 series
     actual: [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
     forecast: [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
