@@ -2,7 +2,7 @@ h1. Introduction
 
 Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to render graphics as well as the "Prototype.js":http://prototypejs.org JavaScript framework. This means it can draw charts in multiple browsers, using VML in IE, and "SVG":http://www.w3.org/TR/SVG/ in all other browsers. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
 
-The original version was written by "Alex Young":http://github.com/alexyoung. The current version features a new API, mainly due to componentization of all graph features, many bug fixes, new features, most importantly implements bullet graphs, angled labels, gradient backgrounds, proper negative bar graphs rendering.
+The original version was written by "Alex Young":http://github.com/alexyoung. The current version features a new API, mainly due to componentization of all graph features, comprehensive documentation, many bug fixes, new features, most importantly implements bullet graphs, angled labels, gradient backgrounds, proper negative bar graphs rendering.
 
 h2. Targeted graph types
 
