@@ -463,62 +463,75 @@ Each component is shown with the name of its options attribute hash:
 <table>
   <tr>
     <td>Component Class</td>
+    <td>Base Class</td>
     <td>Option Attribute Name</td>
     <td>Description</td>
   </tr>
   <tr>
     <td>Ico.Component</td>
+    <td></td>
     <td>n/a</td>
     <td>Base class of all graph components</td>
   </tr>
   <tr>
     <td>Ico.Component.Labels</td>
+    <td>Ico.Component<td>
     <td>labels</td>
-    <td></td>
+    <td>Labels along the data series</td>
   </tr>
   <tr>
     <td>Ico.Component.ValueLabels</td>
+    <td>Ico.Component.Labels<td>
     <td>value_labels</td>
-    <td>Inherits from Labels</td>
+    <td>Label values accross data series</td>
   </tr>
   <tr>
     <td>Ico.Component.Graph</td>
+    <td>Ico.Component<td>
     <td>graph_background</td>
-    <td></td>
+    <td>Graph area, excluding canvas padding areas, background</td>
   </tr>
   <tr>
     <td>Ico.Component.Background</td>
+    <td>Ico.Component<td>
     <td>background</td>
-    <td></td>
+    <td>Background of the entire canvas</td>
   </tr>
   <tr>
     <td>Ico.Component.Axis</td>
+    <td>Ico.Component<td>
     <td>axis</td>
-    <td></td>
+    <td>X and Y Axis</td>
   </tr>
   <tr>
     <td>Ico.Component.Meanline</td>
+    <td>Ico.Component<td>
     <td>meanline</td>
-    <td></td>
+    <td>Mean line at the mean of all data values accross all series</td>
   </tr>
   <tr>
     <td>Ico.Component.FocusHint</td>
+    <td>Ico.Component<td>
     <td>focus_hint</td>
-    <td></td>
+    <td>Display hint if value labels do not contain zero</td>
   </tr> 
   <tr>
     <td>Ico.Component.MousePointer</td>
+    <td>Ico.Component<td>
     <td>mouse_pointer</td>
-    <td></td>
+    <td>Display the mouse pointer as cross when in graph area</td>
   </tr>
   <tr>
     <td>Ico.Component.StatusBar</td>
+    <td>Ico.Component<td>
     <td>status_bar</td>
-    <td></td>
+    <td>Display values on mouse over in status area</td>
   </tr>
 </table>
 
-h3. Component Options
+h3. Component.Labels Options
+
+The option attribute 'labels' defines values labels. If an array is provided, it reprensent the values of the labels. If more label options are provided, labels must be provided as a hash of options defined in the following table:
 
 <table>
   <tr>
@@ -527,9 +540,249 @@ h3. Component Options
     <td>Description</td>
   </tr>
   <tr>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>values</td>
+    <td>[1, .., # of data samples -1]</td>
+    <td>Label values</td>
+  </tr>
+  <tr>
+    <td>angle</td>
+    <td>0</td>
+    <td>Clockwise Angle to display labels</td>
+  </tr>
+</table>
+
+h3. Component.ValueLabels Options
+
+Values labels are always calculated from the range of data series values. Additional options can be provided in the value_labels attribute as a hash:
+
+<table>
+  <tr>
+    <td>Option name</td>
+    <td>Default value</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>angle</td>
+    <td>0</td>
+    <td>Clockwise Angle to display value labels</td>
+  </tr>
+  <tr>
+    <td>units</td>
+    <td>n/a</td>
+    <td>Units to display with value labels</td>
+  </tr>
+  <tr>
+    <td>units_position</td>
+    <td>1</td>
+    <td>Position of units: 0 => before value, 1 => after value</td>
+  </tr>
+</table>
+
+h3. Component.Graph (background) options
+
+The graph area is the area where data series are rendered. This does not include padding areas where labels and other graph features are rendered.
+
+The graph_background option attribute, if present allows to display a grandient of colors in the graph area. The gradient is drawn along the value labels axis to add meaning to ranges of values. The default gradient meaning represents ranges where the values are 'bad', 'acceptable', and 'good'. The actual meaning of these background colors is application-specific and the same colors could mean 'small', 'average', and 'tall' or any other meaning.
+
+The graph_background attribute can be set to true to get the default background or a hash to provide specific attributes:
+
+<table>
+  <tr>
+    <td>Option name</td>
+    <td>Default value</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>key_colors</td>
+    <td>['#aaa','#ccc','#eee']</td>
+    <td>Colors of the different areas of the background</td>
+  </tr>
+  <tr>
+    <td>key_values</td>
+    <td>[50, 75]</td>
+    <td>Values where the transitions occur, there should be one less value than key_colors</td>
+  </tr>
+  <tr>
+    <td>colors_transition</td>
+    <td>0</td>
+    <td>Percentage of key_values where colors transition with a gradient</td>
+  </tr>
+</table>
+
+h3. Component.Background options
+
+The background is the entire Raphael canvas area.
+
+<table>
+  <tr>
+    <td>Option name</td>
+    <td>Default value</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>color</td>
+    <td>n/a</td>
+    <td>Background color</td>
+  </tr>
+  <tr>
+    <td>attributes</td>
+    <td>See bellow</td>
+    <td>Attribute hash for background</td>
+  </tr>
+  <tr>
+    <td>attributes.stroke</td>
+    <td>'none'</td>
+    <td>Stroke color</td>
+  </tr>
+  <tr>
+    <td>attributes.fill</td>
+    <td>color</td>
+    <td>Fill color</td>
+  </tr>
+  <tr>
+    <td>corners</td>
+    <td>Canvas height / 20</td>
+    <td>Radius of rounded corners, 0 to disable</td>
+  </tr>
+</table>
+
+h3. Component.Axis options
+
+If the axis option attribute is provided it can be set to true or a hash of additional options:
+
+<table>
+  <tr>
+    <td>Option name</td>
+    <td>Default value</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>attributes</td>
+    <td>See below</td>
+    <td>Axis attributes</td>
+  </tr>
+  <tr>
+    <td>attributes.stroke</td>
+    <td>'#666' (grey)</td>
+    <td>Stroke color</td>
+  </tr>
+  <tr>
+    <td>attributes['stroke-width']</td>
+    <td>1 pixel</td>
+    <td>Axis stroke width</td>
+  </tr>
+</table>
+
+h3. Component.Meanline options
+
+If the meanline attribute option is set to true or a hash of additional attributes, Ico calculates the mean of all values of all series and displays this mean value as line along the labels axis.
+
+<table>
+  <tr>
+    <td>Option name</td>
+    <td>Default value</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>attributes</td>
+    <td>See below</td>
+    <td>Meanline attributes</td>
+  </tr>
+  <tr>
+    <td>attributes.stroke</td>
+    <td>'#bbb' (light grey)</td>
+    <td>Stroke color</td>
+  </tr>
+  <tr>
+    <td>attributes['stroke-width']</td>
+    <td>2 pixels</td>
+    <td>Meanline stroke width</td>
+  </tr>
+</table>
+
+h3. Component.FocusHint
+
+A focus hint is displayed as two short lines crossing the value labels axis if the value range does not include zero in order to attract the attention of the users that the graph does not start at zero nor contains zero.
+
+<table>
+  <tr>
+    <td>Option name</td>
+    <td>Default value</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>length</td>
+    <td>6 pixels</td>
+    <td>Length of each focus hint line</td>
+  </tr>
+  <tr>
+    <td>color</td>
+    <td>options.labels_font.fill</td>
+    <td>Hint color</td>
+  </tr>
+  <tr>
+    <td>attributes</td>
+    <td>See below</td>
+    <td>Hint lines attributes</td>
+  </tr>
+  <tr>
+    <td>attributes.stroke</td>
+    <td>color</td>
+    <td>Hint lines stroke color</td>
+  </tr>
+  <tr>
+    <td>attributes['stroke-width']</td>
+    <td>2 pixels</td>
+    <td>Hint lines stroke width</td>
+  </tr>
+</table>
+
+h3. Component.MousePointer options
+
+If the mouse_pointer attribute option is set to true or a hash, a mouse pointer is displayed when the mouse is over the graph area as a cross spanning the entire width and height of the graph area.
+
+<table>
+  <tr>
+    <td>Option name</td>
+    <td>Default value</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>attributes</td>
+    <td>See below</td>
+    <td>Mouse Pointer attributes</td>
+  </tr>
+  <tr>
+    <td>attributes.stroke</td>
+    <td>'#666' (grey)</td>
+    <td>Stroke color</td>
+  </tr>
+  <tr>
+    <td>attributes['stroke-dasharray']</td>
+    <td>'--'</td>
+    <td>SVG stroke pattern</td>
+  </tr>
+</table>
+
+h3. Component.StatusBar options
+
+If the status_bar attribute option is set to true or a hash, value are displayed on mouse over in the top padding area.
+
+<table>
+  <tr>
+    <td>Option name</td>
+    <td>Default value</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>attributes</td>
+    <td>See below</td>
+    <td>Status bar attributes</td>
+  </tr>
+  <tr>
+    <td>attributes['text-anchor']</td>
+    <td>'end'</td>
+    <td>SVG anchor in the top padding area</td>
   </tr>
 </table>
 
@@ -547,15 +800,20 @@ h1. ToDo / Wish list
 * Add Legend component
 * Add Title component
 * Display values in tooltips instead of status bar, tooltips implemented w/ an external DOM library to enable out-of-the-canvas tooltips
-* Improve Documentation
 * Terminate options componentization
 * Componentize series to allow bars and lines in the same graph
 * Zoom-in spark lines, spark bars, and bullet graphs on-mouse-over.
 * Display full graph of spark lines and spark bars on mouse-click, possibly in a tooltip
 * Bar graphs: multiple series columns with 1/3 overlap
-* Allow user events on graph elements
+* Facilitate user events definition on graph elements
 * Draw labels on top (or right if orientation) if all values are negative
 * Remove prototype dependency, should also work w/ jQuery, Mootools sh/could probably become js library agnostic as most of the browser specific code is in Raphael itself
+
+h2. Documentaion ToDo
+
+* Graph methods beyond intitial 
+* Graph and Components extentions
+* Raphael gradients
 
 h2. API changes that might come
 
