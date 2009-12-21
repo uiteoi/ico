@@ -2,7 +2,7 @@ h1. Introduction
 
 Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to render graphics as well as the "Prototype":http://prototypejs.org JavaScript framework. This means Ico can render charts in the vast majority of modern web browsers, using "VML":http://en.wikipedia.org/wiki/Vml in IE, or "SVG":http://www.w3.org/TR/SVG/ in SVG standard-compliant web browsers such as Firefox, Apple Safari, Google Chrome, Opera, and Konqueror for Linux. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
 
-Ico's goal is to provide effective visual reprensentation of data according to the work of "Stephen Few":http://www.perceptualedge.com/blog/ and "Edward Tufte":http://en.wikipedia.org/wiki/Edward_Tufte. In particular, Ico provides an implementatino of Edward tufte's "Sparklines":http://en.wikipedia.org/wiki/Sparkline and Stephen Few's "Bullet Graphs":http://en.wikipedia.org/wiki/Bullet_graph.
+Ico's goal is to provide effective visual reprensentation of data according to the work of "Stephen Few":http://www.perceptualedge.com/blog/ and "Edward Tufte":http://en.wikipedia.org/wiki/Edward_Tufte. In particular, Ico provides an implementation of Edward tufte's "Sparklines":http://en.wikipedia.org/wiki/Sparkline and Stephen Few's "Bullet Graphs":http://en.wikipedia.org/wiki/Bullet_graph.
 
 Effective visual reprensentation of data can be achieved by following the Stephen Few's graph design considerations: 
 * Clarity: Use of white-space to help lend clarity to graphs, nominal scale vs. ordinal scale
@@ -807,32 +807,35 @@ h1. Tested web browsers, known issues
 
 h1. ToDo / Wish list
 
+Features:
 * Add Legend component
 * Add Title component
 * Allow single axis (x or y) to be displayed
 * Display values in tooltips instead of status bar, tooltips implemented w/ an external DOM library to enable out-of-the-canvas tooltips
-* Terminate options componentization
-* Componentize series to allow bars and lines in the same graph
 * Zoom-in spark lines, spark bars, and bullet graphs on-mouse-over.
 * Display full graph of spark lines and spark bars on mouse-click, possibly in a tooltip
 * Bar graphs: multiple series columns with 1/3 overlap
 * Facilitate user events definition on graph elements
 * Draw labels on top (or right if orientation) if all values are negative
-* Remove prototype dependency, should also work w/ jQuery, Mootools sh/could probably become js library agnostic as most of the browser specific code is in Raphael itself
 
-h2. Documentaion ToDo
-
-* Graph methods beyond intitialization (new)
-* Graph and Components extentions
-* Raphael gradients
-
-h2. API changes that might come
-
+API:
 The API still needs to be finalized, expect non-backward compatible changes until version 1.0 is released.
 
 Provide series-specific-attributes as keys from serie hash, series becomes an array of hash where each represents a serie if a hash is provided instead of an array then assume there is only one serie.
 
-h1. Requirements
+Architechture:
+* Terminate options componentization
+* Componentize series to allow bars and lines in the same graph
+* Remove prototype dependency, should also work w/ jQuery, Mootools sh/could probably become js library agnostic as most of the browser specific code is in Raphael itself
 
+Documentation:
+* Ico box model
+* Graph methods beyond intitialization (new)
+* Graph and Components extensions
+* Raphael gradients
+
+h1. Dependencies
+
+Ico requires:
 * "Raphael":http://raphaeljs.com
 * "Prototype":http://prototypejs.org
