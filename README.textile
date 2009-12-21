@@ -457,7 +457,7 @@ h3. Ico.BarGraph and Ico.HorizontalBarGraph options
 
 h2. Component Classes
 
-Graph features are driven by components. Each graph type defines different default components and graph orientation (horizontal or vertical) and other graph-specific options. Default components can be disabled by explicitly setting their option to false.
+Graph features are driven by components. Each graph type defines different default components and graph orientation (horizontal or vertical) and other graph-specific options. Default components can be disabled by explicitly setting their option attribute to false.
 Each component is shown with the name of its options attribute hash:
 
 <table>
@@ -470,7 +470,7 @@ Each component is shown with the name of its options attribute hash:
   <tr>
     <td>Ico.Component</td>
     <td></td>
-    <td>n/a</td>
+    <td></td>
     <td>Base class of all graph components</td>
   </tr>
   <tr>
@@ -481,57 +481,66 @@ Each component is shown with the name of its options attribute hash:
   </tr>
   <tr>
     <td>Ico.Component.ValueLabels</td>
-    <td>Ico.Component.Labels<td>
+    <td>Ico.Component.Labels</td>
     <td>value_labels</td>
     <td>Label values accross data series</td>
   </tr>
   <tr>
     <td>Ico.Component.Graph</td>
-    <td>Ico.Component<td>
+    <td>Ico.Component</td>
     <td>graph_background</td>
     <td>Graph area, excluding canvas padding areas, background</td>
   </tr>
   <tr>
     <td>Ico.Component.Background</td>
-    <td>Ico.Component<td>
+    <td>Ico.Component</td>
     <td>background</td>
     <td>Background of the entire canvas</td>
   </tr>
   <tr>
     <td>Ico.Component.Axis</td>
-    <td>Ico.Component<td>
+    <td>Ico.Component</td>
     <td>axis</td>
     <td>X and Y Axis</td>
   </tr>
   <tr>
     <td>Ico.Component.Meanline</td>
-    <td>Ico.Component<td>
+    <td>Ico.Component</td>
     <td>meanline</td>
     <td>Mean line at the mean of all data values accross all series</td>
   </tr>
   <tr>
     <td>Ico.Component.FocusHint</td>
-    <td>Ico.Component<td>
+    <td>Ico.Component</td>
     <td>focus_hint</td>
     <td>Display hint if value labels do not contain zero</td>
   </tr> 
   <tr>
     <td>Ico.Component.MousePointer</td>
-    <td>Ico.Component<td>
+    <td>Ico.Component</td>
     <td>mouse_pointer</td>
     <td>Display the mouse pointer as cross when in graph area</td>
   </tr>
   <tr>
     <td>Ico.Component.StatusBar</td>
-    <td>Ico.Component<td>
+    <td>Ico.Component</td>
     <td>status_bar</td>
     <td>Display values on mouse over in status area</td>
   </tr>
 </table>
 
-h3. Component.Labels Options
+h3. Components options
 
-The option attribute 'labels' defines values labels. If an array is provided, it reprensent the values of the labels. If more label options are provided, labels must be provided as a hash of options defined in the following table:
+Component options can be set with the following types of values:
+* false => disable feature, useful when a graph type sets the option by default
+* true  => get default options for the component
+* hash  => attributes for the component
+
+If a hash is provided and one of the options name is <strong>'attributes'</strong>, this represents a "Raphael attribute":http://raphaeljs.com/reference.html#attr. The tables bellow define only the subset of default options for Raphael attributes but all valid Raphael attributes can be used.
+
+h3. 'labels' option attribute
+
+Labels are defined by the option attribute 'labels'. If an array is provided, it reprensents the values of the labels. If more label options are provided, labels must be provided as a hash of options defined in the following table:
 
 <table>
   <tr>
@@ -551,9 +560,9 @@ The option attribute 'labels' defines values labels. If an array is provided, it
   </tr>
 </table>
 
-h3. Component.ValueLabels Options
+h3. 'value_labels' option attribute
 
-Values labels are always calculated from the range of data series values. Additional options can be provided in the value_labels attribute as a hash:
+Values labels are always calculated from the range of data series values. Additional options can be provided in the value_labels attribute with a hash of labels' attributes:
 
 <table>
   <tr>
@@ -568,7 +577,7 @@ Values labels are always calculated from the range of data series values. Additi
   </tr>
   <tr>
     <td>units</td>
-    <td>n/a</td>
+    <td></td>
     <td>Units to display with value labels</td>
   </tr>
   <tr>
@@ -578,7 +587,7 @@ Values labels are always calculated from the range of data series values. Additi
   </tr>
 </table>
 
-h3. Component.Graph (background) options
+h3. 'graph_background' option attribute
 
 The graph area is the area where data series are rendered. This does not include padding areas where labels and other graph features are rendered.
 
@@ -609,7 +618,7 @@ The graph_background attribute can be set to true to get the default background 
   </tr>
 </table>
 
-h3. Component.Background options
+h3. 'background' option attribute
 
 The background is the entire Raphael canvas area.
 
@@ -621,7 +630,7 @@ The background is the entire Raphael canvas area.
   </tr>
   <tr>
     <td>color</td>
-    <td>n/a</td>
+    <td></td>
     <td>Background color</td>
   </tr>
   <tr>
@@ -646,9 +655,9 @@ The background is the entire Raphael canvas area.
   </tr>
 </table>
 
-h3. Component.Axis options
+h3. 'axis' option attribute
 
-If the axis option attribute is provided it can be set to true or a hash of additional options:
+If the 'axis' option attribute is provided it can be set to true or a hash of additional options:
 
 <table>
   <tr>
@@ -673,9 +682,9 @@ If the axis option attribute is provided it can be set to true or a hash of addi
   </tr>
 </table>
 
-h3. Component.Meanline options
+h3. 'meanline' option attribute
 
-If the meanline attribute option is set to true or a hash of additional attributes, Ico calculates the mean of all values of all series and displays this mean value as line along the labels axis.
+If the 'meanline' attribute option is set to true or a hash of additional attributes, Ico calculates the mean of all values of all series and displays this mean value as line parallel to labels' axis.
 
 <table>
   <tr>
@@ -700,7 +709,7 @@ If the meanline attribute option is set to true or a hash of additional attribut
   </tr>
 </table>
 
-h3. Component.FocusHint
+h3. 'focus_hint' option attribute
 
 A focus hint is displayed as two short lines crossing the value labels axis if the value range does not include zero in order to attract the attention of the users that the graph does not start at zero nor contains zero.
 
@@ -718,7 +727,7 @@ A focus hint is displayed as two short lines crossing the value labels axis if t
   <tr>
     <td>color</td>
     <td>options.labels_font.fill</td>
-    <td>Hint color</td>
+    <td>Hint lines color</td>
   </tr>
   <tr>
     <td>attributes</td>
@@ -737,9 +746,9 @@ A focus hint is displayed as two short lines crossing the value labels axis if t
   </tr>
 </table>
 
-h3. Component.MousePointer options
+h3. 'mouse_pointer' option attribute
 
-If the mouse_pointer attribute option is set to true or a hash, a mouse pointer is displayed when the mouse is over the graph area as a cross spanning the entire width and height of the graph area.
+If the 'mouse_pointer' attribute option is set to true or a hash, a mouse pointer is displayed when the mouse is over the graph area as a cross spanning the entire width and height of the graph area.
 
 <table>
   <tr>
@@ -759,14 +768,14 @@ If the mouse_pointer attribute option is set to true or a hash, a mouse pointer 
   </tr>
   <tr>
     <td>attributes['stroke-dasharray']</td>
-    <td>'--'</td>
+    <td><code>'--'</code></td>
     <td>SVG stroke pattern</td>
   </tr>
 </table>
 
-h3. Component.StatusBar options
+h3. 'status_bar' option attribute
 
-If the status_bar attribute option is set to true or a hash, value are displayed on mouse over in the top padding area.
+If the 'status_bar' attribute option is set to true or a hash, value are displayed on mouse over in the top padding area.
 
 <table>
   <tr>
@@ -799,6 +808,7 @@ h1. ToDo / Wish list
 
 * Add Legend component
 * Add Title component
+* Allow single axis (x or y) to be displayed
 * Display values in tooltips instead of status bar, tooltips implemented w/ an external DOM library to enable out-of-the-canvas tooltips
 * Terminate options componentization
 * Componentize series to allow bars and lines in the same graph
@@ -811,7 +821,7 @@ h1. ToDo / Wish list
 
 h2. Documentaion ToDo
 
-* Graph methods beyond intitial 
+* Graph methods beyond intitialization (new)
 * Graph and Components extentions
 * Raphael gradients
 
