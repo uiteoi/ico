@@ -158,11 +158,11 @@ Data series can provided as:
 Examples:
 <pre><code>// A single value for a bullet graph
 data_series = -20
-
-// An array of values for a single serie graph
+</code>
+<code>// An array of values for a single serie graph
 data_series = [5, 2, -1, 17, 23, 15, 7, 6, -5, -2, 4, 7, 3, 9]
-
-// An array of arrays of values for multiple series graphs
+</code>
+<code>// An array of arrays of values for multiple series graphs
 data_series = [
   [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
   [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
@@ -544,9 +544,9 @@ h3. Ico.BarGraph and Ico.HorizontalBarGraph options
     <td>Description</td>
   </tr>
   <tr>
-    <td>series_attributes</td>
+    <td>series_attributes[]</td>
     <td>See bellow</td>
-    <td>Hash by data series key for bar attributes</td>
+    <td>Array by data series key for bar attributes</td>
   </tr>
   <tr>
     <td>series_attributes[serie_key].stroke</td>
