@@ -1,35 +1,163 @@
-Ico 0.94
-    Upgrade Raphael to version 1.2.8, remove path-methods as recommended from version 1.0
-    Allow to clear grpah canvas, typically to redraw in the same div.
-    Display value label units, optional units_position allows to set units before values
-    Define components layers for calculations and drawing
-    Allow graph area background to display bad, satisfactory and good attributes as a gradient
-    Implement Stephen Few Bullet Graphs
-    Reorganize code, componentize grpah elements, remove redundant code
-    Allow all (path, labels, grid, background, meanline, ...)-attributes configuration
-    Display mouse pointer as a cross when in graph area
-    Display data values and mean value on mouse over in status area
-    Change data and meanline stroke attribute on mouse over
-    Provide svg_path class method to round pixel values and add separators only when needed 
-    Test suite
-        Perform all tests on IE 8.0, Firefox 3.5, Opera 10.0, Chrome, Safari
-    API Changes
-    Fix and optimize value labels range / start and stop calculations
-        Always display zero value when in value range
-        Find best (step, number of steps) pairs to minimize display range and emphasize data values
-        Design significant digits calculation class method with options rounding anomymous function
-            and optional string output to prevent float precision conversion errors
-        Build value labels as strings instead of float
-        Fix value step to one significant digit
-        Fix value labels to two significant digits
-        Fix value labels precision to maximum precision of all value labels
-        Determine number of maximum steps based on actual graph width and labels size
-        Provide scale attribute to scale values to actual graph height
-    Fix bars base value to start at zero when in range and display negative values in reverse direction
-    Allow labels at an angle
-    Design function to properly calculate text display size in pixels
-    Fix bottom and left offset calculations using actual text size
-    Remove sort used to determine longuest labels, iterate through array instead.
-    Fix sort comparison function to determine longuest labels.
-    Numerous other bug fixes
+Ico 0.95
+  This release is a major pre-1.0 release adding many features, fixing bugs, improving the
+  API, and DRYing up the code for improved maintainability, componentization and optimization.
+  
+  This release contains non-backward compatible (NBC) changes listed bellow as "NBC API change".
+  These changes were necessary to ensure the most logical and intuitive API for version 1.0.
+  After version 1.0 all API changes will ensure backward compatibility.
+  
+  Backward compatible API changes are not noted here, refer to the documentation for up-to-date
+  API information.
 
+  The complete list of changes:
+    Format values with units when showing values on mouseover on dots, bars and average line.
+    
+    NBC API Change: Allow to specify bullet graphs target attributes: length, color, stroke-width. The
+    previous way of specifying target_color as a separate parameter is no longer supported.
+    
+    Fix VML text positioning so that it matches SVG's baseline and avoid text getting out of its
+    bounding box.
+    
+    Boost IE8 VML rendering performance by adding IE7 compatibility meta-header in index.html:
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    Rendering speed is improved by 30% to 40% with IE7 compatibility mode. This only affects
+    IE and is ignored by all other browsers. With this improvement, IE8 is only twice slower than
+    Firefox and 2.7 times slower than Safari.
+    
+    Revisit value labels calculation to properly calculate the maximum number of steps based on actual
+    min and max text with optional units and one spacing character for adjacent (<30 degrees) and 1.5
+    character hight for stacked labels (>60 degrees).
+    
+    Revisit longest label calculation to find the actual largest label bounding box by drawing all labels
+    at the time of calculation. For optimization purposes, drawn labels are not removed and only
+    translated, anchored and rotated in draw().
+    
+    Try / Catch errors in components to ease component debugging.
+    
+    Graph font attributes inherit from containing DOM element by default enabling CSS configuration of
+    graph font attributes. Labels fonts inherit from graph but can now be set independently for labels
+    and value labels. Allow font-size attributes to be set using the entire range of units allowed in
+    CSS.
+    
+    Draw series from graph coordinates instead of canvas coordinates to DRY-up the code a bit more.
+    Eventually we should be able to provide drawing functions independent of orientation.
+    
+    Fix cubic B&eacute;zier control points to allow smooth transitions using the previous to last and
+    current points to calculate the first control point and previous and next points to calculate the
+    second control point. The current implementation provided improbable curves when points followed
+    the same upward or downward trend.
+    
+    Enable configuration of remaining line graphs attributes. Change default dot radius to 3
+    and focus radius to 6.
+    
+    Bar graphs: prevent full bar overlap with multiple series
+    
+    Allow to specify grid and grid_attributes in Labels or ValueLabels while still allowing the
+    global attributes. Attributes defined at the component level have higher precedence, allowing
+    to override global attributes. This allows to specify label and value labels grid independently.
+    
+    Set minimum bar width to 5 pixels.
+    
+    Change calculate_value_step() to label_slots_count() to unify labels step calculation.
+    
+    DRY this.graph.x.start_offset, this.bar_width, and this.bar_base calculations for bars into Ico.Base.
+    Eventually this will go into a bar serie class.
+    
+    NBC API change: Allow marker_size to be defined independently in labels and value_labels
+    components hash, marker_size is no longer available in basic graph options.
+      
+    Exchange direction, labels. padding, and angle, attributes between this.x and this.y
+    to improve code clarity and maintainability, thus removing one parameter from
+    Ico.Component.Labels.draw_labels_grid()
+      
+    Allow more or less value labels according to orientation and angle.
+    
+    Workaround <span> IE bug when displaying text (e.g. labels) in Raphael paper. This workaround
+    requires to use a <div> instead of a <span>.
+    
+    Fix value label precision for values with zero decimals.
+    
+    Allow up to 2 significant digits value steps limited to the following rounded-up values:
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90
+    These steps are chosen to that one of their multiples inferior or equal to 10 is part of the set of
+    allowed steps.
+    
+    Series can now be provided as an Array of Arrays. This new method allows to fix the drawing order
+    of series which is guarantied to be first to last. This allows to control which serie is drawn on
+    top of which other serie. The other methods ( single value, array of values and hash of arrays )
+    are still available but the hash of arrays method is deprecated and will be removed before version 1.0.
+    
+    NBC API change: Move units from value_labels component to Ico.Base, because units are linked to
+    series values and should be available for tooltips even if no value label is displayed.
+      
+    Fix rounding error between highlight circle center and sparkline dot.
+    
+    Highlight bar in sparkbars instead of dot.
+    
+    Unify draw_series() for all graphs in Ico.Base.
+    
+    Migrate much of Ico.BaseGraph to Ico.Base to unify behavior and enable all components on all graphs.
+    
+    Allow value labels for bullet graphs.
+    
+    Rename Ico.VERSION to Ico.Version.
+        
+Ico 0.94
+  This pre-1.0 stable release contains many bug fixes, new features and API changes from the original
+  version by Alex Young.
+    
+  The complete list of changes: 
+    Upgrade Raphael to version 1.2.8, remove path-methods as recommended from version 1.0.
+    
+    Allow to clear grpah canvas, typically to redraw in the same div..
+    
+    Display value label units, optional units_position allows to set units before values.
+    
+    Define components layers for calculations and drawing.
+    
+    Allow graph area background to display bad, satisfactory and good attributes as a gradient.
+    
+    Implement Stephen Few Bullet Graphs.
+    
+    Reorganize code, componentize grpah elements, remove redundant code.
+    
+    Allow all (path, labels, grid, background, meanline, ...)-attributes configuration.
+    
+    Display mouse pointer as a cross when in graph area.
+    
+    Display data values and mean value on mouse over in status area.
+    
+    Change data and meanline stroke attribute on mouse over.
+    
+    Provide svg_path class method to round pixel values and add separators only when needed.
+    
+    Test suite:
+        Perform all tests on IE 8.0, Firefox 3.5, Opera 10.0, Chrome, Safari
+        
+    API Changes
+    
+    Fix and optimize value labels range / start and stop calculations:
+        - Always display zero value when in value range
+        - Find best (step, number of steps) pairs to minimize display range and emphasize data values
+        - Design significant digits calculation class method with options rounding anomymous function
+          and optional string output to prevent float precision conversion errors
+        - Build value labels as strings instead of float
+        - Fix value step to one significant digit
+        - Fix value labels to two significant digits
+        - Fix value labels precision to maximum precision of all value labels
+        - Determine number of maximum steps based on actual graph width and labels size
+        - Provide scale attribute to scale values to actual graph height
+        
+    Fix bars base value to start at zero when in range and display negative values in reverse direction.
+    
+    Allow to draw labels at an angle.
+    
+    Design function to properly calculate text display size in pixels.
+    
+    Fix bottom and left offset calculations using actual text size.
+    
+    Remove sort used to determine longuest labels, iterate through array instead.
+    
+    Fix sort comparison function to determine longuest labels.
+    
+    Numerous other bug fixes.
