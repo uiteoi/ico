@@ -4,7 +4,7 @@ Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to r
 
 Ico's goal is to provide effective visual reprensentation of data according to the work of "Stephen Few":http://www.perceptualedge.com/blog/ and "Edward Tufte":http://en.wikipedia.org/wiki/Edward_Tufte. In particular, Ico provides an implementation of Edward tufte's "Sparklines":http://en.wikipedia.org/wiki/Sparkline and Stephen Few's "Bullet Graphs":http://en.wikipedia.org/wiki/Bullet_graph.
 
-Effective visual reprensentation of data can be achieved by following the Stephen Few's graph design considerations: 
+Effective visual reprensentation of data can be achieved by following Stephen Few's graph design considerations: 
 * Clarity: Use of white-space to help lend clarity to graphs, nominal scale vs. ordinal scale
 * Simplicity: Minimal use of decorations and lines, reliance on the Gestalt principle of closure
 * Conciseness: Avoidance of graph types that don't efficiently present data (pie charts, radar maps)
@@ -55,27 +55,28 @@ Bullet graph with 3 graph background colors and gradient transtitions:
 Line graph with 2 lines, angled labels, $ units, meanline, mouse pointer, mouse-over value in status bar, and grid:
 <pre><code>var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 new Ico.LineGraph(
-  $( 'gross_profit_id' ),                             // DOM element where the graph will be rendered
-  {                                                   // The 2 series
-    actual: [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
-    forecast: [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
-  },
-  {                                                   // Graph components' options
-    colors: { actual:'#228899', forecast:'#339933' }, // Series' colors
-    curve_amount: 10,                                 // Slightly curve series' lines path
-    mouseover_attributes: { stroke: 'green' },        // When hovering over values
-    font_size: 16,                                    // for both labels and value labels
-    labels: { values: months, angle: 30 },            // Set labels at a 30 degres angle
-    x_padding_right: 40,                              // Make more room on the right to properly display labels
-    value_labels: {
-      units: '$',                                     // Value labels units are $
-      units_position: 0                               // Will be rendered before value labels
+  $( 'gross_profit_id' ),                          // DOM element where the graph will be rendered
+  [                                                // The 2 series
+    [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3], // Drawn first
+    [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]  // Drawn last, on top of previous series
+  ],
+  {                                                // Graph components' options
+    colors: ['#228899', '#339933' ],               // Series' colors
+    curve_amount: 10,                              // Slightly curve series' lines path using Cubic B&eacute;zier
+    mouseover_attributes: { stroke: 'green' },     // When hovering over values
+    font_size: 16,                                 // for both labels and value labels and other elements
+    labels: { values: months, angle: 30 },         // Set labels at a 30 degres angle
+    x_padding_right: 40,                           // Make more room on the right to properly display labels
+    units: '$',                                    // $ units to display values
+    units_position: 0                              // Render $ before values
+    value_labels: {                                // Controls value labels
+      marker_size: 4                               // Value labels markers set to 4 pixels instead of 5
     },
-    background: { color: '#ccf', corners: 5 },        // Set entire div background color and corner size 
-    meanline: true,                                   // Display mean value of all series
-    grid: true,                                       // Display a grid from labels and value labels
-    mouse_pointer: true,                              // Display a cross mouse pointer in graph area
-    status_bar : true,                                // Display status bar to show values on mouse over
+    background: { color: '#ccf', corners: 5 },     // Set entire div background color and corner size 
+    meanline: true,                                // Display mean value of all series
+    grid: true,                                    // Display a grid from labels and value labels
+    mouse_pointer: true,                           // Display a cross mouse pointer in graph area
+    status_bar : true,                             // Display status bar to show values on mouse over
   }
 )</code></pre>
 
@@ -116,7 +117,7 @@ Graph classes provide defaults components appropriate for each type of graph:
   <tr>
     <td>Ico.BaseGraph</td>
     <td>Ico.Base</td>
-    <td>Base class for line and bar graphs</td>
+    <td>Base class for more complex, multi lines and bars graphs</td>
   </tr>
   <tr>
     <td>Ico.LineGraph</td>
@@ -138,7 +139,7 @@ Graph classes provide defaults components appropriate for each type of graph:
 To create and render a graph, call new <strong>Ico.desired_graph_type</strong>, providing three parameters:
 * The DOM element where the graph will be rendered
 * Data series
-* Options
+* Options (optional)
 
 Example creating and rendering a line graph:
 <pre><code>new Ico.LineGraph( dom_element, data_series, graph_options )</code></pre>
@@ -146,40 +147,49 @@ Example creating and rendering a line graph:
 The DOM element is typically referenced by its id and fetched this way with the Prototype library:
 <pre><code>dom_element = $( 'element_id' )</code></pre>
 
-Data series can be:
+Data series can provided as:
 * A single value (for a bullet graph only)
 * An array of values for a single data serie
-* A hash where:
+* An array of array of values for multiple series data
+* (deprecated, cannot specify display order) A hash where:
 ** each key is the name of the serie
 ** value is an array containing the list of values
 
-Example of hash with two data series:
-<pre><code>data_series = {
-  actual: [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
-  forecast: [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
-}</code></pre>
+Examples:
+<pre><code>// A single value for a bullet graph
+data_series = -20
+
+// An array of values for a single serie graph
+data_series = [5, 2, -1, 17, 23, 15, 7, 6, -5, -2, 4, 7, 3, 9]
+
+// An array of arrays of values for multiple series graphs
+data_series = [
+  [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
+  [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
+]</code></pre>
 
 Options are provided as a hash of options where each key is the option name and each value is the option value. Options hashes can be nested typically to group options by components.
 
 Many options are "Raphael attributes":http://raphaeljs.com/reference.html#attr which rely on the "SVG Specification":http://www.w3.org/TR/SVG/ so please refer to these documents when further information is needed.
 
 Example of options:
-<pre><code>graph_options = {                                   // Graph components' options
-  colors: { actual:'#228899', forecast:'#339933' }, // Series' colors
-  curve_amount: 10,                                 // Slightly curve series' lines path
-  mouseover_attributes: { stroke: 'green' },        // When hovering over values
-  font_size: 16,                                    // for both labels and value labels
-  labels: { values: months, angle: 30 },            // Set labels at a 30 degres angle
-  x_padding_right: 40,                              // Make more room on the right to properly display labels
-  value_labels: {
-    units: '$',                                     // Value labels units are $
-    units_position: 0                               // Will be rendered before value labels
+<pre><code>graph_options = {                     // Graph components' options
+  colors: ['#228899', '#339933' ],               // Series' colors
+  curve_amount: 10,                              // Slightly curve series' lines path using Cubic B&eacute;zier
+  mouseover_attributes: { stroke: 'green' },     // When hovering over values
+  font_size: 16,                                 // for both labels and value labels and other elements
+  labels: { values: months, angle: 30 },         // Set labels at a 30 degres angle
+  x_padding_right: 40,                           // Make more room on the right to properly display labels
+  units: '$',                                    // $ units to display values
+  units_position: 0                              // Render $ before values
+  value_labels: {                                // Controls value labels
+    marker_size: 4                               // Value labels markers set to 4 pixels instead of 5
   },
-  background: { color: '#ccf', corners: 5 },        // Set entire div background color and corner size 
-  meanline: true,                                   // Display mean value of all series
-  grid: true,                                       // Display a grid from labels and value labels
-  mouse_pointer: true,                              // Display a cross mouse pointer in graph area
-  status_bar : true,                                // Display status bar to show values on mouse over
+  background: { color: '#ccf', corners: 5 },     // Set entire div background color and corner size 
+  meanline: true,                                // Display mean value of all series
+  grid: true,                                    // Display a grid from labels and value labels
+  mouse_pointer: true,                           // Display a cross mouse pointer in graph area
+  status_bar : true,                             // Display status bar to show values on mouse over
 }</code></pre>
 
 h3. Ico.Base options
@@ -203,9 +213,29 @@ The following are options shared by all graphs:
     <td>Raphael Canvas height</td>
   </tr>
   <tr>
+    <td>x_padding_left</td>
+    <td>0 pixels</td>
+    <td>Padding left of the graph array</td>
+  </tr>
+  <tr>
+    <td>x_padding_right</td>
+    <td>0 pixels</td>
+    <td>Padding right of the graph array</td>
+  </tr>
+  <tr>
+    <td>y_padding_top</td>
+    <td>0 pixels</td>
+    <td>Padding above the graph array</td>
+  </tr>
+  <tr>
+    <td>y_padding_bottom</td>
+    <td>0 pixels</td>
+    <td>Padding under the graph array</td>
+  </tr>
+  <tr>
     <td>color</td>
     <td>DOM element color</td>
-    <td>Color for data serie</td>
+    <td>Color for single data serie</td>
   </tr>
   <tr>
     <td>mouseover_attributes</td>
@@ -222,9 +252,74 @@ The following are options shared by all graphs:
     <td>0</td>
     <td>0: horizontal, 1:vertical</td>
   </tr>
+  <tr>
+    <td>units</td>
+    <td></td>
+    <td>Units to display with values</td>
+  </tr>
+  <tr>
+    <td>units_position</td>
+    <td>1</td>
+    <td>Position of units: 0 => before value, 1 => after value</td>
+  </tr>
+  <tr>
+    <td>font_size</td>
+    <td>element's font-family</td>
+    <td>Text elements font size - e.g. '1cm'</td>
+  </tr>
+  <tr>
+    <td>font</td>
+    <td>See below</td>
+    <td>Font attributes for all text elements</td>
+  </tr>
+  <tr>
+    <td>font['font-family']</td>
+    <td>element's font-family</td>
+    <td>Font family - e.g. 'Arial'</td>
+  </tr>
+  <tr>
+    <td>font['font-size']</td>
+    <td>font_size || element font-family</td>
+    <td>Font size - e.g. '1cm'</td>
+  </tr>
+  <tr>
+    <td>font.fill</td>
+    <td>element's color</td>
+    <td>Font fill - e.g. 'blue'</td>
+  </tr>
+  <tr>
+    <td>font.stroke</td>
+    <td>'none'</td>
+    <td>Font stroke color - e.g. 'black'</td>
+  </tr>
+  <tr>
+    <td>grid</td>
+    <td>false</td>
+    <td>Controls display of grid associated with labels</td>
+  </tr>
+  <tr>
+    <td>grid_attributes</td>
+    <td></td>
+    <td>Attributes for grid lines</td>
+  </tr>
+  <tr>
+    <td>grid_attributes.stroke</td>
+    <td></td>
+    <td>Stroke color for grid lines</td>
+  </tr>
+  <tr>
+    <td>grid_attributes['stroke-width']</td>
+    <td></td>
+    <td>Stroke width for grid lines</td>
+  </tr>
+  <tr>
+    <td>axis</td>
+    <td></td>
+    <td>X/Y axis, true => display, hash => see 'axis' component option attribute</td>
+  </tr>
 </table>
 
-h3. Ico.SparkLine options
+h3. Ico.SparkLine and Ico.SparkBar options
 
 <table>
   <tr>
@@ -235,12 +330,22 @@ h3. Ico.SparkLine options
   <tr>
     <td>highlight</td>
     <td>false</td>
-    <td>true: highlight last value, hash: provide additional options</td>
+    <td>Higlights a value by displaying a point in sparklines or a bar in sparkbars. true => highlight last value, hash => provide additional options</td>
   </tr>
   <tr>
     <td>highlight.index</td>
-    <td>n/a</td>
-    <td>index of the value to highlight in data serie</td>
+    <td></td>
+    <td>Index of the value to highlight, 0 => first value, null => last value</td>
+  </tr>
+  <tr>
+    <td>highlight.color</td>
+    <td>'red'</td>
+    <td>Highlight color</td>
+  </tr>
+  <tr>
+    <td>highlight.radius</td>
+    <td>2</td>
+    <td>Radius of the highlight circle, for sparklines only</td>
   </tr>
 </table>
 
@@ -269,24 +374,43 @@ h3. Ico.BulletGraph options
   </tr>
   <tr>
     <td>target</td>
-    <td>n/a</td>
-    <td>Target value, rendered as a vertical line</td>
+    <td></td>
+    <td>Target rendered as a vertical line, number => target value, hash => see below</td>
   </tr>
   <tr>
-    <td>target_color</td>
+    <td>target.value</td>
+    <td></td>
+    <td>Target value rendered as a vertical bar</td>
+  </tr>
+  <tr>
+    <td>target.color</td>
     <td>'#666' (dark grey)</td>
     <td>Color for target vertical bar</td>
   </tr>
   <tr>
+    <td>target.length</td>
+    <td>0.8</td>
+    <td>Length of target vertical bar, <= 1</td>
+  </tr>
+  <tr>
+    <td>target['stroke-width']</td>
+    <td>2 (pixels)</td>
+    <td>Width of vertical target line</td>
+  </tr>
+  <tr>
     <td>graph_background</td>
-    <td>see Component.Graph</td>
-    <td>Include graph background component</td>
+    <td>see Ico.Component.Graph defaults</td>
+    <td>Include graph background component, false => disable</td>
   </tr>
 </table>
 
 h3. Ico.BaseGraph options
 
-These options apply for bar and Line graphs:
+Ico.BaseGraph is used as a base for more complex graphs possibly with multiple series whereas sparklines and sparkbars are limited to one serie.
+
+Ico.BaseGraph extends Ico.Base with more default features such as value_labels, focus_hint and axis enabled by default.
+
+The following options apply as defaults for bar and Line graphs unless overrided:
 
 <table>
   <tr>
@@ -296,63 +420,28 @@ These options apply for bar and Line graphs:
   </tr>
   <tr>
     <td>x_padding_left</td>
-    <td>20 pixels</td>
-    <td>Left padding (along the x axis)</td>
+    <td>10 pixels</td>
+    <td>Padding left of the graph array</td>
   </tr>
   <tr>
     <td>x_padding_right</td>
     <td>20 pixels</td>
-    <td>Right padding (along the x axis)</td>
+    <td>Padding right of the graph array</td>
   </tr>
   <tr>
     <td>y_padding_top</td>
     <td>20 pixels</td>
-    <td>Top padding above the graph array</td>
+    <td>Padding above the graph array</td>
   </tr>
   <tr>
     <td>y_padding_bottom</td>
     <td>10 pixels</td>
-    <td>Bottom padding under the graph array</td>
+    <td>Padding under the graph array</td>
   </tr>
   <tr>
-    <td>font_size</td>
-    <td>10 pixels</td>
-    <td>Font size for labels and value labels</td>
-  </tr>
-  <tr>
-    <td>labels_color</td>
-    <td>'#666' (grey)</td>
-    <td>Labels and value labels font color</td>
-  </tr>
-  <tr>
-    <td>labels_font.stroke</td>
-    <td>'none'</td>
-    <td>Labels font stroke color</td>
-  </tr>
-  <tr>
-    <td>labels_font.fill</td>
-    <td>'#666' || options.labels_color</td>
-    <td>Fill color for labels font</td>
-  </tr>
-  <tr>
-    <td>labels_font['font-size']</td>
-    <td>options.font_size</td>
-    <td>Size of font for labels</td>
-  </tr>
-  <tr>
-    <td>marker_size</td>
-    <td>5 pixels</td>
-    <td>Size of label markers, 0 to disable markers</td>
-  </tr>
-  <tr>
-    <td>markers_attributes.stroke</td>
-    <td>options.labels_font.fill</td>
-    <td>Stroke color for label markers</td>
-  </tr>
-  <tr>
-    <td>markers_attributes['stroke-width']</td>
-    <td>1 pixel</td>
-    <td>Stroke width for label markers</td>
+    <td>colors[serie_key]</td>
+    <td>Ico.Base color || Random color</td>
+    <td>Line color for serie 'serie_key'</td>
   </tr>
   <tr>
     <td>value_labels</td>
@@ -362,12 +451,12 @@ These options apply for bar and Line graphs:
   <tr>
     <td>focus_hint</td>
     <td>true</td>
-    <td>Display focus hint if value labels do not start at zero</td>
+    <td>Display focus hint if value labels do not start at zero. false => disable, hash => 'focus_hint' component options attribute</td>
   </tr>
   <tr>
     <td>axis</td>
     <td>true</td>
-    <td>Display x and y axis</td>
+    <td>Display x and y axis, false => disable, hash => see 'axis' component option attribute</td>
   </tr>
   <tr>
     <td>grid_attributes.stroke</td>
@@ -390,19 +479,34 @@ h3. Ico.LineGraph options
     <td>Description</td>
   </tr>
   <tr>
-    <td>colors[serie_key]</td>
-    <td>options.color || random color</td>
-    <td>Line color for serie 'serie_key'</td>
+    <td>series_attributes[]</td>
+    <td>See bellow</td>
+    <td>Attributes by data series</td>
+  </tr>
+  <tr>
+    <td>series_attributes[serie_key].stroke</td>
+    <td>Ico.BaseGraph colors[serie_key]</td>
+    <td>Color for line 'serie_key'</td>
+  </tr>
+  <tr>
+    <td>series_attributes[serie_key]['stroke-width']</td>
+    <td>2 pixels</td>
+    <td>Line 'serie_key' width</td>
+  </tr>
+  <tr>
+    <td>curve_amount</td>
+    <td>5 pixels</td>
+    <td>Cubic B&eacute;zier curve amount, 0 => disable</td>
   </tr>
   <tr>
     <td>dot_radius</td>
-    <td>5 pixels</td>
-    <td>Radius of dots for values</td>
+    <td>3 pixels</td>
+    <td>Radius of dots for values, 0 => not value dot displayed</td>
   </tr>
   <tr>
-    <td>dot_attributes</td>
+    <td>dot_attributes[]</td>
     <td>See bellow</td>
-    <td>Dot attributes hash by data series</td>
+    <td>Dot attributes for all data series</td>
   </tr>
   <tr>
     <td>dot_attributes[serie_key]['stroke-width']</td>
@@ -411,13 +515,23 @@ h3. Ico.LineGraph options
   </tr>
   <tr>
     <td>dot_attributes[serie_key].stroke</td>
-    <td>Background component color || options.color</td>
+    <td>Background component color || options.color[serie_key]</td>
     <td>Dot color for serie_key</td>
   </tr>
   <tr>
     <td>dot_attributes[serie_key].fill</td>
     <td>options.color</td>
     <td>Dot fill color for serie_key</td>
+  </tr>
+  <tr>
+    <td>focus_radius</td>
+    <td>6 pixels</td>
+    <td>Radius of focus, 0 => disable mouse over action</td>
+  </tr>
+  <tr>
+    <td>focus_attributes</td>
+    <td>{ stroke: 'none', 'fill': 'white', 'fill-opacity' : 0 }</td>
+    <td>Attributes hash for focus circle</td>
   </tr>
 </table>
 
@@ -539,9 +653,22 @@ Component options can be set with the following types of values:
 
 If a hash is provided and one of the options name is <strong>'attributes'</strong>, it is a hash of "Raphael attributes":http://raphaeljs.com/reference.html#attr. Attribute option tables bellow define only the subset of Ico default attributes although all valid Raphael attributes can be used.
 
-h3. 'labels' option attribute
+h3. 'labels' and 'value_labels' option attribute
 
-Labels are defined by the option attribute 'labels'. If an array is provided, it reprensents the values of the labels. If more label options are provided, labels must be provided as a hash of options defined in the following table:
+Labels are series' samples labels, while value labels are numerical labels associated with series' data.
+
+Labels are defined by the option attribute 'labels'. If an array is provided, it reprensents the values of the labels. If more label options are provided, labels must be provided as a hash of options.
+
+Label components always make room for themselves in the padding areas.
+
+Values labels are always calculated. The calculation is optimized according to the following criteria:
+* If zero is in the range (between min and max values), zero is always one of the value labels
+* The maximum number of value labels is limited by the size of the graph area, the font, angle and orientation of the graph
+* The number of labels is chosen to minimize unused areas to maximize the size of displayed data series
+* The step beetween two value labels has a maximum of 2 significant digits and is a multiple of 5 if the 2 significant digits are required
+* Values labels are limited to 3 significant digits using string manipulations to avoid floating-point rounding errors
+* Once value labels are calculated, precision is fixed, possibly adding zeros to nicely align labels
+* Finally, appropriate padding is added to make room for calculated labels using just as much space as neccesary and according to labels angle
 
 <table>
   <tr>
@@ -552,39 +679,47 @@ Labels are defined by the option attribute 'labels'. If an array is provided, it
   <tr>
     <td>values</td>
     <td>[1, .., # of data samples -1]</td>
-    <td>Label values</td>
+    <td>Label values, ignored for value_labels which are always calculated</td>
+  </tr>
+  <tr>
+    <td>font</td>
+    <td>Ico.Base font</td>
+    <td>Label font hash</td>
+  </tr>
+  <tr>
+    <td>marker_size</td>
+    <td>5 pixels</td>
+    <td>size of labels markers, 0 => disable</td>
+  </tr>
+  <tr>
+    <td>markers_attributes</td>
+    <td>See bellow</td>
+    <td>Label markers attributes hash</td>
+  </tr>
+  <tr>
+    <td>markers_attributes.stroke</td>
+    <td>labels font fill</td>
+    <td>Stroke color for label markers</td>
+  </tr>
+  <tr>
+    <td>markers_attributes['stroke-width']</td>
+    <td>1 pixel</td>
+    <td>Stroke width for label markers</td>
   </tr>
   <tr>
     <td>angle</td>
     <td>0</td>
-    <td>Clockwise Angle to display labels</td>
-  </tr>
-</table>
-
-h3. 'value_labels' option attribute
-
-Values labels are always calculated from the range of data series values. Additional options can be provided in the value_labels attribute with a hash of labels' attributes:
-
-<table>
-  <tr>
-    <td>Option name</td>
-    <td>Default value</td>
-    <td>Description</td>
+    <td>Clockwise Angle to display labels in degrees (-90 to +90)</td>
   </tr>
   <tr>
-    <td>angle</td>
-    <td>0</td>
-    <td>Clockwise Angle to display value labels</td>
+    <td>grid</td>
+    <td>Ico.Base or Ico.BaseGraph grid</td>
+    <td>Control display of grid associated with labels, overrides global grid attribute value</td>
   </tr>
   <tr>
-    <td>units</td>
-    <td></td>
-    <td>Units to display with value labels</td>
-  </tr>
-  <tr>
-    <td>units_position</td>
-    <td>1</td>
-    <td>Position of units: 0 => before value, 1 => after value</td>
+    <td>grid_attributes</td>
+    <td>Ico.base or Ico.BaseGraph grid_attributes</td>
+    <td>Control grid attributes associated with labels, overrides global attributes</td>
   </tr>
 </table>
 
@@ -805,34 +940,38 @@ h1. Tested web browsers, known issues
 * iPhone (Safari): pretty amazing, try it
 * Opera: good fonts rendering, bugs: zoom, mouse-over while scrolling
 
-h1. ToDo / Wish list
+h1. Target 1.0 milestone
+
+This section outlines the projected improvements to be released with version 1.0.
 
 Features:
-* Add Legend component
-* Add Title component
+* Display Value Labels Title either above the y axis, in the status bar or under value labels if horizontal graph
+* Add Title component, displayed centered in the graph area, above the background layer 
+* Add Legend component, displayed centered in the status bar for now
+* Allow greater control of labels positioning: left-justification, top, right 
+* By default Draw labels on top (or right if orientation) if all values are negative
+* Enable values formatting with a function to allow custom numbers formatting, provide default formatters
 * Allow single axis (x or y) to be displayed
 * Display values in tooltips instead of status bar, tooltips implemented w/ an external DOM library to enable out-of-the-canvas tooltips
 * Zoom-in spark lines, spark bars, and bullet graphs on-mouse-over.
 * Display full graph of spark lines and spark bars on mouse-click, possibly in a tooltip
-* Bar graphs: multiple series columns with 1/3 overlap
 * Facilitate user events definition on graph elements
-* Draw labels on top (or right if orientation) if all values are negative
+* Add zero line component to draw a line at zero when zero in the range. This can be done today by adding a dummy serie but this would make it easier.
 
 API:
-The API still needs to be finalized, expect non-backward compatible changes until version 1.0 is released.
+* Provide cleaner and more intuitive API.
 
-Provide series-specific-attributes as keys from serie hash, series becomes an array of hash where each represents a serie if a hash is provided instead of an array then assume there is only one serie.
+The API still needs to be finalized, expect non-backward compatible changes until version 1.0 is released.
 
 Architechture:
 * Terminate options componentization
-* Componentize series to allow bars and lines in the same graph
-* Remove prototype dependency, should also work w/ jQuery, Mootools sh/could probably become js library agnostic as most of the browser specific code is in Raphael itself
+* Componentize series in a Ico.Serie class to allow bars and lines in the same graph but also to allow new types of data series rendering
+* Remove prototype dependency, should also work w/ jQuery, Mootools sh/could probably become js library agnostic as most of the browser specific code is in Raphael itself. Another possibility could be to release Ico with an optional subset of Prototype compatible with other JavaScript frameworks.
 
 Documentation:
 * Ico box model
-* Graph methods beyond intitialization (new)
-* Graph and Components extensions
-* Raphael gradients
+* methods beyond intitialization
+* (for contributors) Graph and Components extensions
 
 h1. Dependencies
 
