@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <title>Ico / Raphael / Prototype Test Suite</title>
     <style type="text/css">
@@ -12,7 +13,7 @@
         background-color: #fff;
         font-family: "Lucida Grande", "Bitstream Vera Sans", "Verdana";
         font-size: 14px;
-        color: #333;
+        color: #222;
       }
       
       .graphContainer {
@@ -35,8 +36,16 @@
       .bulletgraph {
         display: inline-block;
         width: 100px;
-        height: 15px;
-        vertical-align: middle;        
+        height: 20px;
+        vertical-align: middle;
+      }
+      
+      .bulletgraph_with_value_labels {
+        float: left;
+        display: inline-block;
+        width: 200px;
+        height: 40px;
+        vertical-align: middle;
       }
       
       .bulletgraph div { display: inline-block; }
@@ -68,9 +77,12 @@
       <p>
         A bullet graph:<span id="bulletgraph0", class="bulletgraph"></span>.
       </p>
-      <p>Bullet graph with negative value, zero base and zero target:
-        <span id="bulletgraph1", class="bulletgraph"></span>
-      </p>
+      <p style="float:left;margin-top:0;">Bullet graph with negative value, zero base and zero target:</p>
+      <!-- WARNING: Graphs with text cannot be in a <span> element because it fails in IE,
+       one must use a <div> if any text is displayed, such as labels.
+      -->
+      <div id="bulletgraph1", class="bulletgraph_with_value_labels"></div>
+      
       <div id="graph0" class="leftGraph"></div>
       <div id="graph1" class="rightGraph"></div>
       <div id="graph2" class="leftGraph"></div>
@@ -85,9 +97,11 @@
     
     <script type="text/javascript">
     window.onload = function () {
-      document.title = "Ico " + Ico.VERSION + " / Raphael " + Raphael.version + " / Prototype " + Prototype.Version + " Test Suite"
+      document.title = "Ico " + Ico.Version + " / Raphael " + Raphael.version + " / Prototype " + Prototype.Version + " Test Suite"
       new Ico.SparkLine( $( 'sparkline0' ), [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9], { highlight: true } );
-      new Ico.SparkBar( $( 'sparkbar0' ), [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9], { highlight: { index: 5, color: 'green' } } );
+      new Ico.SparkBar( $( 'sparkbar0' ), [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9],
+        { color: 'grey', highlight: { index: 5, color: 'orange' } }
+      );
       new Ico.BulletGraph( $( 'bulletgraph0' ), 85,
         { min: 0, max: 100, target: 65,
           graph_background: { key_values: [50, 75], key_colors: ['#555','#999','#ddd'], colors_transition: 10 }
@@ -95,14 +109,22 @@
       );
       
       var b1 = new Ico.BulletGraph( $( 'bulletgraph1' ), -40,
-        { min: -50, max: 50, target: 0,
-          graph_background: { key_values: [0], key_colors: ['#555','#ddd'], colors_transition: 20 }
+        { min: -50, max: 50, target: { value: 0, length: 1, color: 'black', 'stroke-width' : 1 },
+          graph_background: { key_values: [0], key_colors: ['#555','#ddd'], colors_transition: 20 },
+          font: { 'font-family': 'Arial', 'font-size': 15, 'fill' : 'black', stroke: 'none' },
+          labels: { values: [ '-40%' ], marker_size: 0 },
+          value_labels: { marker_size: 3 },
+          units: '%',
+          // make room for value labels
+          x_padding_left: 20,
+          x_padding_right: 20
+          // y_padding_bottom: 5
         }
       );
-      b1.clear();
+      // b1.clear();
       // Redraw same bullet graph, after changing value
-      b1.value = -20;
-      b1.draw();
+      //b1.value = -20;
+      //b1.draw();
       
       // Draw graph0, clear it then draw again with no change
       new Ico.BarGraph( $( 'graph0' ), [2, 5, 1, 10, 15, 33, 20, 25, 1], 
@@ -110,7 +132,7 @@
               values: ['foals', 'elephants', 'extinct dinosaurs', 'frogs', 'fish', 'salamanders', 'superman', 'eagles', 'ninjas'],
               angle: -30
             }
-          , labels_font: { 'font-family': 'Courier New', 'font-size': 15, 'fill' : 'black', stroke: 'none' }
+          , font: { 'font-family': 'Arial', 'font-size': 15, 'fill' : 'black', stroke: 'none' }
           , color: '#ccccff'
           , background: { attributes: { stroke: 'none', gradient: '0-#ccf:20-#aaa' } }
           , meanline: true
@@ -121,9 +143,13 @@
       ).clear().draw();
       
       new Ico.HorizontalBarGraph( $( 'graph1' ), [2, 5, -3.17, 10, 15, 33, 20, 25, 1], 
-        {   labels_font: { 'font-family': 'Courier New', 'font-size': 16, 'fill' : 'black', stroke: 'none' }
-          , labels: ['Foals', 'Elephants', 'Extinct Dinosaurs', 'Frogs', 'Fish', 'Salamanders', 'Superman', 'Eagles', 'Ninjas']
-          , value_labels: { units: '%' }
+        {   // font: { 'font-family': 'Arial', 'font-size': 16, 'fill' : 'black', stroke: 'none' }
+            labels: {
+              values: ['Foals', 'Elephants', 'Extinct Dinosaurs', 'Frogs', 'Fish', 'Salamanders', 'Superman', 'Eagles', 'Ninjas'],
+              marker_size: 0,
+              grid: 0
+            }
+          , units: '%'
           , color: '#ccccff'
           , background: { attributes: { stroke: 'none', gradient: '0-#ccccff:20-#aaaaaa' } }
           , meanline: true
@@ -132,20 +158,20 @@
           , status_bar : true
         }
       );
+      
       var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       new Ico.BarGraph( $( 'graph2' ),
-        { actual: [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
-          forecast: [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
-        },
+        [ [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
+          [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
+        ],
         {   font_size: 16
           , labels: months
-          , labels_font: {
-              'font-family': $( 'graph2' ).getStyle( 'font-family' ),
+          , font: {
               'font-size': 16,
               'fill' : 'black',
               stroke: 'none'
             }
-          , colors: { actual:'#228899', forecast:'orange' }
+          , colors: ['#228899', 'orange']
           , background: { color: '#ccf', corners: 5 }
           , meanline: true
           , grid: true
@@ -154,19 +180,18 @@
         }
       );
       new Ico.LineGraph( $( 'graph3' ),
-        { actual: [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
-          forecast: [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
-        },
+        [[31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
+         [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
+        ],
         {   font_size: 16
           , labels: { values: months, angle: 30 }
-          , value_labels: { units: '$', units_position: 0 }
+          , units: '$', units_position: 0
           , legend: {
-            labels: { actual: 'Actual (Prorated)', forecast: 'Forecast' },
-            orientation: 0,
-            x: 50, y: 20
+            labels: ['Actual', 'Forecast'],
+            font: { 'font-size': 48, stroke: 'none', fill: 'orange', 'fill-opacity' : 0.5 }
           }
           , x_padding_right: 40
-          , colors: { actual:'#228899', forecast:'#339933' }
+          , colors: ['#228899', '#339933']
           , mouseover_attributes: { stroke: 'green' }
           , background: { color: '#ccf', corners: 5 }
           , curve_amount: 10
@@ -176,7 +201,8 @@
           , status_bar : true
         }
       );
-      new Ico.BarGraph( $( 'graph4' ), [1500, 1627, 1760, 1820, 1230, 1430, 2131, 1923, 1839, 1956, 2076, 2175],
+      new Ico.BarGraph( $( 'graph4' ),
+        [1500, 1627, 1760, 1820, 1230, 1430, 2131, 1923, 1839, 1956, 2076, 2175],
         {   font_size: 16
           , labels: months
           , value_labels: false
@@ -189,16 +215,17 @@
         }
       );
       new Ico.BarGraph( $( 'graph5' ),
-        { income: [
-            0.001500, 0.001627, 0.001760, 0.001820, 0.001230, 0.001430,
-            0.002131, 0.001923, 0.001839, 0.001956, 0.002076, 0.002175
-          ] },
+        [
+          0.001500, 0.001627, 0.001760, 0.001820, 0.001230, 0.001430,
+          0.002131, 0.001923, 0.001839, 0.001956, 0.002076, 0.002175
+        ],
         {   font_size: 16
           , labels: months
           , value_labels: { angle: -30 }
           , color: '#ccf'
           , meanline: true
           , grid: true
+          , y_padding_bottom: 5
         }
       );
       new Ico.BarGraph( $( 'graph6' ),
@@ -217,7 +244,6 @@
           , color: '#ccf'
           , meanline: true
           , grid: true
-          , x_padding_left: 50
         }
       );
       new Ico.HorizontalBarGraph( $( 'graph8' ),
@@ -227,7 +253,8 @@
           , axis: false
           , grid: true
           , focus_hint: false
-          , marker_size: 0
+          , value_labels: { marker_size: 0 }
+          , x_padding_left: 20
         }
       );
       new Ico.HorizontalBarGraph( $( 'graph9' ),
@@ -239,7 +266,7 @@
           , value_labels: { angle: -30 }
           , color: '#ccf'
           , meanline: true
-          , x_padding_right: 23
+          , x_padding_left: 15
         }
       );
     };
