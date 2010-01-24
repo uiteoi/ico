@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
+    <!--meta http-equiv="X-UA-Compatible" content="chrome=1"-->
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <title>Ico / Raphael / Prototype Test Suite</title>
@@ -41,7 +42,6 @@
       }
       
       .bulletgraph_with_value_labels {
-        float: left;
         display: inline-block;
         width: 200px;
         height: 40px;
@@ -64,6 +64,15 @@
 	height: 280px;
 	margin: 2px;
       }
+      
+      #legend {
+        text-align: center;
+      }
+      
+      .legend {
+        width: 140px;
+        border-bottom: 2px solid;
+      }
     </style>
     <script type="text/javascript" src="prototype.js"></script>
     <script src="raphael.js" type="text/javascript" charset="utf-8"></script>
@@ -83,16 +92,25 @@
       -->
       <div id="bulletgraph1", class="bulletgraph_with_value_labels"></div>
       
-      <div id="graph0" class="leftGraph"></div>
-      <div id="graph1" class="rightGraph"></div>
-      <div id="graph2" class="leftGraph"></div>
-      <div id="graph3" class="rightGraph"></div>
-      <div id="graph4" class="leftGraph"></div>
-      <div id="graph5" class="rightGraph"></div>
-      <div id="graph6" class="leftGraph"></div>
-      <div id="graph7" class="rightGraph"></div>
-      <div id="graph8" class="leftGraph"></div>
-      <div id="graph9" class="rightGraph"></div>
+      <div id="graph0"  class="leftGraph"></div>
+      <div id="graph1"  class="rightGraph"></div>
+      <div id="graph2"  class="leftGraph"></div>
+      <div id="graph3"  class="rightGraph"></div>
+      <div id="graph4"  class="leftGraph"></div>
+      <div id="graph5"   class="rightGraph"></div>
+      <div id="graph6"  class="leftGraph"></div>
+      <div id="graph7"  class="rightGraph"></div>
+      <div id="graph8"  class="leftGraph"></div>
+      <div id="graph9"  class="rightGraph"></div>
+      <h2 id='g10' style="color: blue; margin-top: 20px;">A line of two dependent graphs on the same value range and legend</h2>
+      <p>Click legend labels bellow to toggle (show/hide) series:</p>
+      <p id="legend">
+        <span id="legend_this_year" class="legend">This Year Performance</span>
+        <span id="legend_last_year" class="legend">Last Year Performance</span>
+        <span id="legend_moving_average" class="legend">5 Months Moving Average</span>
+      </p>
+      <div id="graph10" class="leftGraph"></div>
+      <div id="graph11" class="rightGraph"></div>
     </div>
     
     <script type="text/javascript">
@@ -102,7 +120,7 @@
       new Ico.SparkBar( $( 'sparkbar0' ), [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9],
         { color: 'grey', highlight: { index: 5, color: 'orange' } }
       );
-      new Ico.BulletGraph( $( 'bulletgraph0' ), 85,
+      new Ico.BulletGraph( $( 'bulletgraph0' ), 0,
         { min: 0, max: 100, target: 65,
           graph_background: { key_values: [50, 75], key_colors: ['#555','#999','#ddd'], colors_transition: 10 }
         }
@@ -118,11 +136,10 @@
           // make room for value labels
           x_padding_left: 20,
           x_padding_right: 20
-          // y_padding_bottom: 5
         }
       );
       // b1.clear();
-      // Redraw same bullet graph, after changing value
+      // Redraw same bullet graph, after changing value (does not work, displays old value)
       //b1.value = -20;
       //b1.draw();
       
@@ -159,7 +176,26 @@
         }
       );
       
-      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      Array.prototype.rotate = function( n ) {
+        this.unshift.apply( this, this.splice( n, this.length ) )
+        return this;
+      }
+      
+      var long_months =
+        ['January', 'February', 'March', 'April', 'May', 'June',
+         'July', 'August', 'September', 'October', 'November', 'December'
+        ]
+      ;
+      
+      var months = long_months.map( function( month ) {
+        return month.substring( 0, 3 );
+      });
+      
+      var start_month = ( new Date ).getMonth() + 1;
+      months.rotate( start_month ); // set current month as last month
+      long_months.rotate( start_month )
+      
+      var every_other_month = months.map( function( m, i ) { if ( i % 2 ) return m } );
       new Ico.BarGraph( $( 'graph2' ),
         [ [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
           [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
@@ -184,7 +220,7 @@
          [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
         ],
         {   font_size: 16
-          , labels: { values: months, angle: 30 }
+          , labels: { values: months, long_values: long_months, angle: 30 }
           , units: '$', units_position: 0
           , legend: {
             labels: ['Actual', 'Forecast'],
@@ -204,7 +240,7 @@
       new Ico.BarGraph( $( 'graph4' ),
         [1500, 1627, 1760, 1820, 1230, 1430, 2131, 1923, 1839, 1956, 2076, 2175],
         {   font_size: 16
-          , labels: months
+          , labels: every_other_month
           , value_labels: false
           , graph_background: { key_values: [1500, 2000] }
           , mouse_pointer: true
@@ -212,6 +248,7 @@
           , meanline: true
           , grid: true
           , grid_attributes: { stroke:'#fff', 'stroke-width': 1 }
+          , status_bar : true
         }
       );
       new Ico.BarGraph( $( 'graph5' ),
@@ -220,12 +257,12 @@
           0.002131, 0.001923, 0.001839, 0.001956, 0.002076, 0.002175
         ],
         {   font_size: 16
-          , labels: months
           , value_labels: { angle: -30 }
           , color: '#ccf'
           , meanline: true
           , grid: true
-          , y_padding_bottom: 5
+          , y_padding_bottom: 35
+          , status_bar : true
         }
       );
       new Ico.BarGraph( $( 'graph6' ),
@@ -235,26 +272,29 @@
           , value_labels: { angle: -90 }
           , color: '#ccf'
           , meanline: true
+          , status_bar : true
         }
       );
-      new Ico.BarGraph( $( 'graph7' ),
-        [-1500, -1627, -1760, -1820, -1230, -1430, -2131, -1923, -1839, -1956, -2076, -2175],
+      var serie = [-1500, -1627, -1760, -1820, -1230, -1430, -2131, -1923, -1839, -1956, -2076, -2175]; 
+      new Ico.BarGraph( $( 'graph7' ), serie,
         {   font_size: 16
           , labels: months
           , color: '#ccf'
           , meanline: true
           , grid: true
+          , status_bar : true
         }
       );
-      new Ico.HorizontalBarGraph( $( 'graph8' ),
-        [-1500, -1627, -1760, -1820, -230, -1430, -2131, -1923, -1839, -1956, -2076, -2175],
+      new Ico.HorizontalBarGraph( $( 'graph8' ), serie.map( function(v) {return v * 1000000} ),
         {   font_size: 14
           , color: '#ccf'
           , axis: false
           , grid: true
           , focus_hint: false
           , value_labels: { marker_size: 0 }
-          , x_padding_left: 20
+          , x_padding_left: 25
+          , x_padding_right: 25
+          , status_bar : true
         }
       );
       new Ico.HorizontalBarGraph( $( 'graph9' ),
@@ -262,13 +302,79 @@
           -0.002131, -0.001923, -0.001839, -0.001956, -0.002076, -0.002175
         ],
         {   font_size: 14
-          , labels: { values: months, angle: 30 }
+          , labels: { values: months, long_values: long_months, angle: 30 }
           , value_labels: { angle: -30 }
           , color: '#ccf'
           , meanline: true
-          , x_padding_left: 15
+          , x_padding_left: 25
+          , status_bar : true
         }
       );
+      
+      // Make two dependent graphs on a line sharing the same value labels minimum and maximum
+      var serie1 = [31, 5, 1, +5, 15, 33, 20, 25, 1, 12, 25, +3];
+      var serie2 = [18, +1, +7, 17, 15, 21, 1, 25, 3, 21, 16, 4];
+      var serie3 = [18, -1, -9, 17, 15, 21, 1, 25, 3, 21, 16, 4];
+      var serie4 = Ico.moving_average( serie3, 5, { previous_values: serie1 }  ); // 5 months moving average
+      
+      var min_max = Ico.series_min_max( [serie1, serie2, serie3, serie4] );
+      var min = min_max[0];
+      var max = min_max[1];
+      var status_bar = {
+        x : parseInt( $( 'graph10' ).getStyle( 'width' ) ) / 2, y:  8,
+        attributes: { 'font-size': '14', fill: '#642', 'text-anchor': 'middle' }
+      };
+      
+      var g10 = new Ico.LineGraph( $( 'graph10' ),
+        [serie1, serie2],
+        {   min: min, max: max
+          , font_size: 12
+          , labels: { values: months, long_values: long_months, add_padding: false }
+          , series_names: ['This Year', 'Last Year']
+          , value_labels: { add_padding: false }
+          , units: '$', units_position: 0
+          , x_padding_right: 15
+          , colors: ['#228899', '#339933']
+          , mouseover_attributes: { stroke: 'green' }
+          , curve_amount: 10
+          , mouse_pointer: true
+          , status_bar : status_bar
+        }
+      );      
+      
+      g11 = new Ico.LineGraph( $( 'graph11' ),
+        [serie3, serie4, serie1],
+        {   min: g10.min, max: g10.max
+          , font_size: 12
+          , labels: { values: months, long_values: long_months, add_padding: false }
+          , series_names: ['This Year', '5 Months Moving Average', 'Last Year']
+          , value_labels: false
+          , units: '$', units_position: 0
+          , x_padding_right: 15
+          , colors: ['#228899', '#995522', '#339933']
+          , mouseover_attributes: { stroke: 'green' }
+          , curve_amount: 10
+          , mouse_pointer: true
+          , status_bar : status_bar
+        }
+      );
+      
+      function set_legend( graph, serie, element, color ) {
+        Event.observe( element, 'click', function() {
+          graph.toggle_serie( serie );
+        } );
+        element.setStyle( 'cursor: pointer;' )
+        color && element.setStyle( 'border-color: ' + color + ';' )
+      }
+
+      g10.hide_serie( 1 );
+      g11.hide_serie( 2 );
+      
+      set_legend( g10, 0, $('legend_this_year'), '#228899' );
+      set_legend( g10, 1, $('legend_last_year'), '#339933' );
+      set_legend( g11, 0, $('legend_this_year') );
+      set_legend( g11, 1, $('legend_moving_average'), '#995522' );
+      set_legend( g11, 2, $('legend_last_year'), '#339933' );
     };
     </script>
   </body>
