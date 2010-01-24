@@ -1,3 +1,54 @@
+Ico 0.96
+  This release:
+    - displays labels (or long labels if defined) and series names in status bar on mouse over.
+    - allows hide, show and toggle the display of individual series.
+    - displays values using SI multiples
+    - allows the display of graphs in lines or colluns of graphs
+    - performence testing with Google Chrome Frame
+  
+  The complete list of changes:
+    Upgrade Raphael to version 1.3.1.
+    
+    Allow Positionning options for status bar.
+    
+    Protect significant_digits_round() against +/- Infinity and very small numbers (< 1e-13) that is zero.
+    
+    Throw exception when no value is provided in the series. Throw excepton when unsupported format is provided
+    in the series.
+    
+    Reduce displayed value to their scientific powers of 1000, displaying the following SI prefixes:
+    '', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y' for positive powers up to e+24 (Yotta), or the e+-power
+    notation for negative powers and powers above 24. Note that deos not work for SI weight measures (kg).
+    
+    for the powers 
+    Provide graph functions:
+      - hide_serie( i ) to hide serie i
+      - show_serie( i ) to show serie i
+      - toggle_serie( i ) to toggle (hide /show) serie i.
+    These functions will throw 'Undefined serie' if i is out of range.
+    
+    Provide helper function Ico.moving_average() to calculate a moving average serie from another serie plus
+    optional previous values. Values are rounded to 3 significant digits and formated as strings for display.
+    
+    Allow display of aligned lines and columns of graphs sharing the same value range and labels:
+      - Add a line of 2 dependent graphs in test suite.
+      - Allow to overide min and max values in options.
+      - Provide helper function Ico.series_min_max() to calculate the min and max value over multiple series.
+      - Add labels padding to graph padding only if labels or value_labels option 'add_padding' is true (default).
+        To align graphs, one needs to set add_padding to false.
+
+    Change default padding for BaseGraph to top: 15, bottom: 10, left: 10, right: 10.
+    
+    Fix value labels padding calculation when labels are not defined.
+
+    Allow undefined labels, these are not displayed but markers are still displayed if defined.
+    
+    Tests (index.html) with Google Chrome Frame (GCF) installed shows a 7-fold speed improvement over IE8
+    with IE7 compatibility and over 14-fold speed boost compared to IE8 without IE7 compatibility:
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">. To allow both IE7 compatibility when GCF
+    is not installed, and GCF when installed use the following meta tag:
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7,chrome=1">
+
 Ico 0.95
   This release is a major pre-1.0 release adding many features, fixing bugs, improving the
   API, and DRYing up the code for improved maintainability, componentization and optimization.
@@ -6,8 +57,7 @@ Ico 0.95
   These changes were necessary to ensure the most logical and intuitive API for version 1.0.
   After version 1.0 all API changes will ensure backward compatibility.
   
-  Backward compatible API changes are not noted here, refer to the documentation for up-to-date
-  API information.
+  Refer to the documentation for up-to-date API information.
 
   The complete list of changes:
     Format values with units when showing values on mouseover on dots, bars and average line.
