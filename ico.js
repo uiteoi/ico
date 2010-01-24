@@ -5,16 +5,17 @@
  * Licensed under the MIT license: http://github.com/uiteoi/ico/blob/master/MIT-LICENSE
  */
 var Ico = {
-  Version: 0.95,
+  Version: 0.96,
   
   significant_digits_round: function( v, significant_digits, f, string ) {
-    if ( v == 0 ) return 0;
+    if ( v == 0 || v == Number.NEGATIVE_INFINITY || v == Number.POSITIVE_INFINITY ) return v;
     var sign = 1;
     if ( v < 0 ) v = -v, sign = -1;
     var limit = Math.pow( 10, significant_digits ), p10 = 0;
     while ( v >= limit ) v /= 10, p10 += 1;
     limit /= 10;
     while ( v < limit ) v *= 10, p10 -= 1;
+    if ( p10 < -13 - significant_digits ) return 0; // floating point rounding error, was meant to be zero
     v = ( f? f : Math.round )( sign * v );
     if ( string && p10 < 0 ) {
       v = sign * v;
@@ -30,7 +31,11 @@ var Ico = {
     }
     return v * Math.pow( 10, p10 );
   },
-  
+    
+  root: function( v, p ) {
+    return Math.floor( Math.log( Math.abs( v ) ) / Math.log( p ) );
+  },
+
   svg_path: function( a ) {
     var path = '', previous_isNumber = false;
     $A( a ).each( function( v ) {
@@ -44,13 +49,39 @@ var Ico = {
       }
     } );
     return path;
+  },
+  
+  series_min_max: function( series ) {
+    var values = series.flatten();
+    if ( values.length == 0 ) throw "Series must have at least one value";
+    return [
+      Ico.significant_digits_round( Math.min.apply( Math, values ), 2, Math.floor ),
+      Ico.significant_digits_round( Math.max.apply( Math, values ), 2, Math.ceil ),
+      values
+    ]
+  },
+  
+  moving_average: function( serie, samples, options ) {
+    var ma = [], i = -1, j = -1, p;
+    if ( options && Object.isArray( p = options.previous_values ) ) {
+      serie = p.concat( serie );
+      i += p.length
+    }
+    for ( var len = serie.length; ++i < len;  ) {
+      var a = 0;
+      for ( var k = -1; ++k < samples && i >= k; ) {
+        a += serie[i - k]
+      }
+      ma[++j] = Ico.significant_digits_round( a / k, 3, Math.round, true )
+    }
+    return ma;
   }
 };
 
 Ico.Base = Class.create( {
   initialize: function( element, series, options ) {
     this.element = element;
-    this.series = series || [[]];
+    this.series = series || [[0]];
     this.set_defaults();
     this.set_series();
     this.process_options( options );
@@ -65,19 +96,21 @@ Ico.Base = Class.create( {
       if ( ! Object.isArray( this.series[0] ) ) this.series = [this.series];
     } else if ( Object.isNumber( this.series ) ) {
       this.series = [[this.series]];
-    } else { // this is a hash { serie_name : [list of values] } (deprecated)
+    } else if ( Object.isHash( this.series ) ){ // { serie_name : [list of values] } (deprecated)
       // Transform to array of arrays
       var series =[];
       $H( this.series ).keys().each( function( key ) {
         series.push( this.series[key] ); 
       }.bind( this ) )
       this.series = series;
+    } else {
+      throw 'Wrong type for series';
     }
     this.data_samples = this.series.pluck( 'length' ).max();
-    var all_values = this.all_values = this.series.flatten();
-    this.max = Ico.significant_digits_round( all_values.max(), 2, Math.ceil );
-    this.min = Ico.significant_digits_round( all_values.min(), 2, Math.floor );
-    this.range = this.max - this.min;
+    var min_max = Ico.series_min_max( this.series );
+    this.range = ( this.max = min_max[1] ) - ( this.min = min_max[0] );
+    this.all_values = min_max[2];
+    this.series_shapes = [];
   },
   
   set_defaults: function() {
@@ -102,6 +135,11 @@ Ico.Base = Class.create( {
   process_options: function( options ) {
     if ( options ) Object.extend( this.options, options );
     
+    // Set min and max if overriden
+    if ( typeof( this.options.min ) != 'undefined' ) this.min = Math.min( this.min, this.options.min ); 
+    if ( typeof( this.options.max ) != 'undefined' ) this.max = Math.max( this.max, this.options.max );
+    this.range = this.max - this.min;
+
     // Set x and y attributes
     this.x = { direction: [1,  0], start_offset: 0, width: this.options.width  };
     this.y = { direction: [0, -1], start_offset: 0, width: this.options.height };
@@ -193,9 +231,16 @@ Ico.Base = Class.create( {
     )
   },
   
-  format_value: function( v ) {
+  format_value: function( v, p1000 ) {
+    if ( v != 0 && ! Object.isNumber( p1000 ) ) { // !! v can be the string "0"
+      p1000 = Ico.root( v, 1000 );
+      p1000 && ( v /= Math.pow( 1000, p1000 ) );
+      v = Ico.significant_digits_round( v, 3, Math.round, true ).toString()
+    }
+    v = '' + v;
+    p1000 && ( v += ['','k','M','G','T','P','E','Z','Y'][p1000] || 'e' + 3 * p1000 );
     if ( this.options.units ) { // add units
-      return this.options.units_position? '' + v + this.options.units : this.options.units + v;
+      return this.options.units_position? v + this.options.units : this.options.units + v;
     }
     return v
   },
@@ -208,8 +253,33 @@ Ico.Base = Class.create( {
   },
   
   draw_series: function() {
-    this.series.each( this.draw_serie.bind( this ) )
+    for ( var i = -1; ++i < this.series.length; ) {
+      this.series_shapes[i] = {
+        shape: this.draw_serie( this.series[i], i ),
+        visible: true
+      }
+    };
     this.highlight && this.draw_highlight(); // make highlight a component
+  },
+  
+  get_serie: function( s ) {
+    s = this.series_shapes[s];
+    if ( s ) return s;
+    throw 'Undefined serie';
+  },
+  
+  toggle_serie: function( s ) {
+    ( ( s = this.get_serie( s ) ).visible ^= 1 ) && s.shape.show() || s.shape.hide();
+  },
+  
+  show_serie: function( s ) {
+    ( s = this.get_serie( s ) ).shape.show();
+    s.visible = true;
+  },
+  
+  hide_serie: function( s ) {
+    ( s = this.get_serie( s ) ).shape.hide();
+    s.visible = false;
   },
   
   components_call: function( f ) {
@@ -238,17 +308,30 @@ Ico.Base = Class.create( {
     return ( v - this.min ) * this.scale;
   },
 
-  show_label_onmouseover : function( o, label, attr ) {
+  show_label_onmouseover : function( o, value, attr, serie, i, name ) {
+      var v = '';
+      if ( this.status_bar ) {
+        if ( ! name ) {
+          var labels = this.labels, label,
+              names = this.options.series_names
+          ;
+          if ( labels && ( labels = labels.options.long_values || labels.options.values ) && ( label = labels[i] ) ) {
+            v += label + ', '
+          }
+          names && ( name = names[serie] );
+        }
+        name && ( v += name + ': ' );
+        v += this.format_value( value );
+      }
+      
       o.node.onmouseout = function() {
-        this.status_bar && this.status_bar.shape.attr( { text: '' } ).hide();
+        this.status_bar && this.status_bar.shape.hide();
 	o.attr( attr );
-        // this.paper.safari();
       }.bind( this );
       
       o.node.onmouseover = function() {
-        label && this.status_bar && this.status_bar.shape.attr( { 'text': label } ).show();
+        this.status_bar && this.status_bar.shape.attr( { 'text': v } ).show();
         o.attr( this.options.mouseover_attributes );
-        // this.paper.safari();
       }.bind( this );
   }
 } );
@@ -274,7 +357,7 @@ Ico.SparkLine = Class.create( Ico.Base, {
       );
       x += this.x.step;
     }.bind( this ) );
-    this.paper.path( p ).attr( { stroke: this.options.color } );
+    return this.paper.path( p ).attr( { stroke: this.options.color } );
   },
   
   draw_highlight: function() {
@@ -300,7 +383,7 @@ Ico.SparkBar = Class.create( Ico.SparkLine, {
       p += Ico.svg_path( ['M', x, this.bar_base, 'v', - this.scale * v ] );
       x += this.x.step;
     }.bind( this ) )
-    this.paper.path( p ).attr( { 'stroke-width': this.graph.x.step, stroke: this.options.color } );
+    return this.paper.path( p ).attr( { 'stroke-width': this.graph.x.step, stroke: this.options.color } );
   },
   
   draw_highlight: function() {
@@ -314,7 +397,7 @@ Ico.SparkBar = Class.create( Ico.SparkLine, {
 
 Ico.BulletGraph = Class.create( Ico.Base, {
   set_series: function( $super ) { $super();
-    this.value  = this.series[[0]] || 50;
+    this.value  = this.series[0][0];
   },
   
   set_defaults: function( $super ) { $super();
@@ -329,7 +412,6 @@ Ico.BulletGraph = Class.create( Ico.Base, {
   },
   
   process_options: function( $super, options ) { $super( options );
-    this.range = ( this.max = this.options.max ) - ( this.min = this.options.min );
     this.target = { color: '#666', length: 0.8, 'stroke-width' : 2 };
     if ( Object.isNumber( this.options.target ) ) {
       this.target.value = this.options.target
@@ -350,15 +432,15 @@ Ico.BulletGraph = Class.create( Ico.Base, {
     var y = this.y.start + this.y.start_offset;
     
     // this is a bar value => new Ico.Serie.Line(serie).draw()
-    var a, p = this.paper.path( Ico.svg_path(
+    var a, p = this.series_shapes[0] = this.paper.path( Ico.svg_path(
       ['M', x - this.plot( this.value ), y - this.bar_width / 2,
        'H', this.bar_base, 'v', this.bar_width,
        'H', x - this.plot( this.value ), 'z']
     ) ).attr( a = { fill: this.options.color, 'stroke-width' : 1, stroke: 'none' } );
+
+    this.show_label_onmouseover( p, this.value, a, 0, 0 );
     
-    this.show_label_onmouseover( p, this.format_value( this.value ), a );
-    
-    // target should be a component
+    // target should be a component, or might be a graph background option
     if ( typeof( this.target.value ) != 'undefined' ) {
       var padding = 1 - this.target.length;
       this.paper.path( Ico.svg_path(
@@ -387,10 +469,10 @@ Ico.BaseGraph = Class.create( Ico.Base, {
   set_defaults: function( $super ) { $super();
     Object.extend( this.options, {
       // Padding options
-      x_padding_left:           10,
-      x_padding_right:          20,
-      y_padding_top:            20,
+      y_padding_top:            15,
       y_padding_bottom:         10,
+      x_padding_left:           10,
+      x_padding_right:          10,
       // Series options
       colors:                   [], // List of colors for line graphs
       series_attributes:        [], // List of attributes for lines or bars
@@ -415,17 +497,20 @@ Ico.BaseGraph = Class.create( Ico.Base, {
     var x = this.graph.x.start + this.graph.x.start_offset,
         y = this.graph.y.start + this.graph.y.start_offset + this.scale * this.min,
         p = this.paper.path(),
-        path = ''
+        path = '',
+        set = this.paper.set()
     ;
     serie.each( function( v, i ) {  
-      path += this.draw_value( i, x, y - this.scale * v, v, index );
+      path += this.draw_value( i, x, y - this.scale * v, v, index, set );
       x += this.y_direction * this.graph.x.step;
     }.bind( this ) );
     if ( path != '' ) { // only for line graphs
       p.attr( { path: path } ).attr( this.options.series_attributes[index] ||
         { stroke: this.options.colors[index], 'stroke-width': this.options.stroke_width || 3 }
       );
+      set.push( p )
     }
+    return set;
   }  
 } );
 
@@ -462,15 +547,18 @@ Ico.LineGraph = Class.create( Ico.BaseGraph, {
   
   label_slots_count: function() { return this.data_samples - 1 },
 
-  draw_value: function( i, x, y, value, serie ) {
+  draw_value: function( i, x, y, value, serie, set ) {
     var radius = this.options.dot_radius, focus = this.options.focus_radius;
     var t; this.orientation && ( t = x, x = y, y = t );
-    radius && this.paper.circle( x, y, radius ).attr( this.options.dot_attributes[serie] );
+    if ( radius ) {
+      set.push( this.paper.circle( x, y, radius ).attr( this.options.dot_attributes[serie] ) );
+    }
     if ( focus ) {
-      var a = this.options.focus_attributes;
-      this.show_label_onmouseover(
-        this.paper.circle( x, y, focus ).attr( a ), this.format_value( value ), a
-      );
+      var a = this.options.focus_attributes,
+          c = this.paper.circle( x, y, focus ).attr( a )
+      ;
+      set.push( c );
+      this.show_label_onmouseover( c, value, a, serie, i );
     }
     var p, w = this.options.curve_amount;
     if ( i == 0 ) {
@@ -507,6 +595,7 @@ Ico.BarGraph = Class.create( Ico.BaseGraph, {
   set_defaults: function( $super ) { $super();
     this.options.bar_padding = 5;
   },
+  
   process_options: function( $super, options ) { $super( options );
     this.series.each( function( serie, i ) {
       var color = this.options.colors[i];
@@ -525,19 +614,21 @@ Ico.BarGraph = Class.create( Ico.BaseGraph, {
   
   label_slots_count: function() { return this.data_samples },
   
-  draw_value: function( i, x, y, v, serie ) {
+  draw_value: function( i, x, y, v, serie, set ) {
     var a = this.options.series_attributes[serie],
-      sup = this.series.length + 1
+      sup = this.series.length + 1,
       w = this.bar_width,
       width = w * 2 / sup,
-      x += w * serie / sup - w / 2,
-      base = this.bar_base
+      base = this.bar_base,
+      bar
     ;
-    this.show_label_onmouseover( this.paper.path( Ico.svg_path( this.orientation?
+    x += w * serie / sup - w / 2;
+    this.show_label_onmouseover( bar = this.paper.path( Ico.svg_path( this.orientation?
         ['M', y, x, 'H', base, 'v', width, 'H', y, 'z'] :
         ['M', x, y, 'V', base, 'h', width, 'V', y, 'z']
-      ) ).attr( a ), this.format_value( v ), a
+      ) ).attr( a ), v, a, serie, i
     );
+    set.push( bar );
     return '';
   }
 } );
@@ -576,7 +667,8 @@ Ico.Component.Template = Class.create( Ico.Component, {
   defaults: function() { return {} },
   process_options: function() {},
   calculate: function() {},
-  draw: function() {}
+  draw: function() {},
+  clear: function() {}
 } );
 
 Ico.Component.components.set( 'template', [Ico.Component.Template, 0] );
@@ -604,9 +696,10 @@ Ico.Component.StatusBar = Class.create( Ico.Component, {
   defaults: function() { return { attributes: { 'text-anchor': 'end' } } },
   
   draw: function() {
-    this.shape = this.p.paper.text( this.p.options.width - 10, ( this.y ? this.y.padding[0] : this.p.options.height ) / 2, '' )
-      .hide().attr( this.options.attributes )
-    ;
+    this.shape = this.p.paper.text(
+      this.options.x || this.p.options.width - 10,
+      this.options.y || ( this.y ? this.y.padding[0] : this.p.options.height ) / 2,
+    '' ).hide().attr( this.options.attributes );
   }
 } );
 
@@ -644,7 +737,7 @@ Ico.Component.MousePointer = Class.create( Ico.Component, {
 
 Ico.Component.components.set( 'mouse_pointer', [Ico.Component.MousePointer, 2] );
 
-Ico.Component.Graph = Class.create( Ico.Component, {
+Ico.Component.GraphBackground = Class.create( Ico.Component, {
   defaults: function() {
     return {
       key_colors        : ['#aaa','#ccc','#eee'], // e.g. bad, satisfactory, and good colors
@@ -671,14 +764,15 @@ Ico.Component.Graph = Class.create( Ico.Component, {
   }
 } );
 
-Ico.Component.components.set( 'graph_background', [Ico.Component.Graph, 1] );
+Ico.Component.components.set( 'graph_background', [Ico.Component.GraphBackground, 1] );
 
 Ico.Component.Labels = Class.create( Ico.Component, {
   defaults: function() { return {
     marker_size: 5, // 0 to disable
     angle:       0, // degrees, clockwise
+    add_padding: true,
     position:    0  // labels position, 0 => ( left / bottom ), 1 => ( right / top )
-                    // this is under development, so don't use 1 just yet
+                    // this is under development, so don't use it yet
   } },
   
   process_options: function( options ) {
@@ -690,11 +784,11 @@ Ico.Component.Labels = Class.create( Ico.Component, {
       this.title = title.value;
       Object.extend( this.title_font = this.font, this.options.title_font );
     }
+    this.x.angle = 0;
+    this.y.angle = -90; // default vertical labels angle vs vertical axis
   },
   
   calculate: function() { // value labels should overload without calling super
-    this.y.angle = -90; // vertical labels angle, for horinzontal graphs, unsused if vertical graph
-    this.x.angle = 0;
     this.calculate_labels_padding( this.graph.x, 1 );
   },
   
@@ -703,7 +797,7 @@ Ico.Component.Labels = Class.create( Ico.Component, {
     d.labels = this.options.values || $A( $R( 1, this.data_samples ) );
     var angle = d.angle += this.options.angle;
     if ( d.labels ) {
-      var bbox = this.labels_bounding_box( d ), font_size = d.font_size = bbox[1];
+      var bbox = this.get_labels_bounding_boxes( d ), font_size = d.font_size = bbox[1];
       if ( angle % 180 ) {
         angle = angle * Math.PI / 180;
         var sin = Math.abs( Math.sin( angle ) ), cos = Math.abs( Math.cos( angle ) );
@@ -715,7 +809,7 @@ Ico.Component.Labels = Class.create( Ico.Component, {
         } else {
           d.f = [-d.f[1], 0];
         }
-        if ( this.p.vml ) { // Fix VML text positionning
+        if ( this.p.vml ) { // Fix VML vs SVG text positionning
           var offset = 2.2; //+ font_size / 30;
           if ( dy ) angle += Math.PI / 2;
           d.f[0] -= offset * Math.sin( angle );
@@ -732,17 +826,23 @@ Ico.Component.Labels = Class.create( Ico.Component, {
         d.anchor = 'middle'
       }
     }
-    d.other.padding[position ^ this.orientation ^ this.options.position] += padding[1]
+    var i = position ^ this.orientation ^ this.options.position;
+    if ( this.options.add_padding ) {
+      d.other.padding[i] += padding[1]
+    } else if ( d.other.padding[i] < padding[1] ) {
+      d.other.padding[i] = padding[1]
+    }
   },
   
-  labels_bounding_box: function( d ) {
+  get_labels_bounding_boxes: function( d ) {
     if ( this.labels ) return this.bbox;
-    this.labels = [];
-    var longuest = 0; d.labels.each( // get longest label bounding box
+    this.labels = []; this.bboxes = []; this.bbox = [0, 0];
+    var longuest = 0; d.labels.each(
       function ( l ) {
+        if ( typeof( l ) == 'undefined' ) l = "";
         this.labels.push( l = this.p.paper.text( 10, 10, l.toString() ).attr( this.font ) );
-        var bb = l.getBBox();
-        bb.width > longuest && ( this.bbox = [longuest = bb.width, bb.height] )
+        this.bboxes.push( l = l.getBBox() );
+        l.width > longuest && ( this.bbox = [longuest = l.width, l.height] )
       }.bind( this )
     );
     return this.bbox;
@@ -779,7 +879,7 @@ Ico.Component.Labels = Class.create( Ico.Component, {
     ;
     if ( dy ) angle += 90;
     var path = [], grid_path = [];
-    this.labels || this.labels_bounding_box( d );
+    this.labels || this.get_labels_bounding_boxes( d );
     this.labels.each( function( label ) {
       if ( marker )    path.push( 'M', x, y, dx ? 'v' : 'h-', marker );
       if ( grid ) grid_path.push( 'M', x, y, dx ? 'v-' + this.y.len : 'h' + this.x.len );
@@ -806,45 +906,55 @@ Ico.Component.components.set( 'labels', [Ico.Component.Labels, 3] );
 
 Ico.Component.ValueLabels = Class.create( Ico.Component.Labels, {
   calculate: function() {
-    var max = this.p.max, min = this.p.min, range = this.p.range;    
+    var max = this.p.max, min = this.p.min, range = max - min,
+        spaces = this.options.spaces,
+        params;
     
     this.p.calculate_graph_len( this.graph.y );
-    // Calculate minimal step between labels
-    var angle = Math.abs( this.options.angle ), min_step;
-    if ( ( this.orientation && angle < 30 ) || ( !this.orientation && angle > 60 ) ) {
-      min_step = [min, max].map( function( v ) {
-        return this.text_size(
-          '0' + Ico.significant_digits_round( v, 3, Math.round, true ) + this.p.options.units,
-          this.font
-        )[0]
-      }.bind( this ) ).max();
-    } else {
-      min_step = 1.5 * this.text_size( '0', this.font )[1]; // allow 1/2 character height spacing
+    if ( ! spaces ) {
+      // Calculate minimal step between labels
+      var angle = Math.abs( this.options.angle ), min_step;
+      if ( ( this.orientation && angle < 30 ) || ( !this.orientation && angle > 60 ) ) {
+        min_step = [min, max].map( function( v ) {
+          return this.text_size(
+            '0' + Ico.significant_digits_round( v, 3, Math.round, true ) + this.p.options.units,
+            this.font
+          )[0]
+        }.bind( this ) ).max();
+      } else {
+        min_step = 1.5 * this.text_size( '0', this.font )[1]; // allow 1/2 character height spacing
+      }
+      // Calculate maximum number of labels spaces 
+      spaces = Math.round( this.graph.y.len / min_step );
+      // Search (trial/error method) for the best number of spaces yiedling the lowest waste 
+      if ( spaces > 2 ) {
+        var min_waste = range, max_spaces = spaces;
+        $R( 2, max_spaces ).each( function( tried_spaces ) {
+          params = this.calculate_value_labels_params( min, max, range, tried_spaces );
+          if ( params.waste <= min_waste ) {
+            min_waste = params.waste;
+            spaces = tried_spaces;
+          }
+        }.bind( this ) );
+      }
     }
-    // Calculate maximum labels count 
-    var count = Math.round( this.graph.y.len / min_step ), params;
-    // Search (trial/error method) for the best count yiedling the lowest waste 
-    if ( count >= 2 ) {
-      var min_waste = range, max_count = count;
-      $R( 2, max_count ).each( function( tried_count ) {
-        params = this.calculate_value_labels_params( min, max, range, tried_count );
-        if ( params.waste <= min_waste ) {
-          min_waste = params.waste;
-          count = tried_count;
-        }
-      }.bind( this ) );
-    }
-    params = this.calculate_value_labels_params( min, max, range, count );
+    params = this.calculate_value_labels_params( min, max, range, spaces );
     this.p.range = ( this.p.max = params.max ) - ( this.p.min = params.min );
-    this.p.labels_count = params.count;
+    
+    var p1000 = Ico.root( params.step * params.spaces, 1000 );
+    if ( p1000 ) {
+      var dividand = Math.pow( 1000, p1000 );
+      params.step /= dividand;
+      params.min /= dividand;
+    };
     
     // Finally build value labels array
     var labels = this.options.values = [];
     var precision = 0;
-    for ( var label = this.p.min, i = -1; ++i <= params.count; label += params.step ) {
+    for ( var label = params.min, i = -1; ++i <= params.spaces; label += params.step ) {
       var l = Ico.significant_digits_round( label, 3, Math.round, true ).toString();
       var len = ( l + '.' ).split( '.' )[1].length;
-      if ( len > precision ) precision = len; // get longuest precision 
+      if ( len > precision ) precision = len; // get longuest precision
       labels.push( l );
     }
     // Then fix value labels precision and add units
@@ -854,23 +964,23 @@ Ico.Component.ValueLabels = Class.create( Ico.Component.Labels, {
         if ( len == 0 ) l += '.';
         l += '0000'.substring( 0, precision - len );
       }
-      labels[i] = this.p.format_value( l )
+      labels[i] = this.p.format_value( l, p1000 )
     }.bind( this ) );
     
-    this.graph.y.step = this.graph.y.len / params.count;
+    this.graph.y.step = this.graph.y.len / params.spaces;
     this.calculate_labels_padding( this.graph.y, 0 );
   },
   
-  calculate_value_labels_params : function ( min, max, range, count ) {
+  calculate_value_labels_params : function ( min, max, range, spaces ) {
     if ( min < 0 && max > 0 ) {
-      var positive_slots = Math.round( count * max / range );
-      if ( positive_slots == 0 ) {
-        positive_slots = 1;
-      } else if ( positive_slots == count ) {
-        positive_slots -= 1;
+      var spaces_above_zero = Math.round( spaces * max / range );
+      if ( spaces_above_zero == 0 ) {
+        spaces_above_zero = 1;
+      } else if ( spaces_above_zero == spaces ) {
+        spaces_above_zero -= 1;
       }
-      var negative_slots = count - positive_slots;
-      var step = Ico.significant_digits_round( [max / positive_slots, - min / negative_slots].max(), 2,
+      var spaces_under_zero = spaces - spaces_above_zero;
+      var step = Ico.significant_digits_round( [max / spaces_above_zero, - min / spaces_under_zero].max(), 2,
         function( v ) { // the 2 digits rounding function
           v = Math.ceil( v );
           if ( v <= 10 ) return v;
@@ -883,14 +993,14 @@ Ico.Component.ValueLabels = Class.create( Ico.Component.Labels, {
           return ( mod = v % 10 )? v - mod + 10 : v
         }
       );
-      min = -step * negative_slots;
-      max = step * positive_slots;
+      min = -step * spaces_under_zero;
+      max = step * spaces_above_zero;
     } else {
-      var step = Ico.significant_digits_round( range / count, 1, Math.ceil );
-      if ( max <= 0 ) min = max - step * count;
-      else if ( min >= 0 ) max = min + step * count;
+      var step = Ico.significant_digits_round( range / spaces, 1, Math.ceil );
+      if ( max <= 0 ) min = max - step * spaces;
+      else if ( min >= 0 ) max = min + step * spaces;
     }
-    return { min: min, max: max, count: count, step: step, waste: count * step - range };
+    return { min: min, max: max, spaces: spaces, step: step, waste: spaces * step - range };
   },
   
   draw: function() { this.draw_labels_grid( this.graph.y ); }
@@ -917,7 +1027,7 @@ Ico.Component.Meanline = Class.create( Ico.Component, {
     this.shape = this.p.paper.path( Ico.svg_path(
       ['M', this.x.mean.start, this.y.mean.start, 'L', this.x.mean.stop, this.y.mean.stop]
     ) ).attr( a );
-    this.p.show_label_onmouseover( this.shape, 'Average: ' + this.p.format_value( this.mean ), a );
+    this.p.show_label_onmouseover( this.shape, this.mean, a, 0, 0, 'Average' );
   }
 } );
 
