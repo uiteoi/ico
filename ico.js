@@ -1,36 +1,44 @@
 /* Ico Graph Prototype/Raphael library
  *
- * Copyright (c) 2009, Jean Vincent
+ * Copyright (c) 2009, 2010 Jean Vincent
  * Copyright (c) 2009, Alex R. Young
  * Licensed under the MIT license: http://github.com/uiteoi/ico/blob/master/MIT-LICENSE
  */
 var Ico = {
   Version: 0.96,
   
+  // These helper methods are good candidates for unit testing
   significant_digits_round: function( v, significant_digits, f, string ) {
     if ( v == 0 || v == Number.NEGATIVE_INFINITY || v == Number.POSITIVE_INFINITY ) return v;
     var sign = 1;
     if ( v < 0 ) v = -v, sign = -1;
-    var limit = Math.pow( 10, significant_digits ), p10 = 0;
-    while ( v >= limit ) v /= 10, p10 += 1;
-    limit /= 10;
-    while ( v < limit ) v *= 10, p10 -= 1;
-    if ( p10 < -13 - significant_digits ) return 0; // floating point rounding error, was meant to be zero
-    v = ( f? f : Math.round )( sign * v );
+    var p10 = Math.floor( Math.log( v ) / Math.LN10 );
+    if ( p10 < -14  ) return 0; // assume floating point rounding error => was meant to be zero
+    p10 -= significant_digits - 1;
+    v = ( f || Math.round )( sign * v / Math.pow( 10, p10 ) );
+
     if ( string && p10 < 0 ) {
-      v = sign * v;
+      v *= sign; // remove sign again
+      while ( v % 10 == 0 ) {
+        // remove non-significant zeros 12300 => 123
+        p10 += 1;
+        v /= 10;
+      }
       v = '' + v;
-      var len = v.length;
-      while ( v.substring( len - 1 ) == '0' ) { p10 += 1; v = v.substring( 0, len -= 1 ); }
-      if ( ( len += p10 ) <= 0 ) {
-        return ( sign < 0 ? '-' : '' ) + '0.00000000000'.substring(0, 2 - len ) + v;
+      var len = v.length + p10;
+      if ( len <= 0 ) {
+        // value < 1
+        return ( sign < 0 ? '-' : '' ) + '0.00000000000000'.substring(0, 2 - len ) + v;
       } else if ( p10 < 0 ) {
+        // value has significant digits on both sides of the point
         return ( sign < 0 ? '-' : '' ) + v.substring( 0, len ) + '.' + v.substring( len );
       }
-      v = sign * v;
+      // value has no decimals
+      v *= sign;
     }
     return v * Math.pow( 10, p10 );
   },
+
     
   root: function( v, p ) {
     return Math.floor( Math.log( Math.abs( v ) ) / Math.log( p ) );
@@ -51,14 +59,32 @@ var Ico = {
     return path;
   },
   
-  series_min_max: function( series ) {
+  adjust_min_max: function( min, max ) {
+    // Adjust start value to show zero if reasonable (e.g. range > min)
+    var range = max - min;
+    if ( range < min ) {
+      min -= range / 2;
+    } else if ( min > 0 ) {
+      min = 0;
+    } else if ( range < -max ) {
+      max += range / 2;
+    } else if ( max < 0 ) {
+      max = 0;
+    }
+    return [min, max];
+  },
+  
+  series_min_max: function( series, dont_adjust ) {
     var values = series.flatten();
     if ( values.length == 0 ) throw "Series must have at least one value";
-    return [
-      Ico.significant_digits_round( Math.min.apply( Math, values ), 2, Math.floor ),
-      Ico.significant_digits_round( Math.max.apply( Math, values ), 2, Math.ceil ),
-      values
-    ]
+    var min_max = [
+        Ico.significant_digits_round( Math.min.apply( Math, values ), 2, Math.floor ),
+        Ico.significant_digits_round( Math.max.apply( Math, values ), 2, Math.ceil )
+      ]
+    ;
+    dont_adjust || ( min_max = Ico.adjust_min_max.apply( Ico, min_max ) );
+    min_max.push( values );
+    return min_max;
   },
   
   moving_average: function( serie, samples, options ) {
@@ -107,8 +133,9 @@ Ico.Base = Class.create( {
       throw 'Wrong type for series';
     }
     this.data_samples = this.series.pluck( 'length' ).max();
-    var min_max = Ico.series_min_max( this.series );
-    this.range = ( this.max = min_max[1] ) - ( this.min = min_max[0] );
+    var min_max = Ico.series_min_max( this.series, true );
+    this.max = min_max[1];
+    this.min = min_max[0];
     this.all_values = min_max[2];
     this.series_shapes = [];
   },
@@ -396,10 +423,6 @@ Ico.SparkBar = Class.create( Ico.SparkLine, {
 } );
 
 Ico.BulletGraph = Class.create( Ico.Base, {
-  set_series: function( $super ) { $super();
-    this.value  = this.series[0][0];
-  },
-  
   set_defaults: function( $super ) { $super();
     this.orientation = 1;
     
@@ -428,17 +451,19 @@ Ico.BulletGraph = Class.create( Ico.Base, {
   },
   
   draw_series: function() {
-    var x = this.x.start + this.x.start_offset;
-    var y = this.y.start + this.y.start_offset;
+    var x = this.x.start + this.x.start_offset,
+        y = this.y.start + this.y.start_offset,
+        value = this.series[0][0]
+    ;
     
     // this is a bar value => new Ico.Serie.Line(serie).draw()
     var a, p = this.series_shapes[0] = this.paper.path( Ico.svg_path(
-      ['M', x - this.plot( this.value ), y - this.bar_width / 2,
+      ['M', x - this.plot( value ), y - this.bar_width / 2,
        'H', this.bar_base, 'v', this.bar_width,
-       'H', x - this.plot( this.value ), 'z']
+       'H', x - this.plot( value ), 'z']
     ) ).attr( a = { fill: this.options.color, 'stroke-width' : 1, stroke: 'none' } );
 
-    this.show_label_onmouseover( p, this.value, a, 0, 0 );
+    this.show_label_onmouseover( p, value, a, 0, 0 );
     
     // target should be a component, or might be a graph background option
     if ( typeof( this.target.value ) != 'undefined' ) {
@@ -451,21 +476,6 @@ Ico.BulletGraph = Class.create( Ico.Base, {
 } );
  
 Ico.BaseGraph = Class.create( Ico.Base, {
-  set_series: function( $super ) { $super();
-    var min = this.min, max = this.max, range = this.range;
-    // Adjust start value to show zero if reasonable (e.g. range < min)
-    if ( range < min ) {
-      min -= range / 2;
-    } else if ( min > 0 ) {
-      min = 0;
-    } else if ( range < -max ) {
-      max += range / 2;
-    } else if ( max < 0 ) {
-      max = 0;
-    }
-    this.range = ( this.max = max ) - ( this.min = min );
-  },
-  
   set_defaults: function( $super ) { $super();
     Object.extend( this.options, {
       // Padding options
@@ -484,7 +494,11 @@ Ico.BaseGraph = Class.create( Ico.Base, {
     } );
   },
   
-  process_options: function( $super, options ) { $super( options );
+  process_options: function( $super, options ) {
+    var min_max = Ico.adjust_min_max( this.min, this.max );
+    this.min = min_max[0];
+    this.max = min_max[1];
+    $super( options ); // !! process superclass options after min and max adjustments
     // Set default colors[] for individual series
     this.series.each( function( serie, i ) {
       this.options.colors[i] || (
@@ -500,10 +514,15 @@ Ico.BaseGraph = Class.create( Ico.Base, {
         path = '',
         set = this.paper.set()
     ;
-    serie.each( function( v, i ) {  
-      path += this.draw_value( i, x, y - this.scale * v, v, index, set );
+    for( var i = -1; ++i < serie.length; ) {
+      var v = serie[i];
+      if ( v == null ) {
+        this.last = null;
+      } else {
+        path += this.draw_value( i, x, y - this.scale * v, v, index, set );
+      }
       x += this.y_direction * this.graph.x.step;
-    }.bind( this ) );
+    };
     if ( path != '' ) { // only for line graphs
       p.attr( { path: path } ).attr( this.options.series_attributes[index] ||
         { stroke: this.options.colors[index], 'stroke-width': this.options.stroke_width || 3 }
@@ -561,7 +580,7 @@ Ico.LineGraph = Class.create( Ico.BaseGraph, {
       this.show_label_onmouseover( c, value, a, serie, i );
     }
     var p, w = this.options.curve_amount;
-    if ( i == 0 ) {
+    if ( i == 0 || ( w && this.last == null ) ) {
       p = ['M', x, y];
     } else if ( w ) {
       serie = this.series[serie];
@@ -988,7 +1007,6 @@ Ico.Component.ValueLabels = Class.create( Ico.Component.Labels, {
           var mod;
           // allows only multiples of five until 50 => allows 15, 20, 25, 30, 35, 40, 45, 50
           if ( v <= 54 ) return ( mod = v % 5 )? v - mod + 5 : v; // always round above
-          // return mod == 0? v : v - mod + 5;
           // allow only multiples of 10 thereafter
           return ( mod = v % 10 )? v - mod + 10 : v
         }
