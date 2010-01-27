@@ -108,6 +108,7 @@
         <span id="legend_this_year" class="legend">This Year Performance</span>
         <span id="legend_last_year" class="legend">Last Year Performance</span>
         <span id="legend_moving_average" class="legend">5 Months Moving Average</span>
+        <span id="legend_intermitent" class="legend">Intermitent</span>
       </p>
       <div id="graph10" class="leftGraph"></div>
       <div id="graph11" class="rightGraph"></div>
@@ -316,8 +317,9 @@
       var serie2 = [18, +1, +7, 17, 15, 21, 1, 25, 3, 21, 16, 4];
       var serie3 = [18, -1, -9, 17, 15, 21, 1, 25, 3, 21, 16, 4];
       var serie4 = Ico.moving_average( serie3, 5, { previous_values: serie1 }  ); // 5 months moving average
+      var serie5 = [null, 4, null, null, 17, 15, -2, null, 3, 7, null, -2];
       
-      var min_max = Ico.series_min_max( [serie1, serie2, serie3, serie4] );
+      var min_max = Ico.series_min_max( [serie1, serie2, serie3, serie4, serie5] );
       var min = min_max[0];
       var max = min_max[1];
       var status_bar = {
@@ -326,21 +328,21 @@
       };
       
       var g10 = new Ico.LineGraph( $( 'graph10' ),
-        [serie1, serie2],
+        [serie1, serie2, serie5],
         {   min: min, max: max
           , font_size: 12
           , labels: { values: months, long_values: long_months, add_padding: false }
-          , series_names: ['This Year', 'Last Year']
+          , series_names: ['This Year', 'Last Year', 'Intermitent']
           , value_labels: { add_padding: false }
           , units: '$', units_position: 0
           , x_padding_right: 15
-          , colors: ['#228899', '#339933']
+          , colors: ['#228899', '#339933', 'grey']
           , mouseover_attributes: { stroke: 'green' }
           , curve_amount: 10
           , mouse_pointer: true
           , status_bar : status_bar
         }
-      );      
+      );
       
       g11 = new Ico.LineGraph( $( 'graph11' ),
         [serie3, serie4, serie1],
@@ -359,22 +361,24 @@
         }
       );
       
-      function set_legend( graph, serie, element, color ) {
+      function set_legend( graph, serie, element ) {
         Event.observe( element, 'click', function() {
           graph.toggle_serie( serie );
         } );
         element.setStyle( 'cursor: pointer;' )
-        color && element.setStyle( 'border-color: ' + color + ';' )
+        element.setStyle( 'border-color: ' + graph.options.colors[serie] + ';' )
       }
 
       g10.hide_serie( 1 );
       g11.hide_serie( 2 );
       
-      set_legend( g10, 0, $('legend_this_year'), '#228899' );
-      set_legend( g10, 1, $('legend_last_year'), '#339933' );
+      set_legend( g10, 0, $('legend_this_year') );
+      set_legend( g10, 1, $('legend_last_year')  );
+      set_legend( g10, 2, $('legend_intermitent') );
+
       set_legend( g11, 0, $('legend_this_year') );
-      set_legend( g11, 1, $('legend_moving_average'), '#995522' );
-      set_legend( g11, 2, $('legend_last_year'), '#339933' );
+      set_legend( g11, 1, $('legend_moving_average')  );
+      set_legend( g11, 2, $('legend_last_year') );
     };
     </script>
   </body>
