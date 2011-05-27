@@ -80,6 +80,9 @@
   </head>
   <body>
     <div class="graphContainer">
+      <p>This Ico test page is displayed using Raphaël.js in
+        <span id="raphael_mode">unknown</span> mode
+      </p>
       <p>Here is a sparkline:<span id="sparkline0", class="sparkline"></span>,
         a sparkbar:<span id="sparkbar0", class="sparkline"></span> with the same values.
       </p>
@@ -117,7 +120,8 @@
     <script type="text/javascript">
     window.onload = function () {
       document.title = "Ico " + Ico.Version + " / Raphael " + Raphael.version + " / Prototype " + Prototype.Version + " Test Suite"
-      new Ico.SparkLine( $( 'sparkline0' ), [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9], { highlight: true } );
+      var sparkline = new Ico.SparkLine( $( 'sparkline0' ), [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9], { highlight: true } );
+      $( "raphael_mode" ).replace( sparkline.svg ? "SVG" : "VML" );
       new Ico.SparkBar( $( 'sparkbar0' ), [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9],
         { color: 'grey', highlight: { index: 5, color: 'orange' } }
       );
