@@ -499,9 +499,9 @@ h3. Ico.LineGraph options
     <td>Cubic B&eacute;zier curve amount, 0 => disable</td>
   </tr>
   <tr>
-    <td>dot_radius</td>
+    <td>dot_radius[]</td>
     <td>3 pixels</td>
-    <td>Radius of dots for values, 0 => not value dot displayed</td>
+    <td>Radius of dots for values, 0 => no dot displayed, Array => per line values</td>
   </tr>
   <tr>
     <td>dot_attributes[]</td>
@@ -524,9 +524,9 @@ h3. Ico.LineGraph options
     <td>Dot fill color for serie_key</td>
   </tr>
   <tr>
-    <td>focus_radius</td>
+    <td>focus_radius[]</td>
     <td>6 pixels</td>
-    <td>Radius of focus, 0 => disable mouse over action</td>
+    <td>Radius of focus, 0 => disable mouse over action, Array => per line values</td>
   </tr>
   <tr>
     <td>focus_attributes</td>

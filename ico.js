@@ -567,11 +567,19 @@ Ico.LineGraph = Class.create( Ico.BaseGraph, {
   label_slots_count: function() { return this.data_samples - 1 },
 
   draw_value: function( i, x, y, value, serie, set ) {
-    var radius = this.options.dot_radius, focus = this.options.focus_radius;
-    var t; this.orientation && ( t = x, x = y, y = t );
+    var radius = this.options.dot_radius,
+        focus  = this.options.focus_radius,
+        t
+    ;
+        
+    this.orientation && ( t = x, x = y, y = t );
+    
+    if ( typeof radius == 'object' ) radius = radius[ serie ]; 
     if ( radius ) {
-      set.push( this.paper.circle( x, y, radius ).attr( this.options.dot_attributes[serie] ) );
+      set.push( this.paper.circle( x, y, radius ).attr( this.options.dot_attributes[ serie ] ) );
     }
+    
+    if ( typeof focus == 'object' ) focus = focus[ serie ];
     if ( focus ) {
       var a = this.options.focus_attributes,
           c = this.paper.circle( x, y, focus ).attr( a )
@@ -579,6 +587,7 @@ Ico.LineGraph = Class.create( Ico.BaseGraph, {
       set.push( c );
       this.show_label_onmouseover( c, value, a, serie, i );
     }
+    
     var p, w = this.options.curve_amount;
     if ( i == 0 || ( w && this.last == null ) ) {
       p = ['M', x, y];
