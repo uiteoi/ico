@@ -1,6 +1,6 @@
 /* Ico Graph Prototype/Raphael library
  *
- * Copyright (c) 2009, 2010 Jean Vincent
+ * Copyright (c) 2009, 2010, 2011 Jean Vincent, ReverseRisk
  * Copyright (c) 2009, Alex R. Young
  * Licensed under the MIT license: http://github.com/uiteoi/ico/blob/master/MIT-LICENSE
  */
@@ -124,10 +124,10 @@ Ico.Base = Class.create( {
       this.series = [[this.series]];
     } else if ( Object.isHash( this.series ) ){ // { serie_name : [list of values] } (deprecated)
       // Transform to array of arrays
-      var series =[];
+      var that = this, series =[];
       $H( this.series ).keys().each( function( key ) {
-        series.push( this.series[key] ); 
-      }.bind( this ) )
+        series.push( that.series[key] ); 
+      } )
       this.series = series;
     } else {
       throw 'Wrong type for series';
@@ -160,6 +160,8 @@ Ico.Base = Class.create( {
   },
   
   process_options: function( options ) {
+    var that = this;
+    
     if ( options ) Object.extend( this.options, options );
     
     // Set min and max if overriden
@@ -182,18 +184,18 @@ Ico.Base = Class.create( {
     // Scan components and process their options
     this.components = [];
     Ico.Component.components.each( function( c ) {      
-      var k = c.key, a = this.options[k + '_attributes'], o = this.options[k];
-      if ( o === true && a ) o = this.options[k] = a;
+      var k = c.key, a = that.options[k + '_attributes'], o = that.options[k];
+      if ( o === true && a ) o = that.options[k] = a;
       if ( o ) {
         var layer = c.value[1];
-        if ( ! this.components[layer] ) this.components[layer] = [];
+        if ( ! that.components[layer] ) that.components[layer] = [];
         try {
-          this.components[layer].push( this[k] = new (c.value[0])( this, o ) )
+          that.components[layer].push( that[k] = new (c.value[0])( that, o ) )
         } catch( error ) {
-          this.error = error
+          that.error = error
         }
       }
-    }.bind( this ) );
+    } );
   },
   
   get_font: function() {
@@ -336,7 +338,7 @@ Ico.Base = Class.create( {
   },
 
   show_label_onmouseover : function( o, value, attr, serie, i, name ) {
-      var v = '';
+      var that = this, v = '';
       if ( this.status_bar ) {
         if ( ! name ) {
           var labels = this.labels, label,
@@ -352,14 +354,14 @@ Ico.Base = Class.create( {
       }
       
       o.node.onmouseout = function() {
-        this.status_bar && this.status_bar.shape.hide();
+        that.status_bar && that.status_bar.shape.hide();
 	o.attr( attr );
-      }.bind( this );
+      };
       
       o.node.onmouseover = function() {
-        this.status_bar && this.status_bar.shape.attr( { 'text': v } ).show();
-        o.attr( this.options.mouseover_attributes );
-      }.bind( this );
+        that.status_bar && that.status_bar.shape.attr( { 'text': v } ).show();
+        o.attr( that.options.mouseover_attributes );
+      };
   }
 } );
 
@@ -377,13 +379,13 @@ Ico.SparkLine = Class.create( Ico.Base, {
   label_slots_count: function() { return this.data_samples - 1 },
   
   draw_serie: function( serie ) {
-    var x = this.x.start + this.x.start_offset, p;
+    var that = this, x = this.x.start + this.x.start_offset, p;
     serie.each( function( v ) {
       p = Ico.svg_path(
-        [( p ? p + 'L' : 'M' ), x, this.y.start + this.y.start_offset - this.plot( v )]
+        [( p ? p + 'L' : 'M' ), x, that.y.start + that.y.start_offset - that.plot( v )]
       );
-      x += this.x.step;
-    }.bind( this ) );
+      x += that.x.step;
+    } );
     return this.paper.path( p ).attr( { stroke: this.options.color } );
   },
   
@@ -405,11 +407,11 @@ Ico.SparkBar = Class.create( Ico.SparkLine, {
   },
 
   draw_serie: function( serie ) {
-    var x = this.x.start + this.x.start_offset, p = '';
+    var that = this, x = this.x.start + this.x.start_offset, p = '';
     serie.each( function( v ) {
-      p += Ico.svg_path( ['M', x, this.bar_base, 'v', - this.scale * v ] );
-      x += this.x.step;
-    }.bind( this ) )
+      p += Ico.svg_path( ['M', x, that.bar_base, 'v', - that.scale * v ] );
+      x += that.x.step;
+    } )
     return this.paper.path( p ).attr( { 'stroke-width': this.graph.x.step, stroke: this.options.color } );
   },
   
@@ -495,16 +497,16 @@ Ico.BaseGraph = Class.create( Ico.Base, {
   },
   
   process_options: function( $super, options ) {
-    var min_max = Ico.adjust_min_max( this.min, this.max );
+    var that = this, min_max = Ico.adjust_min_max( this.min, this.max );
     this.min = min_max[0];
     this.max = min_max[1];
     $super( options ); // !! process superclass options after min and max adjustments
     // Set default colors[] for individual series
     this.series.each( function( serie, i ) {
-      this.options.colors[i] || (
-        this.options.colors[i] = this.options.color || Raphael.hsb2rgb( Math.random(), 1, .75 ).hex
+      that.options.colors[i] || (
+        that.options.colors[i] = that.options.color || Raphael.hsb2rgb( Math.random(), 1, .75 ).hex
       )
-    }.bind( this) );
+    } );
   },
   
   draw_serie: function( serie, index ) {
@@ -545,23 +547,25 @@ Ico.LineGraph = Class.create( Ico.BaseGraph, {
   ) },
   
   process_options: function( $super, options ) { $super( options );
+    var that = this;
+    
     this.series.each( function( serie, i ) {
-      var color = this.options.colors[i];
+      var color = that.options.colors[i];
       
-      if ( ! this.options.series_attributes[i] ) {
-        this.options.series_attributes[i] = {
+      if ( ! that.options.series_attributes[i] ) {
+        that.options.series_attributes[i] = {
           stroke: color, 'stroke-width': 2
         };
       }
       // line dots attribute apply only to line series
-      if ( ! this.options.dot_attributes[i] ) {
-        this.options.dot_attributes[i] = {
+      if ( ! that.options.dot_attributes[i] ) {
+        that.options.dot_attributes[i] = {
           'stroke-width': 1,
-          stroke: this.background ? this.background.options.color : color,
+          stroke: that.background ? that.background.options.color : color,
           fill: color
         };
       }
-    }.bind( this) );
+    } );
   },
   
   label_slots_count: function() { return this.data_samples - 1 },
@@ -625,15 +629,17 @@ Ico.BarGraph = Class.create( Ico.BaseGraph, {
   },
   
   process_options: function( $super, options ) { $super( options );
+    var that = this;
+    
     this.series.each( function( serie, i ) {
-      var color = this.options.colors[i];
-      if ( ! this.options.series_attributes[i] ) {
-        this.options.series_attributes[i] = {
+      var color = that.options.colors[i];
+      if ( ! that.options.series_attributes[i] ) {
+        that.options.series_attributes[i] = {
           stroke: 'none', 'stroke-width': 2,
-          gradient: '' + ( this.orientation ? 270 : 0 ) + '-' + color + ':20-#555555'
+          gradient: '' + ( that.orientation ? 270 : 0 ) + '-' + color + ':20-#555555'
         };
       }
-    }.bind( this) );
+    } );
   },
   
   calculate: function( $super ) { $super();
@@ -737,29 +743,29 @@ Ico.Component.MousePointer = Class.create( Ico.Component, {
   defaults: function() { return { attributes: { stroke: '#666', 'stroke-dasharray': '--' } } },
 
   draw: function() {
+    var that = this;
+    
     this.shape = this.p.paper.path().attr( this.options.attributes ).hide();
     
     this.p.element.observe( 'mousemove', function( e ) {
-      var viewport_offset =  this.p.element.viewportOffset();
+      var viewport_offset =  that.p.element.viewportOffset();
       var x = e.clientX - viewport_offset[0];
       var y = e.clientY - viewport_offset[1];
       // Google chrome: if the view does not start at 0, 0, there is an offset
       // IE: Slow moves
       // FF provides the best result with smooth moves
-      var in_graph = x >= this.x.start && x <= this.x.stop && y >= this.y.stop  && y <= this.y.start;
+      var in_graph = x >= that.x.start && x <= that.x.stop && y >= that.y.stop  && y <= that.y.start;
       if ( in_graph ) {
-        this.shape.attr( { path: Ico.svg_path( [
-          'M', this.x.start, y, 'h', this.x.len,
-          'M', x, this.y.stop , 'v', this.y.len
+        that.shape.attr( { path: Ico.svg_path( [
+          'M', that.x.start, y, 'h', that.x.len,
+          'M', x, that.y.stop , 'v', that.y.len
         ] ) } ).show();
       } else {
-        this.shape.hide();
+        that.shape.hide();
       }
-    }.bind( this ) );
+    } );
     
-    this.p.element.observe( 'mouseout', function( e ) {
-      this.shape.hide();
-    }.bind( this ) );    
+    this.p.element.observe( 'mouseout', function( e ) { that.shape.hide() } );    
   }
 } );
 
@@ -865,13 +871,13 @@ Ico.Component.Labels = Class.create( Ico.Component, {
   get_labels_bounding_boxes: function( d ) {
     if ( this.labels ) return this.bbox;
     this.labels = []; this.bboxes = []; this.bbox = [0, 0];
-    var longuest = 0; d.labels.each(
+    var that = this, longuest = 0; d.labels.each(
       function ( l ) {
         if ( typeof( l ) == 'undefined' ) l = "";
-        this.labels.push( l = this.p.paper.text( 10, 10, l.toString() ).attr( this.font ) );
-        this.bboxes.push( l = l.getBBox() );
-        l.width > longuest && ( this.bbox = [longuest = l.width, l.height] )
-      }.bind( this )
+        that.labels.push( l = that.p.paper.text( 10, 10, l.toString() ).attr( that.font ) );
+        that.bboxes.push( l = l.getBBox() );
+        l.width > longuest && ( that.bbox = [longuest = l.width, l.height] )
+      }
     );
     return this.bbox;
   },
@@ -897,7 +903,7 @@ Ico.Component.Labels = Class.create( Ico.Component, {
   draw: function() { this.draw_labels_grid( this.graph.x ); },
   
   draw_labels_grid: function( d ) {
-    var dx = d.direction[0], dy = d.direction[1], step = d.step,
+    var that = this, dx = d.direction[0], dy = d.direction[1], step = d.step,
         x = this.x.start + this.x.start_offset * dx,
         y = this.y.start - this.y.start_offset * dy,
         marker = this.options.marker_size,
@@ -910,7 +916,7 @@ Ico.Component.Labels = Class.create( Ico.Component, {
     this.labels || this.get_labels_bounding_boxes( d );
     this.labels.each( function( label ) {
       if ( marker )    path.push( 'M', x, y, dx ? 'v' : 'h-', marker );
-      if ( grid ) grid_path.push( 'M', x, y, dx ? 'v-' + this.y.len : 'h' + this.x.len );
+      if ( grid ) grid_path.push( 'M', x, y, dx ? 'v-' + that.y.len : 'h' + that.x.len );
       var x_anchor = x + fx;
       var y_anchor = y + fy;
       // label is already drawn, only anchor then rotate here
@@ -919,7 +925,7 @@ Ico.Component.Labels = Class.create( Ico.Component, {
       angle && label.rotate( angle, x_anchor, y_anchor );  // !!! then rotate around anchor
       dx && ( x += step );
       dy && ( y -= step );
-    }.bind( this ) );
+    } );
     if ( marker ) paper.path( Ico.svg_path( path ) ).attr( this.markers_attributes );
     if ( grid ) {
       if ( dx ) grid_path.push( 'M', this.x.start, ' ', this.y.stop, 'h', this.x.len, 'v', this.y.len );
@@ -934,7 +940,7 @@ Ico.Component.components.set( 'labels', [Ico.Component.Labels, 3] );
 
 Ico.Component.ValueLabels = Class.create( Ico.Component.Labels, {
   calculate: function() {
-    var max = this.p.max, min = this.p.min, range = max - min,
+    var that = this, max = this.p.max, min = this.p.min, range = max - min,
         spaces = this.options.spaces,
         params;
     
@@ -944,11 +950,11 @@ Ico.Component.ValueLabels = Class.create( Ico.Component.Labels, {
       var angle = Math.abs( this.options.angle ), min_step;
       if ( ( this.orientation && angle < 30 ) || ( !this.orientation && angle > 60 ) ) {
         min_step = [min, max].map( function( v ) {
-          return this.text_size(
-            '0' + Ico.significant_digits_round( v, 3, Math.round, true ) + this.p.options.units,
-            this.font
+          return that.text_size(
+            '0' + Ico.significant_digits_round( v, 3, Math.round, true ) + that.p.options.units,
+            that.font
           )[0]
-        }.bind( this ) ).max();
+        } ).max();
       } else {
         min_step = 1.5 * this.text_size( '0', this.font )[1]; // allow 1/2 character height spacing
       }
@@ -958,12 +964,12 @@ Ico.Component.ValueLabels = Class.create( Ico.Component.Labels, {
       if ( spaces > 2 ) {
         var min_waste = range, max_spaces = spaces;
         $R( 2, max_spaces ).each( function( tried_spaces ) {
-          params = this.calculate_value_labels_params( min, max, range, tried_spaces );
+          params = that.calculate_value_labels_params( min, max, range, tried_spaces );
           if ( params.waste <= min_waste ) {
             min_waste = params.waste;
             spaces = tried_spaces;
           }
-        }.bind( this ) );
+        } );
       }
     }
     params = this.calculate_value_labels_params( min, max, range, spaces );
@@ -992,8 +998,8 @@ Ico.Component.ValueLabels = Class.create( Ico.Component.Labels, {
         if ( len == 0 ) l += '.';
         l += '0000'.substring( 0, precision - len );
       }
-      labels[i] = this.p.format_value( l, p1000 )
-    }.bind( this ) );
+      labels[i] = that.p.format_value( l, p1000 )
+    } );
     
     this.graph.y.step = this.graph.y.len / params.spaces;
     this.calculate_labels_padding( this.graph.y, 0 );
