@@ -5,16 +5,29 @@
 // Licensed under the MIT license
 //
 
-if ( typeof Object.create !== 'function' ) {
-  Object.create = function ( o ) {
-    if (arguments.length > 1) {
+Object.create || ( Object.create = function ( o ) {
+    if ( arguments.length > 1 ) {
       throw new Error( 'Object.create implementation only accepts the first parameter.' );
     }
     function O() {}
     O.prototype = o;
     return new O();
-  };
-}
+} );
+
+Function.prototype.bind || ( Function.prototype.bind = function( o ) {
+  if ( typeof this !== "function" ) {
+    throw new TypeError( "Function.prototype.bind - what is trying to be bound is not callable" )
+  }
+  var that = this
+    , slice = Array.prototype.slice
+    , a = slice.call( arguments, 1 )
+    , bound = function() {
+        return that.apply( o || {}, a.concat( slice.call( arguments ) ) );
+      }
+  ;
+  bound.prototype = this.prototype;
+  return bound;
+} );
 
 Array.prototype.indexOf || ( Array.prototype.indexOf = function( v, i ) {
   var l = this.length; if ( l === 0 ) return -1;

@@ -11,11 +11,11 @@ var Ico = {
   Class : {
     create : function( p ) {
       var f = function() { this.initialize.apply( this, arguments ) };
-      f.subclasses = [];
+      // f.subclasses = [];
       
       if ( arguments.length === 2 ) {
-        f.prototype = Object.create( p.prototype );
-        p.subclasses.push( f );
+        f.prototype = Object.create( f.$super = p.prototype );
+        // p.subclasses.push( f );
         p = arguments[ 1 ];
       }
       f.prototype.constructor = f;
@@ -378,8 +378,10 @@ Ico.Base = Ico.Class.create( {
   }
 } );
 
-Ico.SparkLine = Class.create( Ico.Base, {
-  process_options: function( $super, options ) { $super( options );
+Ico.SparkLine = Ico.Class.create( Ico.Base, {
+  process_options: function( options ) {
+    Ico.Base.prototype.process_options.call( this, options );
+    
     this.graph.y.padding[1] += 1;
     var highlight = this.options.highlight;
     if ( highlight ) {
@@ -412,10 +414,12 @@ Ico.SparkLine = Class.create( Ico.Base, {
   }
 } );
 
-Ico.SparkBar = Class.create( Ico.SparkLine, {
+Ico.SparkBar = Ico.Class.create( Ico.SparkLine, {
   label_slots_count: function() { return this.data_samples },
 
-  calculate: function( $super ) { $super();
+  calculate: function() {
+    Ico.SparkLine.prototype.calculate.call( this );
+    
     this.calculate_bars()
   },
 
@@ -437,8 +441,10 @@ Ico.SparkBar = Class.create( Ico.SparkLine, {
   }
 } );
 
-Ico.BulletGraph = Class.create( Ico.Base, {
-  set_defaults: function( $super ) { $super();
+Ico.BulletGraph = Ico.Class.create( Ico.Base, {
+  set_defaults: function() {
+    Ico.Base.prototype.set_defaults.call( this );
+    
     this.orientation = 1;
     
     Object.extend( this.options, {
@@ -449,7 +455,9 @@ Ico.BulletGraph = Class.create( Ico.Base, {
     })
   },
   
-  process_options: function( $super, options ) { $super( options );
+  process_options: function( options ) {
+    Ico.Base.prototype.process_options.call( this, options );
+    
     this.target = { color: '#666', length: 0.8, 'stroke-width' : 2 };
     if ( Object.isNumber( this.options.target ) ) {
       this.target.value = this.options.target
@@ -460,7 +468,9 @@ Ico.BulletGraph = Class.create( Ico.Base, {
   
   label_slots_count: function() { return 1 },
   
-  calculate: function( $super ) { $super();  
+  calculate: function() {
+    Ico.Base.prototype.calculate.call( this );
+    
     this.options.bar_padding || ( this.options.bar_padding = 2 * this.graph.x.len / 3 );
     this.calculate_bars()
   },
@@ -490,8 +500,10 @@ Ico.BulletGraph = Class.create( Ico.Base, {
   }
 } );
  
-Ico.BaseGraph = Class.create( Ico.Base, {
-  set_defaults: function( $super ) { $super();
+Ico.BaseGraph = Ico.Class.create( Ico.Base, {
+  set_defaults: function() {
+    Ico.Base.prototype.set_defaults.call( this );
+    
     Object.extend( this.options, {
       // Padding options
       y_padding_top:            15,
@@ -509,11 +521,14 @@ Ico.BaseGraph = Class.create( Ico.Base, {
     } );
   },
   
-  process_options: function( $super, options ) {
+  process_options: function( options ) {
     var that = this, min_max = Ico.adjust_min_max( this.min, this.max );
     this.min = min_max[0];
     this.max = min_max[1];
-    $super( options ); // !! process superclass options after min and max adjustments
+    
+    // !! process superclass options after min and max adjustments
+    Ico.Base.prototype.process_options.call( this, options );
+    
     // Set default colors[] for individual series
     this.series.forEach( function( serie, i ) {
       that.options.colors[i] || (
@@ -548,8 +563,10 @@ Ico.BaseGraph = Class.create( Ico.Base, {
   }  
 } );
 
-Ico.LineGraph = Class.create( Ico.BaseGraph, {
-  set_defaults: function( $super ) { $super();
+Ico.LineGraph = Ico.Class.create( Ico.BaseGraph, {
+  set_defaults: function() {
+    Ico.BaseGraph.prototype.set_defaults.call( this );
+    
     Object.extend( this.options, {
       curve_amount:     5,  // 0 => disable
       dot_radius:       3,  // 0 => no dot
@@ -559,7 +576,9 @@ Ico.LineGraph = Class.create( Ico.BaseGraph, {
     }
   ) },
   
-  process_options: function( $super, options ) { $super( options );
+  process_options: function( options ) {
+    Ico.BaseGraph.prototype.process_options.call( this, options );
+    
     var that = this;
     
     this.series.forEach( function( serie, i ) {
@@ -636,12 +655,16 @@ Ico.LineGraph = Class.create( Ico.BaseGraph, {
   }
 } );
 
-Ico.BarGraph = Class.create( Ico.BaseGraph, {
-  set_defaults: function( $super ) { $super();
+Ico.BarGraph = Ico.Class.create( Ico.BaseGraph, {
+  set_defaults: function() {
+    Ico.BaseGraph.prototype.set_defaults.call( this );
+    
     this.options.bar_padding = 5;
   },
   
-  process_options: function( $super, options ) { $super( options );
+  process_options: function( options ) {
+    Ico.BaseGraph.prototype.process_options.call( this, options );
+    
     var that = this;
     
     this.series.forEach( function( serie, i ) {
@@ -655,7 +678,9 @@ Ico.BarGraph = Class.create( Ico.BaseGraph, {
     } );
   },
   
-  calculate: function( $super ) { $super();
+  calculate: function() {
+    Ico.BaseGraph.prototype.calculate.call( this );
+    
     this.calculate_bars()
   },
   
@@ -680,8 +705,10 @@ Ico.BarGraph = Class.create( Ico.BaseGraph, {
   }
 } );
 
-Ico.HorizontalBarGraph = Class.create( Ico.BarGraph, {
-  set_defaults: function( $super ) { $super();
+Ico.HorizontalBarGraph = Ico.Class.create( Ico.BarGraph, {
+  set_defaults: function() {
+    Ico.BarGraph.prototype.set_defaults.call( this );
+    
     this.orientation = 1;
   }
 });
@@ -710,7 +737,8 @@ Ico.Component = Ico.Class.create( {
 
 Ico.Component.components = {};
 
-Ico.Component.Template = Class.create( Ico.Component, {
+/*
+Ico.Component.Template = Ico.Class.create( Ico.Component, {
   defaults: function() { return {} },
   process_options: function() {},
   calculate: function() {},
@@ -719,6 +747,7 @@ Ico.Component.Template = Class.create( Ico.Component, {
 } );
 
 Ico.Component.components.template = [Ico.Component.Template, 0];
+*/
 
 Ico.Component.Background = Ico.Class.create( Ico.Component, {
   defaults: function() { return { corners: true } },
