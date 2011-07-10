@@ -822,7 +822,10 @@ Ico.Component.Labels = Class.create( Ico.Component, {
   
   calculate_labels_padding: function( d, position ) {
     var dx = d.direction[0], dy = d.direction[1], marker = this.options.marker_size, padding = [];
-    d.labels = this.options.values || $A( $R( 1, this.data_samples ) );
+    if ( ( d.labels = this.options.values ) === undefined ) {
+      this.options.values = d.labels = [];
+      for ( i = 0; ++i <= this.data_samples; ) d.labels[ i ] = i;
+    }
     var angle = d.angle += this.options.angle;
     if ( d.labels ) {
       var bbox = this.get_labels_bounding_boxes( d ), font_size = d.font_size = bbox[1];
@@ -957,7 +960,7 @@ Ico.Component.ValueLabels = Class.create( Ico.Component.Labels, {
       // Search (trial/error method) for the best number of spaces yiedling the lowest waste 
       if ( spaces > 2 ) {
         var min_waste = range, max_spaces = spaces;
-        for ( var tried_spaces = 2; tried_spaces <= max_spaces; tried_spaces +=1 ) {
+        for ( var tried_spaces = 1; ++tried_spaces <= max_spaces; ) {
           params = that.calculate_value_labels_params( min, max, range, tried_spaces );
           if ( params.waste <= min_waste ) {
             min_waste = params.waste;
