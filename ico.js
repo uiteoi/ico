@@ -122,13 +122,6 @@ Ico.Base = Class.create( {
       if ( ! Object.isArray( this.series[0] ) ) this.series = [this.series];
     } else if ( Object.isNumber( this.series ) ) {
       this.series = [[this.series]];
-    } else if ( Object.isHash( this.series ) ){ // { serie_name : [list of values] } (deprecated)
-      // Transform to array of arrays
-      var that = this, series =[];
-      $H( this.series ).keys().forEach( function( key ) {
-        series.push( that.series[key] ); 
-      } )
-      this.series = series;
     } else {
       throw 'Wrong type for series';
     }
@@ -183,19 +176,20 @@ Ico.Base = Class.create( {
       
     // Scan components and process their options
     this.components = [];
-    Ico.Component.components.each( function( c ) {      
-      var k = c.key, a = that.options[k + '_attributes'], o = that.options[k];
+    for ( var k in Ico.Component.components ) {
+      if ( ! Ico.Component.components.hasOwnProperty( k ) ) continue;
+      var a = that.options[k + '_attributes'], o = that.options[k], v = Ico.Component.components[k];
       if ( o === true && a ) o = that.options[k] = a;
       if ( o ) {
-        var layer = c.value[1];
+        var layer = v[1];
         if ( ! that.components[layer] ) that.components[layer] = [];
         try {
-          that.components[layer].push( that[k] = new (c.value[0])( that, o ) )
+          that.components[layer].push( that[k] = new (v[0])( that, o ) )
         } catch( error ) {
           that.error = error
         }
       }
-    } );
+    };
   },
   
   get_font: function() {
@@ -695,7 +689,7 @@ Ico.Component = Class.create( {
   process_options: function() {}      // process options once set
 } );
 
-Ico.Component.components = new Hash();
+Ico.Component.components = {};
 
 Ico.Component.Template = Class.create( Ico.Component, {
   defaults: function() { return {} },
@@ -705,7 +699,7 @@ Ico.Component.Template = Class.create( Ico.Component, {
   clear: function() {}
 } );
 
-Ico.Component.components.set( 'template', [Ico.Component.Template, 0] );
+Ico.Component.components.template = [Ico.Component.Template, 0];
 
 Ico.Component.Background = Class.create( Ico.Component, {
   defaults: function() { return { corners: true } },
@@ -724,7 +718,7 @@ Ico.Component.Background = Class.create( Ico.Component, {
   }
 } );
 
-Ico.Component.components.set( 'background', [Ico.Component.Background, 0] );
+Ico.Component.components.background = [Ico.Component.Background, 0];
 
 Ico.Component.StatusBar = Class.create( Ico.Component, {
   defaults: function() { return { attributes: { 'text-anchor': 'end' } } },
@@ -737,7 +731,7 @@ Ico.Component.StatusBar = Class.create( Ico.Component, {
   }
 } );
 
-Ico.Component.components.set( 'status_bar', [Ico.Component.StatusBar, 2] );
+Ico.Component.components.status_bar = [Ico.Component.StatusBar, 2];
 
 Ico.Component.MousePointer = Class.create( Ico.Component, {
   defaults: function() { return { attributes: { stroke: '#666', 'stroke-dasharray': '--' } } },
@@ -769,7 +763,7 @@ Ico.Component.MousePointer = Class.create( Ico.Component, {
   }
 } );
 
-Ico.Component.components.set( 'mouse_pointer', [Ico.Component.MousePointer, 2] );
+Ico.Component.components.mouse_pointer = [Ico.Component.MousePointer, 2];
 
 Ico.Component.GraphBackground = Class.create( Ico.Component, {
   defaults: function() {
@@ -798,7 +792,7 @@ Ico.Component.GraphBackground = Class.create( Ico.Component, {
   }
 } );
 
-Ico.Component.components.set( 'graph_background', [Ico.Component.GraphBackground, 1] );
+Ico.Component.components.graph_background = [Ico.Component.GraphBackground, 1];
 
 Ico.Component.Labels = Class.create( Ico.Component, {
   defaults: function() { return {
@@ -936,7 +930,7 @@ Ico.Component.Labels = Class.create( Ico.Component, {
   }
 } );
 
-Ico.Component.components.set( 'labels', [Ico.Component.Labels, 3] );
+Ico.Component.components.labels = [Ico.Component.Labels, 3];
 
 Ico.Component.ValueLabels = Class.create( Ico.Component.Labels, {
   calculate: function() {
@@ -963,13 +957,13 @@ Ico.Component.ValueLabels = Class.create( Ico.Component.Labels, {
       // Search (trial/error method) for the best number of spaces yiedling the lowest waste 
       if ( spaces > 2 ) {
         var min_waste = range, max_spaces = spaces;
-        $R( 2, max_spaces ).each( function( tried_spaces ) {
+        for ( var tried_spaces = 2; tried_spaces <= max_spaces; tried_spaces +=1 ) {
           params = that.calculate_value_labels_params( min, max, range, tried_spaces );
           if ( params.waste <= min_waste ) {
             min_waste = params.waste;
             spaces = tried_spaces;
           }
-        } );
+        };
       }
     }
     params = this.calculate_value_labels_params( min, max, range, spaces );
@@ -1039,7 +1033,7 @@ Ico.Component.ValueLabels = Class.create( Ico.Component.Labels, {
   draw: function() { this.draw_labels_grid( this.graph.y ); }
 } );
 
-Ico.Component.components.set( 'value_labels', [Ico.Component.ValueLabels, 4] );
+Ico.Component.components.value_labels = [Ico.Component.ValueLabels, 4];
 
 Ico.Component.Meanline = Class.create( Ico.Component, {
   defaults: function() { return { attributes: { stroke: '#bbb', 'stroke-width': 2 } } },
@@ -1064,7 +1058,7 @@ Ico.Component.Meanline = Class.create( Ico.Component, {
   }
 } );
 
-Ico.Component.components.set( 'meanline', [Ico.Component.Meanline, 3] );
+Ico.Component.components.meanline = [Ico.Component.Meanline, 3];
 
 Ico.Component.FocusHint = Class.create( Ico.Component, {
   defaults: function() { return {
@@ -1082,7 +1076,7 @@ Ico.Component.FocusHint = Class.create( Ico.Component, {
   }
 } );
 
-Ico.Component.components.set( 'focus_hint', [Ico.Component.FocusHint, 5] );
+Ico.Component.components.focus_hint = [Ico.Component.FocusHint, 5];
 
 Ico.Component.Axis = Class.create( Ico.Component, {
   defaults: function() { return { attributes: { stroke: '#666', 'stroke-width': 1 } } },
@@ -1092,4 +1086,4 @@ Ico.Component.Axis = Class.create( Ico.Component, {
   }  
 } );
 
-Ico.Component.components.set( 'axis', [Ico.Component.Axis, 4] );
+Ico.Component.components.axis = [Ico.Component.Axis, 4];

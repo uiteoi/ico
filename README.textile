@@ -151,9 +151,6 @@ Data series can provided as:
 * A single value (for a bullet graph only)
 * An array of values for a single data serie
 * An array of array of values for multiple series data
-* (deprecated, cannot specify display order) A hash where:
-** each key is the name of the serie
-** value is an array containing the list of values
 
 Examples:
 <pre><code>// A single value for a bullet graph
