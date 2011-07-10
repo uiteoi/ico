@@ -5,6 +5,17 @@
 // Licensed under the MIT license
 //
 
+if ( typeof Object.create !== 'function' ) {
+  Object.create = function ( o ) {
+    if (arguments.length > 1) {
+      throw new Error( 'Object.create implementation only accepts the first parameter.' );
+    }
+    function O() {}
+    O.prototype = o;
+    return new O();
+  };
+}
+
 Array.prototype.indexOf || ( Array.prototype.indexOf = function( v, i ) {
   var l = this.length; if ( l === 0 ) return -1;
   if ( i === undefined ) {

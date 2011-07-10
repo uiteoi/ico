@@ -4,8 +4,27 @@
  * Copyright (c) 2009, Alex R. Young
  * Licensed under the MIT license: http://github.com/uiteoi/ico/blob/master/MIT-LICENSE
  */
+
 var Ico = {
   Version: 0.96,
+  
+  Class : {
+    create : function( p ) {
+      var f = function() { this.initialize.apply( this, arguments ) };
+      f.subclasses = [];
+      
+      if ( arguments.length === 2 ) {
+        f.prototype = Object.create( p.prototype );
+        p.subclasses.push( f );
+        p = arguments[ 1 ];
+      }
+      f.prototype.constructor = f;
+      
+      Object.extend( f.prototype, p );
+      
+      return f;
+    }
+  },
   
   // These helper methods are good candidates for unit testing
   significant_digits_round: function( v, significant_digits, f, string ) {
@@ -104,7 +123,7 @@ var Ico = {
   }
 };
 
-Ico.Base = Class.create( {
+Ico.Base = Ico.Class.create( {
   initialize: function( element, series, options ) {
     this.element = element;
     this.series = series || [[0]];
@@ -671,7 +690,7 @@ Ico.HorizontalBarGraph = Class.create( Ico.BarGraph, {
 // Chart components
 // ----------------
 
-Ico.Component = Class.create( {
+Ico.Component = Ico.Class.create( {
   initialize: function( p, options ) {
     Object.extend( this, {
       p           : p,
@@ -701,7 +720,7 @@ Ico.Component.Template = Class.create( Ico.Component, {
 
 Ico.Component.components.template = [Ico.Component.Template, 0];
 
-Ico.Component.Background = Class.create( Ico.Component, {
+Ico.Component.Background = Ico.Class.create( Ico.Component, {
   defaults: function() { return { corners: true } },
   
   process_options: function() {
@@ -720,7 +739,7 @@ Ico.Component.Background = Class.create( Ico.Component, {
 
 Ico.Component.components.background = [Ico.Component.Background, 0];
 
-Ico.Component.StatusBar = Class.create( Ico.Component, {
+Ico.Component.StatusBar = Ico.Class.create( Ico.Component, {
   defaults: function() { return { attributes: { 'text-anchor': 'end' } } },
   
   draw: function() {
@@ -733,7 +752,7 @@ Ico.Component.StatusBar = Class.create( Ico.Component, {
 
 Ico.Component.components.status_bar = [Ico.Component.StatusBar, 2];
 
-Ico.Component.MousePointer = Class.create( Ico.Component, {
+Ico.Component.MousePointer = Ico.Class.create( Ico.Component, {
   defaults: function() { return { attributes: { stroke: '#666', 'stroke-dasharray': '--' } } },
 
   draw: function() {
@@ -765,7 +784,7 @@ Ico.Component.MousePointer = Class.create( Ico.Component, {
 
 Ico.Component.components.mouse_pointer = [Ico.Component.MousePointer, 2];
 
-Ico.Component.GraphBackground = Class.create( Ico.Component, {
+Ico.Component.GraphBackground = Ico.Class.create( Ico.Component, {
   defaults: function() {
     return {
       key_colors        : ['#aaa','#ccc','#eee'], // e.g. bad, satisfactory, and good colors
@@ -794,7 +813,7 @@ Ico.Component.GraphBackground = Class.create( Ico.Component, {
 
 Ico.Component.components.graph_background = [Ico.Component.GraphBackground, 1];
 
-Ico.Component.Labels = Class.create( Ico.Component, {
+Ico.Component.Labels = Ico.Class.create( Ico.Component, {
   defaults: function() { return {
     marker_size: 5, // 0 to disable
     angle:       0, // degrees, clockwise
@@ -935,7 +954,7 @@ Ico.Component.Labels = Class.create( Ico.Component, {
 
 Ico.Component.components.labels = [Ico.Component.Labels, 3];
 
-Ico.Component.ValueLabels = Class.create( Ico.Component.Labels, {
+Ico.Component.ValueLabels = Ico.Class.create( Ico.Component.Labels, {
   calculate: function() {
     var that = this, max = this.p.max, min = this.p.min, range = max - min,
         spaces = this.options.spaces,
@@ -1038,7 +1057,7 @@ Ico.Component.ValueLabels = Class.create( Ico.Component.Labels, {
 
 Ico.Component.components.value_labels = [Ico.Component.ValueLabels, 4];
 
-Ico.Component.Meanline = Class.create( Ico.Component, {
+Ico.Component.Meanline = Ico.Class.create( Ico.Component, {
   defaults: function() { return { attributes: { stroke: '#bbb', 'stroke-width': 2 } } },
 
   calculate: function() {
@@ -1063,7 +1082,7 @@ Ico.Component.Meanline = Class.create( Ico.Component, {
 
 Ico.Component.components.meanline = [Ico.Component.Meanline, 3];
 
-Ico.Component.FocusHint = Class.create( Ico.Component, {
+Ico.Component.FocusHint = Ico.Class.create( Ico.Component, {
   defaults: function() { return {
     length: 6,
     attributes: { 'stroke-width': 2, stroke: this.p.get_font().fill }
@@ -1081,7 +1100,7 @@ Ico.Component.FocusHint = Class.create( Ico.Component, {
 
 Ico.Component.components.focus_hint = [Ico.Component.FocusHint, 5];
 
-Ico.Component.Axis = Class.create( Ico.Component, {
+Ico.Component.Axis = Ico.Class.create( Ico.Component, {
   defaults: function() { return { attributes: { stroke: '#666', 'stroke-width': 1 } } },
   draw: function() {
     this.shape = this.p.paper.path( Ico.svg_path( ['M', this.x.start, this.y.stop, 'v', this.y.len, 'h', this.x.len] ) )
