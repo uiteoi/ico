@@ -46,7 +46,7 @@ var Ico = {
 
   svg_path: function( a ) {
     var path = '', previous_isNumber = false;
-    $A( a ).each( function( v ) {
+    a.forEach( function( v ) {
       if ( Object.isNumber( v ) ) {
         if ( previous_isNumber ) path += ' ';
         path += Math.round( v );
@@ -125,7 +125,7 @@ Ico.Base = Class.create( {
     } else if ( Object.isHash( this.series ) ){ // { serie_name : [list of values] } (deprecated)
       // Transform to array of arrays
       var that = this, series =[];
-      $H( this.series ).keys().each( function( key ) {
+      $H( this.series ).keys().forEach( function( key ) {
         series.push( that.series[key] ); 
       } )
       this.series = series;
@@ -380,7 +380,7 @@ Ico.SparkLine = Class.create( Ico.Base, {
   
   draw_serie: function( serie ) {
     var that = this, x = this.x.start + this.x.start_offset, p;
-    serie.each( function( v ) {
+    serie.forEach( function( v ) {
       p = Ico.svg_path(
         [( p ? p + 'L' : 'M' ), x, that.y.start + that.y.start_offset - that.plot( v )]
       );
@@ -408,7 +408,7 @@ Ico.SparkBar = Class.create( Ico.SparkLine, {
 
   draw_serie: function( serie ) {
     var that = this, x = this.x.start + this.x.start_offset, p = '';
-    serie.each( function( v ) {
+    serie.forEach( function( v ) {
       p += Ico.svg_path( ['M', x, that.bar_base, 'v', - that.scale * v ] );
       x += that.x.step;
     } )
@@ -502,7 +502,7 @@ Ico.BaseGraph = Class.create( Ico.Base, {
     this.max = min_max[1];
     $super( options ); // !! process superclass options after min and max adjustments
     // Set default colors[] for individual series
-    this.series.each( function( serie, i ) {
+    this.series.forEach( function( serie, i ) {
       that.options.colors[i] || (
         that.options.colors[i] = that.options.color || Raphael.hsb2rgb( Math.random(), 1, .75 ).hex
       )
@@ -549,7 +549,7 @@ Ico.LineGraph = Class.create( Ico.BaseGraph, {
   process_options: function( $super, options ) { $super( options );
     var that = this;
     
-    this.series.each( function( serie, i ) {
+    this.series.forEach( function( serie, i ) {
       var color = that.options.colors[i];
       
       if ( ! that.options.series_attributes[i] ) {
@@ -631,7 +631,7 @@ Ico.BarGraph = Class.create( Ico.BaseGraph, {
   process_options: function( $super, options ) { $super( options );
     var that = this;
     
-    this.series.each( function( serie, i ) {
+    this.series.forEach( function( serie, i ) {
       var color = that.options.colors[i];
       if ( ! that.options.series_attributes[i] ) {
         that.options.series_attributes[i] = {
@@ -871,7 +871,7 @@ Ico.Component.Labels = Class.create( Ico.Component, {
   get_labels_bounding_boxes: function( d ) {
     if ( this.labels ) return this.bbox;
     this.labels = []; this.bboxes = []; this.bbox = [0, 0];
-    var that = this, longuest = 0; d.labels.each(
+    var that = this, longuest = 0; d.labels.forEach(
       function ( l ) {
         if ( typeof( l ) == 'undefined' ) l = "";
         that.labels.push( l = that.p.paper.text( 10, 10, l.toString() ).attr( that.font ) );
@@ -914,7 +914,7 @@ Ico.Component.Labels = Class.create( Ico.Component, {
     if ( dy ) angle += 90;
     var path = [], grid_path = [];
     this.labels || this.get_labels_bounding_boxes( d );
-    this.labels.each( function( label ) {
+    this.labels.forEach( function( label ) {
       if ( marker )    path.push( 'M', x, y, dx ? 'v' : 'h-', marker );
       if ( grid ) grid_path.push( 'M', x, y, dx ? 'v-' + that.y.len : 'h' + that.x.len );
       var x_anchor = x + fx;
@@ -992,7 +992,7 @@ Ico.Component.ValueLabels = Class.create( Ico.Component.Labels, {
       labels.push( l );
     }
     // Then fix value labels precision and add units
-    labels.each( function( l, i ) {
+    labels.forEach( function( l, i ) {
       var len = ( l + '.' ).split( '.' )[1].length;
       if ( len < precision ) {
         if ( len == 0 ) l += '.';
