@@ -5,6 +5,8 @@
  * Licensed under the MIT license: http://github.com/uiteoi/ico/blob/master/MIT-LICENSE
  */
 
+var de = false, ug = console.log;
+
 Object.extend || ( Object.extend = function( d, s ) {
   for( var p in s ) d[p] = s[p];
   
@@ -17,6 +19,10 @@ Object.isArray || ( Object.isArray = function( v ) {
 
 Object.isNumber || ( Object.isNumber = function( v ) {
   return typeof v === 'number';
+} );
+
+Object.isString || ( Object.isString = function( v ) {
+  return typeof v === 'string';
 } );
 
 var Ico = {
@@ -121,9 +127,9 @@ var Ico = {
   },
   
   series_min_max: function( series, dont_adjust ) {
-    console.log( "series_min_max: values length: " + series.length );
+    de&&ug( "series_min_max: values length: " + series.length );
     var values = Array.prototype.concat.apply( [], series );
-    console.log( "series_min_max: values length: " + values.length );
+    de&&ug( "series_min_max: values length: " + values.length );
     if ( values.length == 0 ) throw "Series must have at least one value";
     var min_max = [
         Ico.significant_digits_round( Math.min.apply( Math, values ), 2, Math.floor ),
@@ -167,15 +173,15 @@ Ico.Base = Ico.Class.create( {
   
   set_series: function() {
     if ( Object.isArray( this.series ) ) {
-      console.log( "set_series Array, element 0 is Array:" + Object.isArray( this.series[0] ) );
+      de&&ug( "set_series Array, element 0 is Array:" + Object.isArray( this.series[0] ) );
       if ( ! Object.isArray( this.series[0] ) ) this.series = [this.series];
     } else if ( Object.isNumber( this.series ) ) {
       this.series = [[this.series]];
     } else {
       throw 'Wrong type for series';
     }
-    this.data_samples = Math.max.apply( Math, this.series.map( function(v) { console.log( "serie length: " + v.length ); return v.length } ) );
-    console.log( "set_series, data samples: " + this.data_samples );
+    this.data_samples = Math.max.apply( Math, this.series.map( function(v) { de&&ug( "serie length: " + v.length ); return v.length } ) );
+    de&&ug( "set_series, data samples: " + this.data_samples );
     var min_max = Ico.series_min_max( this.series, true );
     this.max = min_max[1];
     this.min = min_max[0];
@@ -201,7 +207,7 @@ Ico.Base = Ico.Class.create( {
       units:                '',
       units_position:       1   // 0 => before value e.g. $34, 1 => after value e.g. 45%.
     };
-    console.log( "options: width: " + this.options.width + ', height: ' + this.options.height + ', color: ' + this.options.color );
+    de&&ug( "options: width: " + this.options.width + ', height: ' + this.options.height + ', color: ' + this.options.color );
   },
   
   process_options: function( options ) {
@@ -822,7 +828,7 @@ Ico.Component.MousePointer = Ico.Class.create( Ico.Component, {
     
     this.shape = this.p.paper.path().attr( this.options.attributes ).hide();
     
-    this.p.element.observe( 'mousemove', function( e ) {
+    this.p.element.onmousemove = function( e ) {
       var viewport_offset =  that.p.element.viewportOffset();
       var x = e.clientX - viewport_offset[0];
       var y = e.clientY - viewport_offset[1];
@@ -838,9 +844,9 @@ Ico.Component.MousePointer = Ico.Class.create( Ico.Component, {
       } else {
         that.shape.hide();
       }
-    } );
+    };
     
-    this.p.element.observe( 'mouseout', function( e ) { that.shape.hide() } );    
+    this.p.element.onmouseout = function( e ) { that.shape.hide() };
   }
 } );
 
@@ -987,7 +993,7 @@ Ico.Component.Labels = Ico.Class.create( Ico.Component, {
         marker = this.options.marker_size,
         fx = d.f[0], fy = d.f[1], angle = d.angle,
         options = this.p.options, paper = this.p.paper,
-        grid = Object.isUndefined( this.options.grid ) ? options.grid : this.options.grid
+        grid = this.options.grid || options.grid
     ;
     if ( dy ) angle += 90;
     var path = [], grid_path = [];
@@ -1007,9 +1013,7 @@ Ico.Component.Labels = Ico.Class.create( Ico.Component, {
     if ( marker ) paper.path( Ico.svg_path( path ) ).attr( this.markers_attributes );
     if ( grid ) {
       if ( dx ) grid_path.push( 'M', this.x.start, ' ', this.y.stop, 'h', this.x.len, 'v', this.y.len );
-      paper.path( Ico.svg_path( grid_path ) ).attr( Object.isUndefined( this.options.grid_attributes )
-        ? options.grid_attributes : this.options.grid_attributes
-      );
+      paper.path( Ico.svg_path( grid_path ) ).attr( this.options.grid_attributes || options.grid_attributes );
     }
   }
 } );
@@ -1027,12 +1031,12 @@ Ico.Component.ValueLabels = Ico.Class.create( Ico.Component.Labels, {
       // Calculate minimal step between labels
       var angle = Math.abs( this.options.angle ), min_step;
       if ( ( this.orientation && angle < 30 ) || ( !this.orientation && angle > 60 ) ) {
-        min_step = [min, max].map( function( v ) {
+        min_step = Math.max.apply( Math, [min, max].map( function( v ) {
           return that.text_size(
             '0' + Ico.significant_digits_round( v, 3, Math.round, true ) + that.p.options.units,
             that.font
           )[0]
-        } ).max();
+        } ) );
       } else {
         min_step = 1.5 * this.text_size( '0', this.font )[1]; // allow 1/2 character height spacing
       }
@@ -1092,7 +1096,7 @@ Ico.Component.ValueLabels = Ico.Class.create( Ico.Component.Labels, {
         spaces_above_zero -= 1;
       }
       var spaces_under_zero = spaces - spaces_above_zero;
-      var step = Ico.significant_digits_round( [max / spaces_above_zero, - min / spaces_under_zero].max(), 2,
+      var step = Ico.significant_digits_round( Math.max( max / spaces_above_zero, - min / spaces_under_zero ), 2,
         function( v ) { // the 2 digits rounding function
           v = Math.ceil( v );
           if ( v <= 10 ) return v;
@@ -1114,7 +1118,7 @@ Ico.Component.ValueLabels = Ico.Class.create( Ico.Component.Labels, {
     return { min: min, max: max, spaces: spaces, step: step, waste: spaces * step - range };
   },
   
-  draw: function() { this.draw_labels_grid( this.graph.y ); }
+  draw: function() { this.draw_labels_grid( this.graph.y ) }
 } );
 
 Ico.Component.components.value_labels = [Ico.Component.ValueLabels, 4];
@@ -1124,9 +1128,12 @@ Ico.Component.Meanline = Ico.Class.create( Ico.Component, {
 
   calculate: function() {
     var values = this.p.all_values;
+    this.mean = values.reduce( function( sum, v ) { return sum + v }, 0 );
+    de&&ug( "Ico.Component.Meanline, calculate, len: " + values.length + ", mean=" + this.mean );
     this.mean = Ico.significant_digits_round(
-      values.inject( 0, function( v, sum ) { return sum + v } ) / values.length, 3, Math.round, true
+      this.mean / values.length, 3, Math.round, true
     );
+    de&&ug( "Ico.Component.Meanline, calculate, len: " + values.length + ", mean=" + this.mean );
   },
   
   draw: function() {

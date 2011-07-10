@@ -74,8 +74,8 @@
         border-bottom: 2px solid;
       }
     </style>
-    <script type="text/javascript" src="es5.js"></script>
     <script type="text/javascript" src="prototype.js"></script>
+    <script type="text/javascript" src="es5.js"></script>
     <script src="raphael-1.5.2.js" type="text/javascript" charset="utf-8"></script>
     <script src="ico.js" type="text/javascript" charset="utf-8"></script>    
   </head>
@@ -124,6 +124,7 @@
       
       document.title = "Ico " + Ico.Version + " / Raphael " + Raphael.version + /* " / Prototype " + Prototype.Version + */ " Test Suite"
       var sparkline = new Ico.SparkLine( $( 'sparkline0' ), [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9], { highlight: true } );
+      
       $( "raphael_mode" ).innerHTML = sparkline.svg ? "SVG" : "VML";
       new Ico.SparkBar( $( 'sparkbar0' ), [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9],
         { color: 'grey', highlight: { index: 5, color: 'orange' } }
@@ -370,24 +371,21 @@
         }
       );
       
-      function set_legend( graph, serie, element ) {
-        Event.observe( element, 'click', function() {
-          graph.toggle_serie( serie );
-        } );
-        element.setStyle( 'cursor: pointer;' )
-        element.setStyle( 'border-color: ' + graph.options.colors[serie] + ';' )
+      function set_legend( graphs, series, element ) {
+        element.onclick = function() {
+          series.forEach( function( serie, i ) { graphs[i].toggle_serie( serie ) } );
+        };
+        element.style.cursor = "pointer";
+        element.style.borderColor = graphs[0].options.colors[series[0]];
       }
 
       g10.hide_serie( 1 );
       g11.hide_serie( 2 );
       
-      set_legend( g10, 0, $('legend_this_year') );
-      set_legend( g10, 1, $('legend_last_year')  );
-      set_legend( g10, 2, $('legend_intermitent') );
-
-      set_legend( g11, 0, $('legend_this_year') );
-      set_legend( g11, 1, $('legend_moving_average')  );
-      set_legend( g11, 2, $('legend_last_year') );
+      set_legend( [g10, g11], [0, 0], $('legend_this_year') );
+      set_legend( [g10, g11], [1, 2], $('legend_last_year')  );
+      set_legend( [g10], [2], $('legend_intermitent') );
+      set_legend( [g11], [1], $('legend_moving_average')  );
     };
     </script>
   </body>
