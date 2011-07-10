@@ -120,9 +120,11 @@
     
     <script type="text/javascript">
     window.onload = function () {
-      document.title = "Ico " + Ico.Version + " / Raphael " + Raphael.version + " / Prototype " + Prototype.Version + " Test Suite"
+      var $ = function( id ) { return document.getElementById( id ); };
+      
+      document.title = "Ico " + Ico.Version + " / Raphael " + Raphael.version + /* " / Prototype " + Prototype.Version + */ " Test Suite"
       var sparkline = new Ico.SparkLine( $( 'sparkline0' ), [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9], { highlight: true } );
-      $( "raphael_mode" ).replace( sparkline.svg ? "SVG" : "VML" );
+      $( "raphael_mode" ).innerHTML = sparkline.svg ? "SVG" : "VML";
       new Ico.SparkBar( $( 'sparkbar0' ), [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9],
         { color: 'grey', highlight: { index: 5, color: 'orange' } }
       );
@@ -328,7 +330,7 @@
       var min = min_max[0];
       var max = min_max[1];
       var status_bar = {
-        x : parseInt( $( 'graph10' ).getStyle( 'width' ) ) / 2, y:  8,
+        x : parseInt( Ico.get_style( $( 'graph10' ), 'width' ) ) / 2, y:  8,
         attributes: { 'font-size': '14', fill: '#642', 'text-anchor': 'middle' }
       };
       

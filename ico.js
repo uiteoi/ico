@@ -5,6 +5,20 @@
  * Licensed under the MIT license: http://github.com/uiteoi/ico/blob/master/MIT-LICENSE
  */
 
+Object.extend || ( Object.extend = function( d, s ) {
+  for( var p in s ) d[p] = s[p];
+  
+  return d;
+} );
+
+Object.isArray || ( Object.isArray = function( v ) {
+  return typeof v === 'object' && v instanceof Array;
+} );
+
+Object.isNumber || ( Object.isNumber = function( v ) {
+  return typeof v === 'number';
+} );
+
 var Ico = {
   Version: 0.96,
   
@@ -24,6 +38,19 @@ var Ico = {
       
       return f;
     }
+  },
+  
+  get_style : function( e, p ) {
+    var v = "";
+    if ( document.defaultView && document.defaultView.getComputedStyle ) {
+      v = document.defaultView.getComputedStyle( e, "" ).getPropertyValue( p );
+    } else if( e.currentStyle ) {
+      p = p.replace(/\-(\w)/g, function( s, p ){
+        return p.toUpperCase();
+      } );
+      v = e.currentStyle[p];
+    }
+    return v;
   },
   
   // These helper methods are good candidates for unit testing
@@ -94,7 +121,9 @@ var Ico = {
   },
   
   series_min_max: function( series, dont_adjust ) {
-    var values = series.flatten();
+    console.log( "series_min_max: values length: " + series.length );
+    var values = Array.prototype.concat.apply( [], series );
+    console.log( "series_min_max: values length: " + values.length );
     if ( values.length == 0 ) throw "Series must have at least one value";
     var min_max = [
         Ico.significant_digits_round( Math.min.apply( Math, values ), 2, Math.floor ),
@@ -138,13 +167,15 @@ Ico.Base = Ico.Class.create( {
   
   set_series: function() {
     if ( Object.isArray( this.series ) ) {
+      console.log( "set_series Array, element 0 is Array:" + Object.isArray( this.series[0] ) );
       if ( ! Object.isArray( this.series[0] ) ) this.series = [this.series];
     } else if ( Object.isNumber( this.series ) ) {
       this.series = [[this.series]];
     } else {
       throw 'Wrong type for series';
     }
-    this.data_samples = this.series.pluck( 'length' ).max();
+    this.data_samples = Math.max.apply( Math, this.series.map( function(v) { console.log( "serie length: " + v.length ); return v.length } ) );
+    console.log( "set_series, data samples: " + this.data_samples );
     var min_max = Ico.series_min_max( this.series, true );
     this.max = min_max[1];
     this.min = min_max[0];
@@ -155,20 +186,22 @@ Ico.Base = Ico.Class.create( {
   set_defaults: function() {
     this.options = {
       // Canvas dimensions
-      width:                parseInt( this.element.getStyle( 'width'  ) ) -1,
-      height:               parseInt( this.element.getStyle( 'height' ) ) -1,
+      width:                parseInt( this.element.offsetWidth ) -1,
+      height:               parseInt( this.element.offsetHeight ) -1,
       // Padding
       x_padding_left:       0,
       x_padding_right:      0,
       y_padding_top:        0,
       y_padding_bottom:     0,
       // Attributes
-      color:                this.element.getStyle( 'color' ),
+      color:                Ico.get_style( this.element, "color" ),
+      //color:                this.element.getStyle( 'color' ),
       mouseover_attributes: { stroke: 'red' },
       // Units
       units:                '',
       units_position:       1   // 0 => before value e.g. $34, 1 => after value e.g. 45%.
     };
+    console.log( "options: width: " + this.options.width + ', height: ' + this.options.height + ', color: ' + this.options.color );
   },
   
   process_options: function( options ) {
@@ -214,9 +247,9 @@ Ico.Base = Ico.Class.create( {
   get_font: function() {
     if( this.font ) return this.font;
     this.font = {
-      'font-family': this.element.getStyle( 'font-family' ),
-      'font-size'  : this.options.font_size || this.element.getStyle( 'font-size' ) || 10,
-      fill         : this.element.getStyle( 'color' ) || '#666',
+      'font-family': Ico.get_style( this.element, 'font-family' ),
+      'font-size'  : this.options.font_size || Ico.get_style( this.element, 'font-size' ) || 10,
+      fill         : Ico.get_style( this.element, 'color' ) || '#666',
       stroke       : 'none'
     };
     Object.extend( this.font, this.options.font || {} );
