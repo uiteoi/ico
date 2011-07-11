@@ -7,42 +7,42 @@
 
 var de = false, ug = console.log;
 
-Object.extend || ( Object.extend = function( d, s ) {
-  for( var p in s ) d[p] = s[p];
-  
-  return d;
-} );
-
-Object.isArray || ( Object.isArray = function( v ) {
-  return typeof v === 'object' && v instanceof Array;
-} );
-
-Object.isNumber || ( Object.isNumber = function( v ) {
-  return typeof v === 'number';
-} );
-
-Object.isString || ( Object.isString = function( v ) {
-  return typeof v === 'string';
-} );
-
 var Ico = {
   Version: 0.96,
   
+  extend : function( d, s ) {
+    for( var p in s ) d[p] = s[p];
+    
+    return d
+  },
+  
+  isArray : function( v ) { return typeof v === 'object' && v instanceof Array }
+};
+
+Ico.extend( Ico, {
   Class : {
+    add_methods : Ico.extend, // could be changed to implement additional features such as $super
+    
     create : function( p ) {
-      var f = function() { this.initialize.apply( this, arguments ) };
-      // f.subclasses = [];
+      var C = function() { this.initialize.apply( this, arguments ) };
+      C.subclasses = [];
       
-      if ( arguments.length === 2 ) {
-        f.prototype = Object.create( f.$super = p.prototype );
-        // p.subclasses.push( f );
-        p = arguments[ 1 ];
+      var i = -1;
+      if ( typeof p === "function" ) {
+        i += 1;
+        ( C.superclass = p ).subclasses.push( C );
+        C.prototype = Object.create( p.prototype );
+      } else {
+        C.superclass = null;
       }
-      f.prototype.constructor = f;
+      C.prototype.constructor = C;
       
-      Object.extend( f.prototype, p );
+      // Add instance properties and methods
+      while ( ++i < arguments.length ) Ico.Class.add_methods( C.prototype, arguments[ i ] );
       
-      return f;
+      C.prototype.initialize || ( C.prototype.initialize = function() {} );
+      
+      return C;
     }
   },
   
@@ -99,7 +99,7 @@ var Ico = {
   svg_path: function( a ) {
     var path = '', previous_isNumber = false;
     a.forEach( function( v ) {
-      if ( Object.isNumber( v ) ) {
+      if ( typeof v === "number" ) {
         if ( previous_isNumber ) path += ' ';
         path += Math.round( v );
         previous_isNumber = true;
@@ -143,7 +143,7 @@ var Ico = {
   
   moving_average: function( serie, samples, options ) {
     var ma = [], i = -1, j = -1, p;
-    if ( options && Object.isArray( p = options.previous_values ) ) {
+    if ( options && Ico.isArray( p = options.previous_values ) ) {
       serie = p.concat( serie );
       i += p.length
     }
@@ -156,7 +156,7 @@ var Ico = {
     }
     return ma;
   }
-};
+} );
 
 Ico.Base = Ico.Class.create( {
   initialize: function( element, series, options ) {
@@ -173,10 +173,10 @@ Ico.Base = Ico.Class.create( {
   },
   
   set_series: function() {
-    if ( Object.isArray( this.series ) ) {
-      de&&ug( "set_series Array, element 0 is Array:" + Object.isArray( this.series[0] ) );
-      if ( ! Object.isArray( this.series[0] ) ) this.series = [this.series];
-    } else if ( Object.isNumber( this.series ) ) {
+    if ( Ico.isArray( this.series ) ) {
+      de&&ug( "set_series Array, element 0 is Array:" + Ico.isArray( this.series[0] ) );
+      if ( ! Ico.isArray( this.series[0] ) ) this.series = [this.series];
+    } else if ( typeof this.series === "number" ) {
       this.series = [[this.series]];
     } else {
       throw 'Wrong type for series';
@@ -214,7 +214,7 @@ Ico.Base = Ico.Class.create( {
   process_options: function( options ) {
     var that = this;
     
-    if ( options ) Object.extend( this.options, options );
+    if ( options ) Ico.extend( this.options, options );
     
     // Set min and max if overriden
     if ( typeof( this.options.min ) != 'undefined' ) this.min = Math.min( this.min, this.options.min ); 
@@ -259,7 +259,7 @@ Ico.Base = Ico.Class.create( {
       fill         : Ico.get_style( this.element, 'color' ) || '#666',
       stroke       : 'none'
     };
-    Object.extend( this.font, this.options.font || {} );
+    Ico.extend( this.font, this.options.font || {} );
     // this.graph.x.labels_font = this.graph.y.labels_font = this.font;
     return this.font
   },
@@ -314,7 +314,7 @@ Ico.Base = Ico.Class.create( {
   },
   
   format_value: function( v, p1000 ) {
-    if ( v != 0 && ! Object.isNumber( p1000 ) ) { // !! v can be the string "0"
+    if ( v != 0 && typeof p1000 !== "number" ) { // !! v can be the string "0"
       p1000 = Ico.root( v, 1000 );
       p1000 && ( v /= Math.pow( 1000, p1000 ) );
       v = Ico.significant_digits_round( v, 3, Math.round, true ).toString()
@@ -426,7 +426,7 @@ Ico.SparkLine = Ico.Class.create( Ico.Base, {
     var highlight = this.options.highlight;
     if ( highlight ) {
       this.highlight = { index: this.data_samples - 1, color: 'red', radius: 2 };
-      Object.extend( this.highlight, highlight == true? {} : highlight );
+      Ico.extend( this.highlight, highlight == true? {} : highlight );
       if ( this.highlight.index == this.data_samples - 1  ) this.graph.x.padding[1] += this.highlight.radius + 1;
     }
   },
@@ -487,7 +487,7 @@ Ico.BulletGraph = Ico.Class.create( Ico.Base, {
     
     this.orientation = 1;
     
-    Object.extend( this.options, {
+    Ico.extend( this.options, {
       min              : 0,
       max              : 100,
       color            : '#33e',
@@ -499,10 +499,10 @@ Ico.BulletGraph = Ico.Class.create( Ico.Base, {
     Ico.Base.prototype.process_options.call( this, options );
     
     this.target = { color: '#666', length: 0.8, 'stroke-width' : 2 };
-    if ( Object.isNumber( this.options.target ) ) {
+    if ( typeof this.options.target === "number" ) {
       this.target.value = this.options.target
     } else {
-      Object.extend( this.target, this.options.target || {} );
+      Ico.extend( this.target, this.options.target || {} );
     }
   },
   
@@ -544,7 +544,7 @@ Ico.BaseGraph = Ico.Class.create( Ico.Base, {
   set_defaults: function() {
     Ico.Base.prototype.set_defaults.call( this );
     
-    Object.extend( this.options, {
+    Ico.extend( this.options, {
       // Padding options
       y_padding_top:            15,
       y_padding_bottom:         10,
@@ -607,7 +607,7 @@ Ico.LineGraph = Ico.Class.create( Ico.BaseGraph, {
   set_defaults: function() {
     Ico.BaseGraph.prototype.set_defaults.call( this );
     
-    Object.extend( this.options, {
+    Ico.extend( this.options, {
       curve_amount:     5,  // 0 => disable
       dot_radius:       3,  // 0 => no dot
       dot_attributes:   [], // List of attributes for dots
@@ -759,16 +759,16 @@ Ico.HorizontalBarGraph = Ico.Class.create( Ico.BarGraph, {
 
 Ico.Component = Ico.Class.create( {
   initialize: function( p, options ) {
-    Object.extend( this, {
+    Ico.extend( this, {
       p           : p,
       graph       : p.graph,
       x           : p.x,
       y           : p.y,
       orientation : p.orientation
     } );
-    if( Object.isArray( options ) ) options = { values: options };
-    else if( Object.isNumber( options || Object.isString( options ) ) ) options = { value: options };
-    this.options = Object.extend( this.defaults(), options );
+    if( Ico.isArray( options ) ) options = { values: options };
+    else if( typeof options === "number" || typeof options === "string" ) options = { value: options };
+    this.options = Ico.extend( this.defaults(), options );
     this.process_options();
   },
   defaults: function() { return {} }, // return default options, if any
@@ -893,13 +893,13 @@ Ico.Component.Labels = Ico.Class.create( Ico.Component, {
   } },
   
   process_options: function( options ) {
-    Object.extend( this.font = this.p.get_font(), this.options.font || {} );
+    Ico.extend( this.font = this.p.get_font(), this.options.font || {} );
     this.markers_attributes = { stroke: this.font.fill, 'stroke-width': 1 };
-    Object.extend( this.markers_attributes, this.options.markers_attributes );
+    Ico.extend( this.markers_attributes, this.options.markers_attributes );
     if ( this.options.title ) {
       var title = this.options.title;
       this.title = title.value;
-      Object.extend( this.title_font = this.font, this.options.title_font );
+      Ico.extend( this.title_font = this.font, this.options.title_font );
     }
     this.x.angle = 0;
     this.y.angle = -90; // default vertical labels angle vs vertical axis
