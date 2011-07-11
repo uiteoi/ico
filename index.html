@@ -120,22 +120,24 @@
     
     <script type="text/javascript">
     window.onload = function () {
-      var $ = function( id ) { return document.getElementById( id ); };
+      // var $ = function( id ) { return document.getElementById( id ); };
       
       document.title = "Ico " + Ico.Version + " / Raphael " + Raphael.version + /* " / Prototype " + Prototype.Version + */ " Test Suite"
-      var sparkline = new Ico.SparkLine( $( 'sparkline0' ), [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9], { highlight: true } );
+      var sparkline = new Ico.SparkLine( "sparkline0", [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9], { highlight: true } );
       
       $( "raphael_mode" ).innerHTML = sparkline.svg ? "SVG" : "VML";
-      new Ico.SparkBar( $( 'sparkbar0' ), [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9],
+      
+      new Ico.SparkBar( "sparkbar0", [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9],
         { color: 'grey', highlight: { index: 5, color: 'orange' } }
       );
-      new Ico.BulletGraph( $( 'bulletgraph0' ), 0,
+      
+      new Ico.BulletGraph( "bulletgraph0", 0,
         { min: 0, max: 100, target: 65,
           graph_background: { key_values: [50, 75], key_colors: ['#555','#999','#ddd'], colors_transition: 10 }
         }
       );
       
-      var b1 = new Ico.BulletGraph( $( 'bulletgraph1' ), -40,
+      var b1 = new Ico.BulletGraph( "bulletgraph1", -40,
         { min: -50, max: 50, target: { value: 0, length: 1, color: 'black', 'stroke-width' : 1 },
           graph_background: { key_values: [0], key_colors: ['#555','#ddd'], colors_transition: 20 },
           font: { 'font-family': 'Arial', 'font-size': 15, 'fill' : 'black', stroke: 'none' },
@@ -153,7 +155,7 @@
       //b1.draw();
       
       // Draw graph0, clear it then draw again with no change
-      new Ico.BarGraph( $( 'graph0' ), [2, 5, 1, 10, 15, 33, 20, 25, 1], 
+      new Ico.BarGraph( "graph0", [2, 5, 1, 10, 15, 33, 20, 25, 1], 
         {   labels: {
               values: ['foals', 'elephants', 'extinct dinosaurs', 'frogs', 'fish', 'salamanders', 'superman', 'eagles', 'ninjas'],
               angle: -30
@@ -168,7 +170,7 @@
         }
       ).clear().draw();
       
-      new Ico.HorizontalBarGraph( $( 'graph1' ), [2, 5, -3.17, 10, 15, 33, 20, 25, 1], 
+      new Ico.HorizontalBarGraph( "graph1", [2, 5, -3.17, 10, 15, 33, 20, 25, 1], 
         {   // font: { 'font-family': 'Arial', 'font-size': 16, 'fill' : 'black', stroke: 'none' }
             labels: {
               values: ['Foals', 'Elephants', 'Extinct Dinosaurs', 'Frogs', 'Fish', 'Salamanders', 'Superman', 'Eagles', 'Ninjas'],
@@ -205,7 +207,7 @@
       long_months.rotate( start_month )
       
       var every_other_month = months.map( function( m, i ) { if ( i % 2 ) return m } );
-      new Ico.BarGraph( $( 'graph2' ),
+      new Ico.BarGraph( "graph2",
         [ [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
           [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
         ],
@@ -224,7 +226,7 @@
           , status_bar : true
         }
       );
-      new Ico.LineGraph( $( 'graph3' ),
+      new Ico.LineGraph( "graph3",
         [[31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3],
          [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]
         ],
@@ -246,7 +248,7 @@
           , status_bar : true
         }
       );
-      new Ico.BarGraph( $( 'graph4' ),
+      new Ico.BarGraph( "graph4",
         [1500, 1627, 1760, 1820, 1230, 1430, 2131, 1923, 1839, 1956, 2076, 2175],
         {   font_size: 16
           , labels: every_other_month
@@ -260,7 +262,7 @@
           , status_bar : true
         }
       );
-      new Ico.BarGraph( $( 'graph5' ),
+      new Ico.BarGraph( "graph5",
         [
           0.001500, 0.001627, 0.001760, 0.001820, 0.001230, 0.001430,
           0.002131, 0.001923, 0.001839, 0.001956, 0.002076, 0.002175
@@ -274,7 +276,7 @@
           , status_bar : true
         }
       );
-      new Ico.BarGraph( $( 'graph6' ),
+      new Ico.BarGraph( "graph6",
         [-150, -162.7, -176, -182, -23, -143, -213.1, -192.3, -183.9, -195.6, -207.6, -217.5],
         {   font_size: 16
           , labels: months
@@ -285,7 +287,7 @@
         }
       );
       var serie = [-1500, -1627, -1760, -1820, -1230, -1430, -2131, -1923, -1839, -1956, -2076, -2175]; 
-      new Ico.BarGraph( $( 'graph7' ), serie,
+      new Ico.BarGraph( "graph7", serie,
         {   font_size: 16
           , labels: months
           , color: '#ccf'
@@ -294,7 +296,7 @@
           , status_bar : true
         }
       );
-      new Ico.HorizontalBarGraph( $( 'graph8' ), serie.map( function(v) {return v * 1000000} ),
+      new Ico.HorizontalBarGraph( "graph8", serie.map( function(v) {return v * 1000000} ),
         {   font_size: 14
           , color: '#ccf'
           , axis: false
@@ -306,7 +308,7 @@
           , status_bar : true
         }
       );
-      new Ico.HorizontalBarGraph( $( 'graph9' ),
+      new Ico.HorizontalBarGraph( "graph9",
         [ -0.001500, -0.001627, -0.001760, -0.001820, -0.001230, -0.001430,
           -0.002131, -0.001923, -0.001839, -0.001956, -0.002076, -0.002175
         ],
@@ -335,7 +337,7 @@
         attributes: { 'font-size': '14', fill: '#642', 'text-anchor': 'middle' }
       };
       
-      var g10 = new Ico.LineGraph( $( 'graph10' ),
+      var g10 = new Ico.LineGraph( "graph10",
         [serie1, serie2, serie5],
         {   min: min, max: max
           , font_size: 12
@@ -352,7 +354,7 @@
         }
       );
       
-      g11 = new Ico.LineGraph( $( 'graph11' ),
+      g11 = new Ico.LineGraph( "graph11",
         [serie3, serie4, serie1],
         {   min: g10.min, max: g10.max
           , font_size: 12

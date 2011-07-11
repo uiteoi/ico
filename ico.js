@@ -160,6 +160,7 @@ var Ico = {
 
 Ico.Base = Ico.Class.create( {
   initialize: function( element, series, options ) {
+    if ( typeof element == "string" ) element = document.getElementById( element );
     this.element = element;
     this.series = series || [[0]];
     this.set_defaults();
@@ -829,7 +830,8 @@ Ico.Component.MousePointer = Ico.Class.create( Ico.Component, {
     this.shape = this.p.paper.path().attr( this.options.attributes ).hide();
     
     this.p.element.onmousemove = function( e ) {
-      var viewport_offset =  that.p.element.viewportOffset();
+      e || ( e = window.event );
+      var viewport_offset = Element.viewportOffset( that.p.element );
       var x = e.clientX - viewport_offset[0];
       var y = e.clientY - viewport_offset[1];
       // Google chrome: if the view does not start at 0, 0, there is an offset

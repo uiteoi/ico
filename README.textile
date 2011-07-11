@@ -32,13 +32,13 @@ h1. Examples
 
 Simple sparkline, no decoration:
 <pre><code>new Ico.SparkLine(
-  $( 'market_trend_id' ),                           // DOM element where the sparkline is rendered
+  "market_trend_id",                                // DOM element where the sparkline is rendered
   [5, 2, -1, 17, 23, 15, 7, 6, -5, -2, 4, 7, 3, 9]  // List of values for market trend
 )</code></pre>
 
 Bullet graph with 3 graph background colors and gradient transtitions:
 <pre><code>new Ico.BulletGraph(
-  $( 'gross_profit_id' ), // DOM element where the bullet graph will be rendered
+  "gross_profit_id",      // DOM element where the bullet graph will be rendered
   85,                     // Actual gross profit for current period as a percentage of gross revenues
   {                       // Bullet graph options
     min: 0,               // Minimum gross profit value
@@ -55,7 +55,7 @@ Bullet graph with 3 graph background colors and gradient transtitions:
 Line graph with 2 lines, angled labels, $ units, meanline, mouse pointer, mouse-over value in status bar, and grid:
 <pre><code>var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 new Ico.LineGraph(
-  $( 'gross_profit_id' ),                          // DOM element where the graph will be rendered
+  "gross_profit_id",                               // DOM element where the graph will be rendered
   [                                                // The 2 series
     [31, 5, 1, -5, 15, 33, 20, 25, 1, 12, 25, -3], // Drawn first
     [18, -1, -7, 17, 15, 21, 1, 25, 3, 21, 16, 4]  // Drawn last, on top of previous series
@@ -144,8 +144,11 @@ To create and render a graph, call new <strong>Ico.desired_graph_type</strong>, 
 Example creating and rendering a line graph:
 <pre><code>new Ico.LineGraph( dom_element, data_series, graph_options )</code></pre>
 
-The DOM element is typically referenced by its id and fetched this way with the Prototype library:
-<pre><code>dom_element = $( 'element_id' )</code></pre>
+The DOM element can be provided as a DOM Element object:
+<pre><code>new Ico.LineGraph( $( "sales" ), data_series, graph_options )</code></pre>
+
+The DOM element can also be specified using a string containing a DOM id:
+<pre><code>new Ico.LineGraph( "sales", data_series, graph_options )</code></pre>
 
 Data series can provided as:
 * A single value (for a bullet graph only)
