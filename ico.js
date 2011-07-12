@@ -62,7 +62,7 @@ Ico.extend( Ico, {
   // Element.viewportOffset from Prototype library (last dependency)
   // If not available, i.e. when prototype is not installed the only feature that will be disabled
   // is the mouse pointer component.
-  viewport_offset : Element.viewportOffset || function () { return [ 0, 0] },
+  viewport_offset : Element.viewportOffset,
   
   // These helper methods are good candidates for unit testing
   significant_digits_round: function( v, significant_digits, f, string ) {
@@ -830,6 +830,8 @@ Ico.Component.MousePointer = Ico.Class.create( Ico.Component, {
   defaults: function() { return { attributes: { stroke: '#666', 'stroke-dasharray': '--' } } },
 
   draw: function() {
+    if ( ! Ico.viewport_offset ) return;
+    
     var that = this;
     
     this.shape = this.p.paper.path().attr( this.options.attributes ).hide();
