@@ -74,7 +74,7 @@
         border-bottom: 2px solid;
       }
     </style>
-    <script type="text/javascript" src="prototype.js"></script>
+    <!---script type="text/javascript" src="prototype.js"></script-->
     <script type="text/javascript" src="es5.js"></script>
     <script src="raphael-1.5.2.js" type="text/javascript" charset="utf-8"></script>
     <script src="ico.js" type="text/javascript" charset="utf-8"></script>    
@@ -120,7 +120,7 @@
     
     <script type="text/javascript">
     window.onload = function () {
-      // var $ = function( id ) { return document.getElementById( id ); };
+      var $ = function( id ) { return document.getElementById( id ); };
       
       document.title = "Ico " + Ico.Version + " / Raphael " + Raphael.version + /* " / Prototype " + Prototype.Version + */ " Test Suite"
       var sparkline = new Ico.SparkLine( "sparkline0", [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9], { highlight: true } );

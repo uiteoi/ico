@@ -59,7 +59,10 @@ Ico.extend( Ico, {
     return v;
   },
   
-  viewport_offset : Element.viewportOffset, // from Prototype library (last dependency)
+  // Element.viewportOffset from Prototype library (last dependency)
+  // If not available, i.e. when prototype is not installed the only feature that will be disabled
+  // is the mouse pointer component.
+  viewport_offset : Element.viewportOffset || function () { return [ 0, 0] },
   
   // These helper methods are good candidates for unit testing
   significant_digits_round: function( v, significant_digits, f, string ) {

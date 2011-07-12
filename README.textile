@@ -28,6 +28,12 @@ Unfortunatly tests cannot be automated because it is primaraly about rendering i
 * check for font display defects such as characters mis-alignments
 * measure the time to render the entire test suite page
 
+h1. Dependencies
+
+Ico requires:
+* "Raphael":http://raphaeljs.com
+* "Prototype":http://prototypejs.org only for the mouse_pointer option
+
 h1. Examples
 
 Simple sparkline, no decoration:
