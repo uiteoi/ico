@@ -1,6 +1,6 @@
 h1. Introduction
 
-Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to render graphics as well as the "Prototype":http://prototypejs.org JavaScript framework. This means Ico can render charts in the vast majority of modern web browsers, using "VML":http://en.wikipedia.org/wiki/Vml in IE, or "SVG":http://www.w3.org/TR/SVG/ in SVG standard-compliant web browsers such as Firefox, Apple Safari, Google Chrome, Opera, and Konqueror for Linux. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
+Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to render graphics. This means Ico can render charts in the vast majority of modern web browsers, using "VML":http://en.wikipedia.org/wiki/Vml in IE (< 9), or "SVG":http://www.w3.org/TR/SVG/ in SVG standard-compliant web browsers such as IE 9, Firefox, Apple Safari, Google Chrome, Opera, and Konqueror for Linux. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
 
 Ico's goal is to provide effective visual reprensentation of data according to the work of "Stephen Few":http://www.perceptualedge.com/blog/ and "Edward Tufte":http://en.wikipedia.org/wiki/Edward_Tufte. In particular, Ico provides an implementation of Edward tufte's "Sparklines":http://en.wikipedia.org/wiki/Sparkline and Stephen Few's "Bullet Graphs":http://en.wikipedia.org/wiki/Bullet_graph.
 
@@ -946,15 +946,13 @@ h1. Tested web browsers, known issues
 * iPhone (Safari): pretty amazing, try it
 * Opera: good fonts rendering, bugs: zoom, mouse-over while scrolling
 
-h1. Target 1.0 milestone
+h1. Wishlist
 
-This section outlines the projected improvements to be released with version 1.0.
+This section outlines the projected improvements for upcoming releases.
 
 Features:
 * Display Value Labels Title either above the y axis, in the status bar or under value labels if horizontal graph
-* Add Title component, displayed centered in the graph area, above the background layer 
-* Add Legend component, displayed centered in the status bar for now
-* Allow greater control of labels positioning: left-justification, top, right 
+* Allow greater control of labels positioning: left-justification, top, right
 * By default Draw labels on top (or right if orientation) if all values are negative
 * Enable values formatting with a function to allow custom numbers formatting, provide default formatters
 * Allow single axis (x or y) to be displayed
@@ -964,23 +962,10 @@ Features:
 * Facilitate user events definition on graph elements
 * Add zero line component to draw a line at zero when zero in the range. This can be done today by adding a dummy serie but this would make it easier.
 
-API:
-* Provide cleaner and more intuitive API.
-
-The API still needs to be finalized, expect non-backward compatible changes until version 1.0 is released.
-
 Architechture:
-* Terminate options componentization
 * Componentize series in a Ico.Serie class to allow bars and lines in the same graph but also to allow new types of data series rendering
-* Remove prototype dependency, should also work w/ jQuery, Mootools sh/could probably become js library agnostic as most of the browser specific code is in Raphael itself. Another possibility could be to release Ico with an optional subset of Prototype compatible with other JavaScript frameworks.
 
 Documentation:
 * Ico box model
 * methods beyond intitialization
 * (for contributors) Graph and Components extensions
-
-h1. Dependencies
-
-Ico requires:
-* "Raphael":http://raphaeljs.com
-* "Prototype":http://prototypejs.org
