@@ -5,7 +5,7 @@
  * Licensed under the MIT license: http://github.com/uiteoi/ico/blob/master/MIT-LICENSE
  */
 
-var de = false, ug = console.log;
+var de = false, ug = console.log || function() { de = false };
 
 var Ico = {
   Version: 0.96,
@@ -58,6 +58,8 @@ Ico.extend( Ico, {
     }
     return v;
   },
+  
+  viewport_offset : Element.viewportOffset, // from Prototype library (last dependency)
   
   // These helper methods are good candidates for unit testing
   significant_digits_round: function( v, significant_digits, f, string ) {
@@ -831,7 +833,7 @@ Ico.Component.MousePointer = Ico.Class.create( Ico.Component, {
     
     this.p.element.onmousemove = function( e ) {
       e || ( e = window.event );
-      var viewport_offset = Element.viewportOffset( that.p.element );
+      var viewport_offset = Ico.viewport_offset( that.p.element );
       var x = e.clientX - viewport_offset[0];
       var y = e.clientY - viewport_offset[1];
       // Google chrome: if the view does not start at 0, 0, there is an offset
