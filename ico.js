@@ -705,6 +705,7 @@ Ico.BarGraph = Ico.Class.create( Ico.BaseGraph, {
     Ico.BaseGraph.prototype.set_defaults.call( this );
     
     this.options.bar_padding = 5;
+    this.options.bar_label = true;
   },
   
   process_options: function( options ) {
@@ -737,7 +738,9 @@ Ico.BarGraph = Ico.Class.create( Ico.BaseGraph, {
       w = this.bar_width,
       width = w * 2 / sup,
       base = this.bar_base,
-      bar
+      bar,
+      lx,
+      ly
     ;
     x += w * serie / sup - w / 2;
     this.show_label_onmouseover( bar = this.paper.path( Ico.svg_path( this.orientation?
@@ -745,6 +748,17 @@ Ico.BarGraph = Ico.Class.create( Ico.BaseGraph, {
         ['M', x, y, 'V', base, 'h', width, 'V', y, 'z']
       ) ).attr( a ), v, a, serie, i
     );
+    if ( v !== 0 && this.options.bar_label ) {
+    	if ( this.orientation === 0 ) {
+    		lx = x + width / 2;
+    		ly = y + ( v > 0? -5: 5 );
+    	}
+    	else {
+    		lx = y + ( v > 0? 10: -10 );
+    		ly = x + width / 2;
+    	}
+    	this.paper.text( lx, ly, v + this.options.units );
+    }
     set.push( bar );
     return '';
   }
