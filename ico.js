@@ -132,6 +132,7 @@ var Ico = {
       var range = max - min;
       if ( range === 0 ) {
         min = 0;
+        if ( max === 0 ) max = 1;
       } else if ( range < min ) {
         min -= range / 2;
       } else if ( min > 0 ) {
