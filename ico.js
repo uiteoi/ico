@@ -291,9 +291,11 @@ var Ico = {
     },
     
     clear: function() {
-      this.components_call( 'clear' );
-      this.paper.remove();
-      this.paper = null;
+      if ( this.paper ) {
+        this.components_call( 'clear' );
+        this.paper.remove();
+        this.paper = null;
+      }
       return this
     },
     
