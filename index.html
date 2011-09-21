@@ -118,6 +118,8 @@
       </p>
       <div id="graph10" class="leftGraph"></div>
       <div id="graph11" class="rightGraph"></div>
+      <div id="graph12" class="leftGraph"></div>
+      <div id="graph13" class="rightGraph"></div>
     </div>
     
     <script type="text/javascript">
@@ -390,6 +392,14 @@
       set_legend( [g10, g11], [1, 2], $('legend_last_year')  );
       set_legend( [g10], [2], $('legend_intermitent') );
       set_legend( [g11], [1], $('legend_moving_average')  );
+      
+      new Ico.LineGraph(
+          document.getElementById( 'graph12' )
+        , [ 1, 2, 3, 4 ]
+        , { grid: true
+          , curve_amount: 10
+        }
+      );
     };
     </script>
   </body>
