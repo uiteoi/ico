@@ -574,6 +574,11 @@ h3. Ico.BarGraph and Ico.HorizontalBarGraph options
     <td>5 pixels</td>
     <td>Padding between bars</td>
   </tr>
+  <tr>
+    <td>bars_overlap</td>
+    <td>1/2</td>
+    <td>Overlapping between bars (unit fraction): 0 -> no overlap, 1/1 -> full overlap</td>
+  </tr>
 </table>
 
 h2. Component Classes

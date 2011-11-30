@@ -730,6 +730,7 @@ var Ico = {
       Ico.BaseGraph.prototype.set_defaults.call( this );
       
       this.options.bar_padding = 5;
+      this.options.bars_overlap = 1 / 2;
     },
     
     process_options: function( options ) {
@@ -746,28 +747,35 @@ var Ico = {
           };
         }
       } );
+      
+      this.options.bars_overlap > 1 && ( this.options.bars_overlap = 1 );
     },
     
     calculate: function() {
       Ico.BaseGraph.prototype.calculate.call( this );
       
-      this.calculate_bars()
+      this.calculate_bars();
+      
+      var o = this.bars_overlap = this.options.bars_overlap
+        , n = this.series.length
+        , w = this.bars_width = this.bar_width / ( n - ( n - 1 ) * o )
+      ;
+      
+      this.bars_step = w * ( 1 - o );
     },
     
     label_slots_count: function() { return this.data_samples },
     
     draw_value: function( i, x, y, v, serie, set ) {
       var a = this.options.series_attributes[serie],
-        sup = this.series.length + 1,
-        w = this.bar_width,
-        width = w * 2 / sup,
-        base = this.bar_base,
+        w = this.bars_width,
+        b = this.bar_base,
         bar
       ;
-      x += w * serie / sup - w / 2;
+      x += this.bars_step * serie - this.bar_width / 2;
       this.show_label_onmouseover( bar = this.paper.path( Ico.svg_path( this.orientation?
-          ['M', y, x, 'H', base, 'v', width, 'H', y, 'z'] :
-          ['M', x, y, 'V', base, 'h', width, 'V', y, 'z']
+          ['M', y, x, 'H', b, 'v', w, 'H', y, 'z'] :
+          ['M', x, y, 'V', b, 'h', w, 'V', y, 'z']
         ) ).attr( a ), v, a, serie, i
       );
       set.push( bar );
