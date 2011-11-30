@@ -8,7 +8,7 @@
 "use strict";
 
 var Ico = {
-  Version: 0.97,
+  Version: 0.98,
   
   extend : function( d, s ) {
     for( var p in s ) d[p] = s[p];
@@ -687,8 +687,8 @@ var Ico = {
         this.show_label_onmouseover( c, value, a, serie, i );
       }
       
-      var p, w = this.options.curve_amount;
-      if ( i == 0 || ( w && this.last == null ) ) {
+      var p, w = this.options.curve_amount, last = this.last;
+      if ( i == 0 || ( w && !last ) ) {
         p = ['M', x, y];
       } else if ( w ) {
         serie = this.series[serie];
@@ -696,23 +696,30 @@ var Ico = {
         // and next points
         var scale = this.scale * w / 2 / this.graph.x.step,
           ym1 = serie[i - 1], ym2 = serie[i - 2], y0 = serie[i], y1 = serie[i + 1],
-          d = [
-            [w, ( ym2? ( ym2 - y0 ) : ( ym1 - y0 ) * 2 ) * scale],
-            [w, ( y1 ? ( ym1 - y1 ) : ( ym1 - y0 ) * 2 ) * scale]
-          ]
+          d0 = [w, ( ym2 !== undefined ? ( ym2 - y0 ) : ( ym1 - y0 ) * 2 ) * scale],
+          d1 = [w, ( y1  !== undefined ? ( ym1 - y1 ) : ( ym1 - y0 ) * 2 ) * scale]
         ;
-        this.orientation && ( d = [[d[0][1], -w], [d[1][0]], -w] );
+
+        this.orientation && ( d0 = [d0[1], -w], d1 = [d1[0], -w] );
+
+        var x0 = last[0] + d0[0], y0 = last[1] + d0[1]
+          , x1 = x - d1[0], y1 = y - d1[1]
+        ;
+
         // Display control points and lines
-        //if ( serie === this.series[0] ) {
-        //  this.paper.circle( this.last[0] + d[0][0], this.last[1] + d[0][1], 1 ).attr( { 'stroke':'black' } );
-        //  this.paper.path( Ico.svg_path( ['M', this.last[0], this.last[1], 'l', d[0][0], d[0][1] ] ) ).attr( { 'stroke':'black' } );
-        //  this.paper.circle( x - d[1][0], y - d[1][1], 1 ).attr( { 'stroke':'red' } );
-        //  this.paper.path( Ico.svg_path( ['M', x, y, 'l', - d[1][0], - d[1][1] ] ) ).attr( { 'stroke':'red' } );
-        //}
-        p = ["C", this.last[0] + d[0][0], this.last[1] + d[0][1], x - d[1][0], y - d[1][1], x, y];
+        if ( this.options.debug && serie === this.series[0] ) {
+          var a0 = { 'stroke':'black' }, a1 = { 'stroke':'red' };
+
+          this.paper.circle( x0, y0, 1 ).attr( a0 );
+          this.paper.path( Ico.svg_path( ['M', last[0], last[1], 'L', x0, y0 ] ) ).attr( a0 );
+          this.paper.circle( x1, y1, 1 ).attr( a1 );
+          this.paper.path( Ico.svg_path( ['M', x, y, 'L', x1, y1 ] ) ).attr( a1 );
+        }
+        p = ["C", x0, y0, x1, y1, x, y];
       } else {
         p = ['L', x, y];
-      } 
+      }
+      
       w && ( this.last = [x, y] );
       return Ico.svg_path( p );
     }
