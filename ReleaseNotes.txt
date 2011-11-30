@@ -1,3 +1,34 @@
+Ico 0.98
+  This release highlights:
+    - Add bars_overlap option
+    - Upgrade to Raphaël 2.0.1
+
+  The complete list of changes:
+    - Bars: add bars_overlap option
+    - Upgrade to Raphaël 2.0.1
+    - Bezier curves: fix control points for zero values
+    - Add test case for line graph and a straight line with curve amount != 0
+    - clear(), test this.paper, allows to call clear() on a cleared or not initialized graph
+    - Fix related to issue #3 if all values are zero.
+
+Ico 0.97
+  First version without Prototype library dependency, however this disables the mouse_pointer option:
+    - This is because the mouse pointer requires Element.viewportOffset that
+    - is not yet implemented without prototype
+
+  The complete list of changes:
+    - Encapsulate de and ug() as local varaible to global function.
+    - Fix issue #3: Line chart unable to handle data array with all equal values.
+    - Disable mouse_pointer draw() if Ico.viewport_offset is not defined - e.g. if prototype.js is not defined.
+    - Allow customization of Element.viewportOffset as Ico.viewport_offset.
+    - Remove Prototype dependency
+    - Allow to specify dot radius and focus radius per line.
+    - Change raphael.js to non-min version that fails in IE8, remove IE7 compatibility mode.
+    - Upgrade Raphael to version 1.5.2 from 1.3.1, fixes IE9 issues.
+    - Allow intermitent series where some points are not defined.
+    - Adjust min and max in Ico.series_min_max() to show zero if reasonable.
+    - This can be disabled by setting to true the second parameter (dont_adjust).
+
 Ico 0.96
   This release:
     - displays labels (or long labels if defined) and series names in status bar on mouse over.
