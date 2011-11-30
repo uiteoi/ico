@@ -580,7 +580,8 @@ var Ico = {
         value_labels:             {}, // allow values, labels, false => disable
         focus_hint:               true,
         axis:                     true,
-        grid_attributes:          { stroke: '#eee', 'stroke-width': 1 }
+        grid_attributes:          { stroke: '#eee', 'stroke-width': 1},
+        grid_axis: {x: true, y: true}
       } );
     },
     
@@ -1035,14 +1036,17 @@ var Ico = {
           marker = this.options.marker_size,
           fx = d.f[0], fy = d.f[1], angle = d.angle,
           options = this.p.options, paper = this.p.paper,
-          grid = this.options.grid || options.grid
+          grid = this.options.grid || options.grid,
+          grid_axis = this.options.grid_axis || options.grid_axis
       ;
       if ( dy ) angle += 90;
       var path = [], grid_path = [];
       this.labels || this.get_labels_bounding_boxes( d );
       this.labels.forEach( function( label ) {
         if ( marker )    path.push( 'M', x, y, dx ? 'v' : 'h-', marker );
-        if ( grid ) grid_path.push( 'M', x, y, dx ? 'v-' + that.y.len : 'h' + that.x.len );
+        if( grid_axis.x ) grid_axis.x = 'h' + that.x.len;
+        if( grid_axis.y ) grid_axis.y = 'v-' + that.y.len;
+        if ( grid ) grid_path.push( 'M', x, y, dx ? grid_axis.y : 'h' + grid_axis.x );
         var x_anchor = x + fx;
         var y_anchor = y + fy;
         // label is already drawn, only anchor then rotate here
@@ -1054,7 +1058,7 @@ var Ico = {
       } );
       if ( marker ) paper.path( Ico.svg_path( path ) ).attr( this.markers_attributes );
       if ( grid ) {
-        if ( dx ) grid_path.push( 'M', this.x.start, ' ', this.y.stop, 'h', this.x.len, 'v', this.y.len );
+        if ( dx ) grid_path.push( 'M', this.x.start, ' ', this.y.stop, 'h', this.x.len, 'v', this.y.len );        
         paper.path( Ico.svg_path( grid_path ) ).attr( this.options.grid_attributes || options.grid_attributes );
       }
     }
