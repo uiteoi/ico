@@ -464,16 +464,6 @@ The following options apply as defaults for bar and Line graphs unless overrided
     <td>true</td>
     <td>Display x and y axis, false => disable, hash => see 'axis' component option attribute</td>
   </tr>
-  <tr>
-    <td>grid_attributes.stroke</td>
-    <td>'#eee' (light grey)</td>
-    <td>Stroke color for grid</td>
-  </tr>
-  <tr>
-    <td>grid_attributes['stroke-width']</td>
-    <td>1 pixel</td>
-    <td>Stroke width for grid</td>
-  </tr>
 </table>
 
 h3. Ico.LineGraph options
@@ -724,13 +714,8 @@ Values labels are always calculated. The calculation is optimized according to t
   </tr>
   <tr>
     <td>grid</td>
-    <td>Ico.Base or Ico.BaseGraph grid</td>
-    <td>Control display of grid associated with labels, overrides global grid attribute value</td>
-  </tr>
-  <tr>
-    <td>grid_attributes</td>
-    <td>Ico.base or Ico.BaseGraph grid_attributes</td>
-    <td>Control grid attributes associated with labels, overrides global attributes</td>
+    <td>Ico.Base or Ico.BaseGraph grid and grid attributes</td>
+    <td>Grid Attributes, overrides global grid attributes value</td>
   </tr>
 </table>
 

@@ -73,6 +73,10 @@
         width: 140px;
         border-bottom: 2px solid;
       }
+      
+      #ico_version, #raphael_version, #raphael_mode {
+        color: red;
+      }
     </style>
     <!-- The Prototype Library is not required for most features, except mouse_pointer-->
     <script type="text/javascript" src="prototype.js"></script>
@@ -83,8 +87,9 @@
   </head>
   <body>
     <div class="graphContainer">
-      <p>This Ico test page is displayed using Raphaël.js in
-        <span id="raphael_mode">unknown</span> mode
+      <p style="font-weight: bold;">This Ico version <span id="ico_version"></span> test page is displayed using
+         Raphaël.js version <span id="raphael_version"></span>
+         in <span id="raphael_mode"></span> mode
       </p>
       <p>Here is a sparkline:<span id="sparkline0", class="sparkline"></span>,
         a sparkbar:<span id="sparkbar0", class="sparkline"></span> with the same values.
@@ -126,9 +131,12 @@
     window.onload = function () {
       var $ = function( id ) { return document.getElementById( id ); };
       
-      document.title = "Ico " + Ico.Version + " / Raphael " + Raphael.version + /* " / Prototype " + Prototype.Version + */ " Test Suite"
+      document.title = "Ico " + Ico.Version + " / Raphael " + Raphael.version + " Demo/Test Suite";
+      
       var sparkline = new Ico.SparkLine( "sparkline0", [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9], { highlight: true } );
       
+      $( "ico_version" ).innerHTML = Ico.Version;
+      $( "raphael_version" ).innerHTML = Raphael.version;
       $( "raphael_mode" ).innerHTML = sparkline.svg ? "SVG" : "VML";
       
       new Ico.SparkBar( "sparkbar0", [5,2,-1,17,23,15,7,6,-5,-2,4,7,3,9],
@@ -153,12 +161,8 @@
           x_padding_right: 20
         }
       );
-      // b1.clear();
-      // Redraw same bullet graph, after changing value (does not work, displays old value)
-      //b1.value = -20;
-      //b1.draw();
       
-      // Draw graph0, clear it then draw again with no change
+      // Draw graph0
       new Ico.BarGraph( "graph0", [2, 5, 1, 10, 15, 33, 20, 25, 1], 
         {   labels: {
               values: ['foals', 'elephants', 'extinct dinosaurs', 'frogs', 'fish', 'salamanders', 'superman', 'eagles', 'ninjas'],
@@ -172,14 +176,14 @@
           , mouse_pointer: true
           , status_bar : true
         }
-      ).clear().draw();
+      );
       
       new Ico.HorizontalBarGraph( "graph1", [2, 5, -3.17, 10, 15, 33, 20, 25, 1], 
         {   // font: { 'font-family': 'Arial', 'font-size': 16, 'fill' : 'black', stroke: 'none' }
             labels: {
               values: ['Foals', 'Elephants', 'Extinct Dinosaurs', 'Frogs', 'Fish', 'Salamanders', 'Superman', 'Eagles', 'Ninjas'],
               marker_size: 0,
-              grid: 0
+              grid: false
             }
           , units: '%'
           , color: '#ccccff'
@@ -249,6 +253,7 @@
           , curve_amount: 10
           , meanline: true
           , grid: true
+          , grid_attributes: { stroke: "#eee", 'stroke-width': 1 }
           , mouse_pointer: true
           , status_bar : true
         }
@@ -257,13 +262,13 @@
         [1500, 1627, 1760, 1820, 1230, 1430, 2131, 1923, 1839, 1956, 2076, 2175],
         {   font_size: 16
           , labels: every_other_month
-          , value_labels: false
+          , value_labels: {
+              grid: { stroke: "blue", 'stroke-dasharray' : "-." }
+            }
           , graph_background: { key_values: [1500, 2000] }
           , mouse_pointer: true
           , color: '#ccf'
           , meanline: true
-          , grid: true
-          , grid_attributes: { stroke:'#fff', 'stroke-width': 1 }
           , status_bar : true
         }
       );
@@ -342,11 +347,18 @@
         attributes: { 'font-size': '14', fill: '#642', 'text-anchor': 'middle' }
       };
       
+      var labels = {
+          values: months
+        , long_values: long_months
+        , add_padding: false
+        , grid: false
+      };
+      
       var g10 = new Ico.LineGraph( "graph10",
         [serie1, serie2, serie5],
         {   min: min, max: max
           , font_size: 12
-          , labels: { values: months, long_values: long_months, add_padding: false }
+          , labels: labels
           , series_names: ['This Year', 'Last Year', 'Intermitent']
           , value_labels: { add_padding: false }
           , units: '$', units_position: 0
@@ -356,6 +368,7 @@
           , curve_amount: 10
           , mouse_pointer: true
           , status_bar : status_bar
+          , grid: true
         }
       );
       
@@ -363,9 +376,9 @@
         [serie3, serie4, serie1],
         {   min: g10.min, max: g10.max
           , font_size: 12
-          , labels: { values: months, long_values: long_months, add_padding: false }
+          , labels: labels
           , series_names: ['This Year', '5 Months Moving Average', 'Last Year']
-          , value_labels: false
+          , value_labels: { values: g10.options.value_labels.values }
           , units: '$', units_position: 0
           , x_padding_right: 15
           , colors: ['#228899', '#995522', '#339933']
@@ -375,6 +388,7 @@
           , curve_amount: 10
           , mouse_pointer: true
           , status_bar : status_bar
+          , grid: true
         }
       );
       
@@ -394,6 +408,7 @@
       set_legend( [g10], [2], $('legend_intermitent') );
       set_legend( [g11], [1], $('legend_moving_average')  );
       
+      /*
       new Ico.LineGraph(
           document.getElementById( 'graph12' )
         , [ 1, 2, 3, 4 ]
@@ -401,6 +416,7 @@
           , curve_amount: 10
         }
       );
+      */
     };
     </script>
   </body>
