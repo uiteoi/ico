@@ -46,11 +46,13 @@
         width: 200px;
         height: 40px;
         vertical-align: middle;
+        margin-bottom: 20px;
       }
       
       .bulletgraph div { display: inline-block; }
       
       .leftGraph {
+        clear: both;
         float: left;
         width: 480px;
 	height: 280px;
@@ -98,8 +100,8 @@
         A bullet graph:<span id="bulletgraph0", class="bulletgraph"></span>.
       </p>
       <p style="float:left;margin-top:0;">Bullet graph with negative value, zero base and zero target:</p>
-      <!-- WARNING: Graphs with text cannot be in a <span> element because it fails in IE,
-       one must use a <div> if any text is displayed, such as labels.
+      <!-- WARNING: Graphs with text cannot be in a <span> element because it fails in IE
+       versions prior to IE 9 that supports SVG, one must use a <div> if any text is displayed, such as labels.
       -->
       <div id="bulletgraph1", class="bulletgraph_with_value_labels"></div>
       
@@ -143,7 +145,7 @@
         { color: 'grey', highlight: { index: 5, color: 'orange' } }
       );
       
-      new Ico.BulletGraph( "bulletgraph0", 0,
+      new Ico.BulletGraph( "bulletgraph0", 85,
         { min: 0, max: 100, target: 65,
           graph_background: { key_values: [50, 75], key_colors: ['#555','#999','#ddd'], colors_transition: 10 }
         }
@@ -252,8 +254,7 @@
           , background: { color: '#ccf', corners: 5 }
           , curve_amount: 10
           , meanline: true
-          , grid: true
-          , grid_attributes: { stroke: "#eee", 'stroke-width': 1 }
+          , grid: { stroke: "#a9b", 'stroke-width': 1 }
           , mouse_pointer: true
           , status_bar : true
         }
@@ -378,7 +379,7 @@
           , font_size: 12
           , labels: labels
           , series_names: ['This Year', '5 Months Moving Average', 'Last Year']
-          , value_labels: { values: g10.options.value_labels.values }
+          , value_labels: { values: g10.options.value_labels.values, display: false }
           , units: '$', units_position: 0
           , x_padding_right: 15
           , colors: ['#228899', '#995522', '#339933']

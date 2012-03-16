@@ -8,7 +8,7 @@
 "use strict";
 
 var Ico = {
-  Version: "0.98.1",
+  Version: "0.98.2",
   
   extend : function( d, s ) {
     for( var p in s ) d[p] = s[p];
@@ -128,6 +128,8 @@ var Ico = {
     },
     
     adjust_min_max: function( min, max ) {
+      de&&ug( "adjust_min_max(), min: " + min + ", max: " + max );
+      
       // Adjust start value to show zero if reasonable (e.g. range > min)
       var range = max - min;
       if ( range === 0 ) {
@@ -146,8 +148,9 @@ var Ico = {
     },
     
     series_min_max: function( series, dont_adjust ) {
-      de&&ug( "series_min_max: values length: " + series.length );
-      var values = Array.prototype.concat.apply( [], series );
+      de&&ug( "series_min_max: series length: " + series.length );
+      var values = Array.prototype.concat.apply( [], series ).map( function( v ) { return v === undefined ? null : v } );
+      
       de&&ug( "series_min_max: values length: " + values.length );
       if ( values.length == 0 ) throw "Series must have at least one value";
       var min_max = [
@@ -580,7 +583,6 @@ var Ico = {
         value_labels:             {}, // allow values, labels, false => disable
         focus_hint:               true,
         axis:                     true,
-        grid_attributes:          { stroke: '#eee', 'stroke-width': 1 }
       } );
     },
     
@@ -771,6 +773,7 @@ var Ico = {
         b = this.bar_base,
         bar
       ;
+      if ( y == b ) y = b + 2;
       x += this.bars_step * serie - this.bar_width / 2;
       this.show_label_onmouseover( bar = this.paper.path( Ico.svg_path( this.orientation?
           ['M', y, x, 'H', b, 'v', w, 'H', y, 'z'] :
@@ -805,10 +808,10 @@ var Ico = {
       } );
       if( Ico.isArray( o ) ) o = { values: o };
       else if( typeof o === "number" || typeof o === "string" ) o = { value: o };
-      this.process_options( this.options = Ico.extend( this.defaults( p ), o ), p );
-    },
-    defaults: function() { return {} }, // return default options, if any
-    process_options: function() {}      // process options once set
+      o = this.options = ( this.defaults ? Ico.extend( this.defaults( p ), o ) : o );
+      de&&ug( "Ico.Component::initialize(), o: " + JSON.stringify( o ) );
+      this.process_options && this.process_options( o, p );
+    }
   } );
 
   Ico.Component.components = {};
@@ -927,6 +930,11 @@ var Ico = {
   } );
 
   Ico.Component.components.graph_background = [Ico.Component.GraphBackground, 1];
+  
+  Ico.Component.Grid = Ico.Class.create( Ico.Component, {
+    defaults: function() { return { stroke: '#eee', 'stroke-width': 1 } }
+  } );
+  Ico.Component.components.grid = [Ico.Component.Grid, 0];
 
   Ico.Component.Labels = Ico.Class.create( Ico.Component, {
     defaults: function( p ) {
@@ -936,16 +944,12 @@ var Ico = {
         , add_padding: true
         , position:    0  // labels position, 0 => ( left / bottom ), 1 => ( right / top )
                           // this is under development, so don't use it yet
-        , grid:        p.options.grid
+        , grid:        p.grid ? p.grid.options : undefined
       }
     },
     
     process_options: function( o, p ) {
-      var g = o.grid, title = o.title;
-      
-      g && (
-        o.grid = Ico.extend( p.options.grid_attributes || {}, g === true ? {} : g )
-      );
+      var title = o.title;
       
       Ico.extend( this.font = p.get_font(), o.font || {} );
       this.markers_attributes = { stroke: this.font.fill, 'stroke-width': 1 };
