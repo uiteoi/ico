@@ -787,7 +787,9 @@ The background is the entire Raphaël canvas area.
 
 h3. 'grid' option attribute
 
-If the 'grid' option attribute is provided it can be set to true or a hash of additional options:
+If the 'grid' option attribute is provided it can be set to true or a hash of additional options.
+
+All Raphaël Element Attributes are valid, only listed here are those whith default values:
 
 <table>
   <tr>
@@ -804,11 +806,6 @@ If the 'grid' option attribute is provided it can be set to true or a hash of ad
     <td>'stroke-width'</td>
     <td>1 pixel</td>
     <td>Grid stroke width</td>
-  </tr>
-  <tr>
-    <td>'stroke-dasharray'</td>
-    <td>undefined</td>
-    <td>Grid stroke style</td>
   </tr>
 </table>
 
