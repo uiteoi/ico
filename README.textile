@@ -561,7 +561,7 @@ Each component is shown with the name of its options attribute hash:
     <th>Component Class</th>
     <th>Base Class</th>
     <th>Option Attribute Name</th>
-    <th>Drawing order</th>
+    <th>Drawing Layer</th>
     <th>Description</th>
   </tr>
   <tr>
@@ -570,27 +570,6 @@ Each component is shown with the name of its options attribute hash:
     <td></td>
     <td></td>
     <td>Base class of all graph components</td>
-  </tr>
-  <tr>
-    <td>Ico.Component.Labels</td>
-    <td>Ico.Component</td>
-    <td>labels</td>
-    <td>3</td>
-    <td>Labels along the data series</td>
-  </tr>
-  <tr>
-    <td>Ico.Component.ValueLabels</td>
-    <td>Ico.Component.Labels</td>
-    <td>value_labels</td>
-    <td>4</td>
-    <td>Label values accross data series</td>
-  </tr>
-  <tr>
-    <td>Ico.Component.Graph</td>
-    <td>Ico.Component</td>
-    <td>graph_background</td>
-    <td>1</td>
-    <td>Graph area, excluding canvas padding areas, background</td>
   </tr>
   <tr>
     <td>Ico.Component.Background</td>
@@ -607,26 +586,12 @@ Each component is shown with the name of its options attribute hash:
     <td>Grid</td>
   </tr>
   <tr>
-    <td>Ico.Component.Axis</td>
+    <td>Ico.Component.Graph</td>
     <td>Ico.Component</td>
-    <td>axis</td>
-    <td>4</td>
-    <td>X and Y Axis</td>
+    <td>graph_background</td>
+    <td>1</td>
+    <td>Graph area, excluding canvas padding areas, background</td>
   </tr>
-  <tr>
-    <td>Ico.Component.Meanline</td>
-    <td>Ico.Component</td>
-    <td>meanline</td>
-    <td>3</td>
-    <td>Mean line at the mean of all data values accross all series</td>
-  </tr>
-  <tr>
-    <td>Ico.Component.FocusHint</td>
-    <td>Ico.Component</td>
-    <td>focus_hint</td>
-    <td>5</td>
-    <td>Display hint if value labels do not contain zero</td>
-  </tr> 
   <tr>
     <td>Ico.Component.MousePointer</td>
     <td>Ico.Component</td>
@@ -641,6 +606,41 @@ Each component is shown with the name of its options attribute hash:
     <td>2</td>
     <td>Display values on mouse over in status area</td>
   </tr>
+  <tr>
+    <td>Ico.Component.Meanline</td>
+    <td>Ico.Component</td>
+    <td>meanline</td>
+    <td>3</td>
+    <td>Mean line at the mean of all data values accross all series</td>
+  </tr>
+  <tr>
+    <td>Ico.Component.Labels</td>
+    <td>Ico.Component</td>
+    <td>labels</td>
+    <td>3</td>
+    <td>Labels along the data series</td>
+  </tr>
+  <tr>
+    <td>Ico.Component.ValueLabels</td>
+    <td>Ico.Component.Labels</td>
+    <td>value_labels</td>
+    <td>4</td>
+    <td>Label values accross data series</td>
+  </tr>
+  <tr>
+    <td>Ico.Component.Axis</td>
+    <td>Ico.Component</td>
+    <td>axis</td>
+    <td>4</td>
+    <td>X and Y Axis</td>
+  </tr>
+  <tr>
+    <td>Ico.Component.FocusHint</td>
+    <td>Ico.Component</td>
+    <td>focus_hint</td>
+    <td>5</td>
+    <td>Display hint if value labels do not contain zero</td>
+  </tr> 
 </table>
 
 h3. Component option attributes
