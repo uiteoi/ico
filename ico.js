@@ -283,8 +283,7 @@ var Ico = {
         fill         : Ico.get_style( this.element, 'color' ) || '#666',
         stroke       : 'none'
       };
-      Ico.extend( this.font, o || {} );
-      // this.graph.x.labels_font = this.graph.y.labels_font = this.font;
+      o && Ico.extend( this.font, o );
       return this.font
     },
     
@@ -951,7 +950,7 @@ var Ico = {
     process_options: function( o, p ) {
       var title = o.title;
       
-      Ico.extend( this.font = p.get_font(), o.font || {} );
+      Ico.extend( this.font = Ico.extend( {}, p.get_font() ), o.font || {} );
       this.markers_attributes = { stroke: this.font.fill, 'stroke-width': 1 };
       Ico.extend( this.markers_attributes, o.markers_attributes );
       if ( title ) {
