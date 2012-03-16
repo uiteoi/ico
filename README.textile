@@ -1,6 +1,6 @@
 h1. Introduction
 
-Ico is a JavaScript graph library that uses "Raphael":http://raphaeljs.com/ to render graphics. This means Ico can render charts in the vast majority of modern web browsers, using "VML":http://en.wikipedia.org/wiki/Vml in IE (< 9), or "SVG":http://www.w3.org/TR/SVG/ in SVG standard-compliant web browsers such as IE 9, Firefox, Apple Safari, Google Chrome, Opera, and Konqueror for Linux. Also because Raphael does not rely on Flash, it works well (and is tested) on iPhone.
+Ico is a JavaScript graph library that uses "Raphaël":http://raphaeljs.com/ to render graphics. This means Ico can render charts in the vast majority of modern web browsers, using "VML":http://en.wikipedia.org/wiki/Vml in IE (< 9), or "SVG":http://www.w3.org/TR/SVG/ in SVG standard-compliant web browsers such as IE 9, Firefox, Apple Safari, Google Chrome, Opera, and Konqueror for Linux. Also because Raphaël does not rely on Flash, it works well (and is tested) on iPhone.
 
 Ico's goal is to provide effective visual reprensentation of data according to the work of "Stephen Few":http://www.perceptualedge.com/blog/ and "Edward Tufte":http://en.wikipedia.org/wiki/Edward_Tufte. In particular, Ico provides an implementation of Edward tufte's "Sparklines":http://en.wikipedia.org/wiki/Sparkline and Stephen Few's "Bullet Graphs":http://en.wikipedia.org/wiki/Bullet_graph.
 
@@ -31,8 +31,8 @@ Unfortunatly tests cannot be automated because it is primaraly about rendering i
 h1. Dependencies
 
 Ico requires:
-* "Raphael":http://raphaeljs.com
-* "Prototype":http://prototypejs.org only for the mouse_pointer option
+* "Raphaël":http://raphaeljs.com
+* "Prototype":http://prototypejs.org only if the mouse_pointer component is used
 
 h1. Examples
 
@@ -176,7 +176,7 @@ data_series = [
 
 Options are provided as a hash of options where each key is the option name and each value is the option value. Options hashes can be nested typically to group options by components.
 
-Many options are "Raphael attributes":http://raphaeljs.com/reference.html#attr which rely on the "SVG Specification":http://www.w3.org/TR/SVG/ so please refer to these documents when further information is needed.
+Many options are "Raphaël attributes":http://raphaeljs.com/reference.html#Element.attr which rely on the "SVG Specification":http://www.w3.org/TR/SVG/ so please refer to these documents when further information is needed.
 
 Example of options:
 <pre><code>graph_options = {                     // Graph components' options
@@ -211,12 +211,12 @@ The following are options shared by all graphs:
   <tr>
     <td>width</td>
     <td>DOM element width</td>
-    <td>Raphael Canvas width</td>
+    <td>Raphaël Canvas width</td>
   </tr>
   <tr>
     <td>height</td>
     <td>DOM element height</td>
-    <td>Raphael Canvas height</td>
+    <td>Raphaël Canvas height</td>
   </tr>
   <tr>
     <td>x_padding_left</td>
@@ -650,7 +650,7 @@ Component options can be set with the following types of values:
 * true  => get default options for the component
 * hash  => attributes for the component
 
-If a hash is provided and one of the options name is <strong>'attributes'</strong>, it is a hash of "Raphael attributes":http://raphaeljs.com/reference.html#attr. Attribute option tables bellow define only the subset of Ico default attributes although all valid Raphael attributes can be used.
+If a hash is provided and one of the options name is <strong>'attributes'</strong>, it is a hash of "Raphaël attributes":http://raphaeljs.com/reference.html#Element.attr. Attribute option tables bellow define only the subset of Ico default attributes although all valid Raphaël attributes can be used.
 
 h3. 'labels' and 'value_labels' option attribute
 
@@ -712,8 +712,8 @@ Values labels are always calculated. The calculation is optimized according to t
   </tr>
   <tr>
     <td>grid</td>
-    <td>Ico.Base or Ico.BaseGraph grid and grid attributes</td>
-    <td>Grid Attributes, overrides global grid attributes value</td>
+    <td>grid component</td>
+    <td>Grid attributes, overrides grid component</td>
   </tr>
 </table>
 
@@ -750,7 +750,7 @@ The graph_background attribute can be set to true to get the default background 
 
 h3. 'background' option attribute
 
-The background is the entire Raphael canvas area.
+The background is the entire Raphaël canvas area.
 
 <table>
   <tr>
@@ -797,7 +797,7 @@ If the 'grid' option attribute is provided it can be set to true or a hash of ad
   </tr>
   <tr>
     <td>stroke</td>
-    <td>'#666' (grey)</td>
+    <td>'#eee' (grey)</td>
     <td>Stroke color</td>
   </tr>
   <tr>
@@ -807,7 +807,7 @@ If the 'grid' option attribute is provided it can be set to true or a hash of ad
   </tr>
   <tr>
     <td>'stroke-dasharray'</td>
-    <td>-</td>
+    <td>undefined</td>
     <td>Grid stroke style</td>
   </tr>
 </table>
