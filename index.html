@@ -67,6 +67,17 @@
 	margin: 2px;
       }
       
+      .clear {
+        clear: both;
+      }
+      
+      .left_6 {
+        float: left;
+        width: 160px;
+        margin: 0px;
+        padding: 0px;
+      }
+      
       #legend {
         text-align: center;
       }
@@ -115,7 +126,9 @@
       <div id="graph7"  class="rightGraph"></div>
       <div id="graph8"  class="leftGraph"></div>
       <div id="graph9"  class="rightGraph"></div>
-      <h2 id='g10' style="color: blue; margin-top: 20px;">A line of two dependent graphs on the same value range and legend</h2>
+      
+      <div class="clear"></div>
+      <h2 id='g10' style="color: blue; margin-top: 50px;">A line of two dependent graphs on the same value range and legend</h2>
       <p>Click legend labels bellow to toggle (show/hide) series:</p>
       <p id="legend">
         <span id="legend_this_year" class="legend">This Year Performance</span>
@@ -125,8 +138,16 @@
       </p>
       <div id="graph10" class="leftGraph"></div>
       <div id="graph11" class="rightGraph"></div>
-      <div id="graph12" class="leftGraph"></div>
-      <div id="graph13" class="rightGraph"></div>
+      
+      <div class="clear"></div>
+      <h2 id='g10' style="color: blue; margin-top: 50px;">6 Horinzontal Bar Graphs connected through their grids, the left-most holding only the labels</h2>
+      <div class="clear"></div>
+      <div id="graph12" class="left_6"></div>
+      <div id="graph13" class="left_6"></div>
+      <div id="graph14" class="left_6"></div>
+      <div id="graph15" class="left_6"></div>
+      <div id="graph16" class="left_6"></div>
+      <div id="graph17" class="left_6"></div>
     </div>
     
     <script type="text/javascript">
@@ -408,6 +429,53 @@
       set_legend( [g10, g11], [1, 2], $('legend_last_year')  );
       set_legend( [g10], [2], $('legend_intermitent') );
       set_legend( [g11], [1], $('legend_moving_average')  );
+      
+      var countries = [
+        "Zimbabwe", "Ireland", "Argentina", "New Zealand", "Sri Lanka", "Finland"
+      ];
+      
+      var data = [
+        [ 1500, 1200, 750, 845, 756, 124 ],
+        [ 45, 78, 21, 102, 51, 87 ],
+        [ 17, 21, 15, 18, 8, 12 ],
+        [ 54, 87, 12, 201, 15, 78 ],
+        [ 51, 21, 57, 548, 657, 421 ]
+      ];
+      
+      var options = {
+          labels: {
+            values: countries, long_values: countries,
+            marker_size: 0,
+            font: { fill: 'blue' },
+            grid: { through: true
+              , 'stroke-width': 1
+              , stroke: '#ccc'
+            }
+          }
+        , value_labels: {
+            marker_size: 3,
+            font: { fill: 'white' }
+          }
+        , units: ''
+        , color: '#ccccff'
+        , axis: false
+        , status_bar : true
+        , width: 161
+        , height: 140
+        , x_padding_left: 20
+        , x_padding_right: 0
+      }
+      
+      new Ico.HorizontalBarGraph( "graph12", [ null ,null ,null ,null ,null ,null ], options );
+      options.labels.values = [ '', '', '', '', '', '' ];
+      options.value_labels.font.fill = "black";
+      options.x_padding_right = 20;
+      
+      new Ico.HorizontalBarGraph( "graph13", data[ 0 ], options );
+      new Ico.HorizontalBarGraph( "graph14", data[ 1 ], options );
+      new Ico.HorizontalBarGraph( "graph15", data[ 2 ], options );
+      new Ico.HorizontalBarGraph( "graph16", data[ 3 ], options );
+      new Ico.HorizontalBarGraph( "graph17", data[ 4 ], options );
       
       /*
       new Ico.LineGraph(

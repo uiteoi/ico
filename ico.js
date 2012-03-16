@@ -1051,14 +1051,22 @@ var Ico = {
           x = this.x.start + this.x.start_offset * dx,
           y = this.y.start - this.y.start_offset * dy,
           marker = o.marker_size, fx = d.f[0], fy = d.f[1], angle = d.angle,
-          paper = this.p.paper, grid = o.grid
+          paper = this.p.paper,
+          grid = o.grid, grid_len = ( dx ? 'v-' + t.y.len : 'h' + t.x.len ), grid_x = 0, grid_y = 0
       ;
+      if ( grid && grid.through ) {
+        grid_len += d.padding[ 1 ] + 10;
+        
+        var offset = -d.padding[ 0 ] - this.bbox[ 0 ] - marker - 20;
+        dx ? grid_y = offset : grid_x = offset;
+      }
+      
       if ( dy ) angle += 90;
       var path = [], grid_path = [];
       this.labels || this.get_labels_bounding_boxes( d );
-      this.labels.forEach( function( label ) {
+      this.labels.forEach( function( label, i ) {
         marker &&    path.push( 'M', x, y, dx ? 'v' : 'h-', marker );
-        grid && grid_path.push( 'M', x, y, dx ? 'v-' + t.y.len : 'h' + t.x.len );
+        grid && grid_path.push( 'M', x + ( d.labels[ i ] ? 0 : grid_x ), y + ( d.labels[ i ] ? 0 : grid_y ), grid_len );
         var x_anchor = x + fx;
         var y_anchor = y + fy;
         // label is already drawn, only anchor then rotate here

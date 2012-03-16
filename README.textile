@@ -798,8 +798,13 @@ All Raphaël Element Attributes are valid, only listed here are those whith defa
     <th>Description</th>
   </tr>
   <tr>
+    <td>through</td>
+    <td>undefined</td>
+    <td>true: grid line extends to graph borders</td>
+  </tr>
+  <tr>
     <td>stroke</td>
-    <td>'#eee' (grey)</td>
+    <td>'#eee' (very light grey)</td>
     <td>Stroke color</td>
   </tr>
   <tr>
