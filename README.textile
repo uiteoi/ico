@@ -96,9 +96,9 @@ Graph classes provide defaults components appropriate for each type of graph:
 
 <table>
   <tr>
-    <td>Class name</td>
-    <td>Base class</td>
-    <td>Description</td>
+    <th>Class name</th>
+    <th>Base class</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>Ico.Base</td>
@@ -204,9 +204,9 @@ The following are options shared by all graphs:
 
 <table>
   <tr>
-    <td>Option name</td>
-    <td>Default value</td>
-    <td>Description</td>
+    <th>Option name</th>
+    <th>Default value</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>width</td>
@@ -299,26 +299,6 @@ The following are options shared by all graphs:
     <td>Font stroke color - e.g. 'black'</td>
   </tr>
   <tr>
-    <td>grid</td>
-    <td>false</td>
-    <td>Controls display of grid associated with labels</td>
-  </tr>
-  <tr>
-    <td>grid_attributes</td>
-    <td></td>
-    <td>Attributes for grid lines</td>
-  </tr>
-  <tr>
-    <td>grid_attributes.stroke</td>
-    <td></td>
-    <td>Stroke color for grid lines</td>
-  </tr>
-  <tr>
-    <td>grid_attributes['stroke-width']</td>
-    <td></td>
-    <td>Stroke width for grid lines</td>
-  </tr>
-  <tr>
     <td>axis</td>
     <td></td>
     <td>X/Y axis, true => display, hash => see 'axis' component option attribute</td>
@@ -329,9 +309,9 @@ h3. Ico.SparkLine and Ico.SparkBar options
 
 <table>
   <tr>
-    <td>Option name</td>
-    <td>Default value</td>
-    <td>Description</td>
+    <th>Option name</th>
+    <th>Default value</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>highlight</td>
@@ -359,9 +339,9 @@ h3. Ico.BulletGraph options
 
 <table>
   <tr>
-    <td>Option name</td>
-    <td>Default value</td>
-    <td>Description</td>
+    <th>Option name</th>
+    <th>Default value</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>min</td>
@@ -420,9 +400,9 @@ The following options apply as defaults for bar and Line graphs unless overrided
 
 <table>
   <tr>
-    <td>Option name</td>
-    <td>Default value</td>
-    <td>Description</td>
+    <th>Option name</th>
+    <th>Default value</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>x_padding_left</td>
@@ -470,9 +450,9 @@ h3. Ico.LineGraph options
 
 <table>
   <tr>
-    <td>Option name</td>
-    <td>Default value</td>
-    <td>Description</td>
+    <th>Option name</th>
+    <th>Default value</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>series_attributes[]</td>
@@ -535,9 +515,9 @@ h3. Ico.BarGraph and Ico.HorizontalBarGraph options
 
 <table>
   <tr>
-    <td>Option name</td>
-    <td>Default value</td>
-    <td>Description</td>
+    <th>Option name</th>
+    <th>Default value</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>series_attributes[]</td>
@@ -578,13 +558,15 @@ Each component is shown with the name of its options attribute hash:
 
 <table>
   <tr>
-    <td>Component Class</td>
-    <td>Base Class</td>
-    <td>Option Attribute Name</td>
-    <td>Description</td>
+    <th>Component Class</th>
+    <th>Base Class</th>
+    <th>Option Attribute Name</th>
+    <th>Drawing order</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>Ico.Component</td>
+    <td></td>
     <td></td>
     <td></td>
     <td>Base class of all graph components</td>
@@ -593,54 +575,70 @@ Each component is shown with the name of its options attribute hash:
     <td>Ico.Component.Labels</td>
     <td>Ico.Component</td>
     <td>labels</td>
+    <td>3</td>
     <td>Labels along the data series</td>
   </tr>
   <tr>
     <td>Ico.Component.ValueLabels</td>
     <td>Ico.Component.Labels</td>
     <td>value_labels</td>
+    <td>4</td>
     <td>Label values accross data series</td>
   </tr>
   <tr>
     <td>Ico.Component.Graph</td>
     <td>Ico.Component</td>
     <td>graph_background</td>
+    <td>1</td>
     <td>Graph area, excluding canvas padding areas, background</td>
   </tr>
   <tr>
     <td>Ico.Component.Background</td>
     <td>Ico.Component</td>
     <td>background</td>
+    <td>0</td>
     <td>Background of the entire canvas</td>
+  </tr>
+  <tr>
+    <td>Ico.Component.Grid</td>
+    <td>Ico.Component</td>
+    <td>grid</td>
+    <td>0</td>
+    <td>Grid</td>
   </tr>
   <tr>
     <td>Ico.Component.Axis</td>
     <td>Ico.Component</td>
     <td>axis</td>
+    <td>4</td>
     <td>X and Y Axis</td>
   </tr>
   <tr>
     <td>Ico.Component.Meanline</td>
     <td>Ico.Component</td>
     <td>meanline</td>
+    <td>3</td>
     <td>Mean line at the mean of all data values accross all series</td>
   </tr>
   <tr>
     <td>Ico.Component.FocusHint</td>
     <td>Ico.Component</td>
     <td>focus_hint</td>
+    <td>5</td>
     <td>Display hint if value labels do not contain zero</td>
   </tr> 
   <tr>
     <td>Ico.Component.MousePointer</td>
     <td>Ico.Component</td>
     <td>mouse_pointer</td>
+    <td>2</td>
     <td>Display the mouse pointer as a cross when in graph area</td>
   </tr>
   <tr>
     <td>Ico.Component.StatusBar</td>
     <td>Ico.Component</td>
     <td>status_bar</td>
+    <td>2</td>
     <td>Display values on mouse over in status area</td>
   </tr>
 </table>
@@ -673,9 +671,9 @@ Values labels are always calculated. The calculation is optimized according to t
 
 <table>
   <tr>
-    <td>Option name</td>
-    <td>Default value</td>
-    <td>Description</td>
+    <th>Option name</th>
+    <th>Default value</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>values</td>
@@ -729,9 +727,9 @@ The graph_background attribute can be set to true to get the default background 
 
 <table>
   <tr>
-    <td>Option name</td>
-    <td>Default value</td>
-    <td>Description</td>
+    <th>Option name</th>
+    <th>Default value</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>key_colors</td>
@@ -756,9 +754,9 @@ The background is the entire Raphael canvas area.
 
 <table>
   <tr>
-    <td>Option name</td>
-    <td>Default value</td>
-    <td>Description</td>
+    <th>Option name</th>
+    <th>Default value</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>color</td>
@@ -787,15 +785,42 @@ The background is the entire Raphael canvas area.
   </tr>
 </table>
 
+h3. 'grid' option attribute
+
+If the 'grid' option attribute is provided it can be set to true or a hash of additional options:
+
+<table>
+  <tr>
+    <th>Option name</th>
+    <th>Default value</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>stroke</td>
+    <td>'#666' (grey)</td>
+    <td>Stroke color</td>
+  </tr>
+  <tr>
+    <td>'stroke-width'</td>
+    <td>1 pixel</td>
+    <td>Grid stroke width</td>
+  </tr>
+  <tr>
+    <td>'stroke-dasharray'</td>
+    <td>-</td>
+    <td>Grid stroke style</td>
+  </tr>
+</table>
+
 h3. 'axis' option attribute
 
 If the 'axis' option attribute is provided it can be set to true or a hash of additional options:
 
 <table>
   <tr>
-    <td>Option name</td>
-    <td>Default value</td>
-    <td>Description</td>
+    <th>Option name</th>
+    <th>Default value</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>attributes</td>
@@ -820,9 +845,9 @@ If the 'meanline' attribute option is set to true or a hash of additional attrib
 
 <table>
   <tr>
-    <td>Option name</td>
-    <td>Default value</td>
-    <td>Description</td>
+    <th>Option name</th>
+    <th>Default value</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>attributes</td>
@@ -847,9 +872,9 @@ A focus hint is displayed as two short lines crossing the value labels axis if t
 
 <table>
   <tr>
-    <td>Option name</td>
-    <td>Default value</td>
-    <td>Description</td>
+    <th>Option name</th>
+    <th>Default value</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>length</td>
@@ -884,9 +909,9 @@ If the 'mouse_pointer' attribute option is set to true or a hash, a mouse pointe
 
 <table>
   <tr>
-    <td>Option name</td>
-    <td>Default value</td>
-    <td>Description</td>
+    <th>Option name</th>
+    <th>Default value</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>attributes</td>
@@ -911,9 +936,9 @@ If the 'status_bar' attribute option is set to true or a hash, value are display
 
 <table>
   <tr>
-    <td>Option name</td>
-    <td>Default value</td>
-    <td>Description</td>
+    <th>Option name</th>
+    <th>Default value</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td>attributes</td>
