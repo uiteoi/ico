@@ -268,7 +268,7 @@ var Ico = {
             t.components[layer].push( t[k] = new (v[0])( t, o ) )
           } catch( e ) {
             t.error = e;
-            de&&ug( "process_options(), exception: " + e );
+            de&&ug( "process_options(), exception: " + JSON.stringify( e ) );
           }
         }
       };
@@ -581,7 +581,7 @@ var Ico = {
         // Other options
         value_labels:             {}, // allow values, labels, false => disable
         focus_hint:               true,
-        axis:                     true,
+        axis:                     true
       } );
     },
     
