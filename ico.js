@@ -1,6 +1,6 @@
 /* Ico Graph Prototype/Raphael library
  *
- * Copyright (c) 2009, 2010, 2011 Jean Vincent, ReverseRisk
+ * Copyright (c) 2009-2012 Jean Vincent, ReverseRisk
  * Copyright (c) 2009, Alex R. Young
  * Licensed under the MIT license: http://github.com/uiteoi/ico/blob/master/MIT-LICENSE
  */
@@ -20,12 +20,28 @@ var Ico = {
 };
 
 (function() {
-  var de = true, ug;
+  var de = true, ug, has_debug = typeof debug === "function";
   
-  if ( console.log ) {
-    ug = function( m ) {
-      console.log( "Ico." + m );
-    }
+  if ( has_debug || console.log ) {
+    ug = has_debug ?
+        function( m ) { debug( "Ico, " + m ); }
+      : function( m ) {
+          var date = new Date;
+          
+          console.log(
+              digits( date.getMinutes(), 2 )
+            + ':' + digits( date.getSeconds(), 2 )
+            + '.' + digits( date.getMilliseconds(), 3 )
+            + ' - ' + "Ico, " + m
+          );
+          
+          function digits( n, d ) {
+            n = "000" + n;
+            
+            return n.substr( n.length - d );
+          }
+        }
+    ;
   } else {
     de = false;
   }
@@ -182,6 +198,8 @@ var Ico = {
 
   Ico.Base = Ico.Class.create( {
     initialize: function( element, series, o ) {
+      de&&ug( "Ico.Base.initialize( " + element + ", " + JSON.stringify( series ) + ", " + JSON.stringify( o ) + " )" );
+      
       if ( typeof element == "string" ) element = document.getElementById( element );
       this.element = element;
       this.series = series || [[0]];
