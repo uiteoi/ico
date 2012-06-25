@@ -209,6 +209,9 @@ var Ico = {
       this.set_raphael( o = this.options );
       this.calculate( o );
       this.draw( o );
+      
+      de&&ug( "Ico.Base.initialize(), end" );
+      
       return this;
     },
     
@@ -252,6 +255,8 @@ var Ico = {
     },
     
     process_options: function( o ) {
+      de&&ug( "Ico.Base.process_options()" );
+      
       var t = this;
       
       o && ( o = Ico.extend( t.options, o ) );
@@ -321,6 +326,8 @@ var Ico = {
     },
     
     calculate: function( o ) {
+      de&&ug( "Ico.Base.calculate()" );
+      
       this.paper || this.set_raphael( o );
       
       // component calculations may modify padding to make room for themselves
@@ -370,6 +377,8 @@ var Ico = {
     },
 
     draw: function( o ) {
+      de&&ug( "Ico.Base.draw()" );
+      
       this.paper || this.set_raphael( o );
       this.components_call( 'draw', o );
       this.draw_series( o );
@@ -790,7 +799,7 @@ var Ico = {
         b = this.bar_base,
         bar
       ;
-      if ( y == b ) y = b + 2;
+      if ( Math.abs( y - b ) < 2 ) y = b + ( y >= b ? 2 : -2 );
       x += this.bars_step * serie - this.bar_width / 2;
       this.show_label_onmouseover( bar = this.paper.path( Ico.svg_path( this.orientation?
           ['M', y, x, 'H', b, 'v', w, 'H', y, 'z'] :
@@ -1106,6 +1115,8 @@ var Ico = {
 
   Ico.Component.ValueLabels = Ico.Class.create( Ico.Component.Labels, {
     calculate: function( o, p ) {
+      de&&ug( "Ico.Component.ValueLabels.calculate()" );
+      
       var t = this, max = p.max, min = p.min, range = max - min
         , spaces = o.spaces, params
       ;
