@@ -51,43 +51,42 @@ Array.prototype.lastIndexOf || ( Array.prototype.lastIndexOf = function( v, i ) 
 
 Array.prototype.forEach || ( Array.prototype.forEach = function( c, t ) {
   t || ( t = window );
-  var i = -1; while( ++i < this.length ) c.call( t, this[i], i, this );
+  var i = -1; while( ++i < this.length ) if ( i in this ) c.call( t, this[i], i, this );
 } );
 
 Array.prototype.every || ( Array.prototype.every = function( c, t ) {
   t || ( t = window );
-  var i = -1; while( ++i < this.length ) if ( c.call( t, this[i], i, this ) === false ) return false;
+  var i = -1; while( ++i < this.length ) if ( i in this && ! c.call( t, this[i], i, this ) ) return false;
   return true;
 } );
 
 Array.prototype.some || ( Array.prototype.some = function( c, t ) {
   t || ( t = window );
-  var i = -1; while( ++i < this.length ) if ( c.call( t, this[i], i, this ) === true ) return true;
+  var i = -1; while( ++i < this.length ) if ( i in this && c.call( t, this[i], i, this ) ) return true;
   return false;
 } );
 
 Array.prototype.map || ( Array.prototype.map = function( c, t ) {
   t || ( t = window );
-  var a = [], i = -1; while( ++i < this.length ) a [i] = c.call( t, this[i], i, this );
+  var a = [], i = -1; while( ++i < this.length ) if ( i in this ) a [i] = c.call( t, this[i], i, this );
   return a;
 } );
 
 Array.prototype.filter || ( Array.prototype.filter = function( c, t ) {
   t || ( t = window );
-  var a = [], i = -1; while( ++i < this.length ) c.call( t, this[i], i, this ) && a.push( this[i] );
+  var a = [], v, l = this.length, i = -1; while( ++i < l ) if ( i in this ) c.call( t, v = this[i], i, this ) && a.push( v );
   return a;
 } );
 
 delete Array.prototype.reduce;
 Array.prototype.reduce || ( Array.prototype.reduce = function( c, v ) {
   var i = -1; if ( v === undefined ) v = this[++i];
-  while( ++i < this.length ) v = c( v, this[i], i, this );
+  while( ++i < this.length ) if ( i in this ) v = c( v, this[i], i, this );
   return v;
 } );
 
 Array.prototype.reduceRight || ( Array.prototype.reduceRight = function( c, v ) {
   var i = this.length; if ( v === undefined ) v = this[--i];
-  while( --i >= 0 ) v = c( v, this[i], i, this );
+  while( --i >= 0 ) if ( i in this ) v = c( v, this[i], i, this );
   return v;
 } );
-
