@@ -1223,10 +1223,8 @@ var Ico = {
 
     calculate: function() {
       var values = this.p.all_values;
-      this.mean = values.reduce( function( sum, v ) { return sum + v }, 0 );
-      de&&ug( "Ico.Component.Meanline, calculate, len: " + values.length + ", mean=" + this.mean );
       this.mean = Ico.significant_digits_round(
-        this.mean / values.length, 3, Math.round, true
+        values.reduce( function( sum, v ) { return sum + v }, 0 ) / values.length, 3, Math.round, true
       );
       de&&ug( "Ico.Component.Meanline, calculate, len: " + values.length + ", mean=" + this.mean );
     },

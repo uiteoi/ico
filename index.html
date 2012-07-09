@@ -92,7 +92,26 @@
       }
     </style>
     <!-- The Prototype Library is not required for most features, except mouse_pointer-->
+    <script type="text/javascript">
+      // Memorize ES5 Array.prototype methods overridden by prototype, to restore them after loading prototype
+      var __Array_Prototype_Methods = {
+           map: Array.prototype.map,
+        reduce: Array.prototype.reduce
+      };
+    </script>
+    
     <script type="text/javascript" src="prototype.js"></script>
+    
+    <script type="text/javascript">
+      delete Array.prototype.toJSON; // Defined in prototype.js was interfering with JSON.stringify()
+      
+      // Restore ES5 Array.prototype methods overridden by prototype
+      ( function() {
+        for( var method in __Array_Prototype_Methods )
+          if ( __Array_Prototype_Methods.hasOwnProperty( method ) )
+            Array.prototype[ method ] = __Array_Prototype_Methods[ method ];
+      } )();
+    </script>
     
     <script type="text/javascript" src="json2.js"></script>
     <script type="text/javascript" src="es5.js"></script>
