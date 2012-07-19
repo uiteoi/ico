@@ -5,13 +5,21 @@
 // Licensed under the MIT license
 //
 
+Object.keys || ( Object.keys = function( o ) {
+  var keys = [];
+
+  for ( var property in o ) if ( o.hasOwnProperty( property ) ) keys.push( property );
+
+  return keys;
+} );
+
 Object.create || ( Object.create = function ( o ) {
-    if ( arguments.length > 1 ) {
-      throw new Error( 'Object.create implementation only accepts the first parameter.' );
-    }
-    function O() {}
-    O.prototype = o;
-    return new O();
+  if ( arguments.length > 1 ) {
+    throw new Error( 'Object.create implementation only accepts the first parameter.' );
+  }
+  function O() {}
+  O.prototype = o;
+  return new O();
 } );
 
 Function.prototype.bind || ( Function.prototype.bind = function( o ) {
