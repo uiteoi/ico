@@ -8,7 +8,7 @@
 "use strict";
 
 var Ico = {
-  Version: "0.98.2",
+  Version: "0.98.21",
   
   extend : function( d, s ) {
     for( var p in s ) d[p] = s[p];
@@ -291,7 +291,7 @@ var Ico = {
             t.components[layer].push( t[k] = new (v[0])( t, o ) )
           } catch( e ) {
             t.error = e;
-            de&&ug( "process_options(), exception: " + JSON.stringify( e ) );
+            de&&ug( "process_options(), exception: " + e );
           }
         }
       };
@@ -424,7 +424,7 @@ var Ico = {
           try {
             c[f] && c[f]( c.options, this )
           } catch( e ) {
-            de&&ug( "Ico::Base::components_call(), exception " + JSON.stringify( e ) );
+            de&&ug( "Ico::Base::components_call(), exception " + e );
             this.set_raphael( o )
             this.errors = ( this.errors || 0 ) + 1;
             this.paper.text( 0, 12 * this.errors, "Error in " + f + "(): " + ( this.error = e ) )
@@ -1135,21 +1135,26 @@ var Ico = {
         } else {
           min_step = 1.5 * this.text_size( '0', this.font )[1]; // allow 1/2 character height spacing
         }
-        // Calculate maximum number of labels spaces 
+        if ( min_step === 0 ) throw new Error( "Ico.Component.ValueLabels(), min_step is zero, canvas is possibly not active" );
+        
+        // Calculate maximum number of labels spaces
         spaces = Math.round( this.graph.y.len / min_step );
         // Search (trial/error method) for the best number of spaces yiedling the lowest waste 
         if ( spaces > 2 ) {
           var min_waste = range, max_spaces = spaces;
+          
+          // de&&ug( "Ico.Component.ValueLabels.calculate(), max_spaces: " + max_spaces + ", min_step: " + min_step );
+          
           for ( var tried_spaces = 1; ++tried_spaces <= max_spaces; ) {
-            params = t.calculate_value_labels_params( min, max, range, tried_spaces );
+            params = calculate_value_labels_params( min, max, range, tried_spaces );
             if ( params.waste <= min_waste ) {
               min_waste = params.waste;
               spaces = tried_spaces;
             }
-          };
+          }
         }
       }
-      params = this.calculate_value_labels_params( min, max, range, spaces );
+      params = calculate_value_labels_params( min, max, range, spaces );
       p.range = ( p.max = params.max ) - ( p.min = params.min );
       
       var p1000 = Ico.root( params.step * params.spaces, 1000 );
@@ -1180,38 +1185,45 @@ var Ico = {
       
       this.graph.y.step = this.graph.y.len / params.spaces;
       this.calculate_labels_padding( this.graph.y, 0, o );
-    },
-    
-    calculate_value_labels_params : function ( min, max, range, spaces ) {
-      if ( min < 0 && max > 0 ) {
-        var spaces_above_zero = Math.round( spaces * max / range );
-        if ( spaces_above_zero == 0 ) {
-          spaces_above_zero = 1;
-        } else if ( spaces_above_zero == spaces ) {
-          spaces_above_zero -= 1;
-        }
-        var spaces_under_zero = spaces - spaces_above_zero;
-        var step = Ico.significant_digits_round( Math.max( max / spaces_above_zero, - min / spaces_under_zero ), 2,
-          function( v ) { // the 2 digits rounding function
-            v = Math.ceil( v );
-            if ( v <= 10 ) return v;
-            if ( v <= 12 ) return 12;
-            var mod;
-            // allows only multiples of five until 50 => allows 15, 20, 25, 30, 35, 40, 45, 50
-            if ( v <= 54 ) return ( mod = v % 5 )? v - mod + 5 : v; // always round above
-            // allow only multiples of 10 thereafter
-            return ( mod = v % 10 )? v - mod + 10 : v
-          }
+      
+      function calculate_value_labels_params( min, max, range, spaces ) {
+        de&&ug( "Ico.Component.ValueLabels.calculate_value_labels_params()"
+          + ", min: " + min
+          + ", max: " + max
+          + ", range: " + range
+          + ", space: " + spaces
         );
-        min = -step * spaces_under_zero;
-        max = step * spaces_above_zero;
-      } else {
-        var step = Ico.significant_digits_round( range / spaces, 1, Math.ceil );
-        if ( max <= 0 ) min = max - step * spaces;
-        else if ( min >= 0 ) max = min + step * spaces;
-      }
-      return { min: min, max: max, spaces: spaces, step: step, waste: spaces * step - range };
-    },
+        
+        if ( min < 0 && max > 0 ) {
+          var spaces_above_zero = Math.round( spaces * max / range );
+          if ( spaces_above_zero == 0 ) {
+            spaces_above_zero = 1;
+          } else if ( spaces_above_zero == spaces ) {
+            spaces_above_zero -= 1;
+          }
+          var spaces_under_zero = spaces - spaces_above_zero;
+          var step = Ico.significant_digits_round( Math.max( max / spaces_above_zero, - min / spaces_under_zero ), 2,
+            function( v ) { // the 2 digits rounding function
+              v = Math.ceil( v );
+              if ( v <= 10 ) return v;
+              if ( v <= 12 ) return 12;
+              var mod;
+              // allows only multiples of five until 50 => allows 15, 20, 25, 30, 35, 40, 45, 50
+              if ( v <= 54 ) return ( mod = v % 5 )? v - mod + 5 : v; // always round above
+              // allow only multiples of 10 thereafter
+              return ( mod = v % 10 )? v - mod + 10 : v
+            }
+          );
+          min = -step * spaces_under_zero;
+          max = step * spaces_above_zero;
+        } else {
+          var step = Ico.significant_digits_round( range / spaces, 1, Math.ceil );
+          if ( max <= 0 ) min = max - step * spaces;
+          else if ( min >= 0 ) max = min + step * spaces;
+        }
+        return { min: min, max: max, spaces: spaces, step: step, waste: spaces * step - range };
+      } // calculate_value_labels_params()
+    }, // calculate()
     
     draw: function( o ) { this.draw_labels_grid( this.graph.y, o ) }
   } );
@@ -1223,8 +1235,10 @@ var Ico = {
 
     calculate: function() {
       var values = this.p.all_values;
+      this.mean = values.reduce( function( sum, v ) { return sum + v }, 0 );
+      de&&ug( "Ico.Component.Meanline, calculate, len: " + values.length + ", mean=" + this.mean );
       this.mean = Ico.significant_digits_round(
-        values.reduce( function( sum, v ) { return sum + v }, 0 ) / values.length, 3, Math.round, true
+        this.mean / values.length, 3, Math.round, true
       );
       de&&ug( "Ico.Component.Meanline, calculate, len: " + values.length + ", mean=" + this.mean );
     },
