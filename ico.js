@@ -4,53 +4,51 @@
  * Copyright (c) 2009, Alex R. Young
  * Licensed under the MIT license: http://github.com/uiteoi/ico/blob/master/MIT-LICENSE
  */
-
 "use strict";
 
-var Ico = {
-  Version: "0.98.21",
-  
-  extend : function( d, s ) {
-    for( var p in s ) d[p] = s[p];
+( function( exports ) {
+  var Ico = exports.Ico = {
+    Version: "0.98.22",
     
-    return d
-  },
+    extend: function( d, s ) {
+      for( var p in s ) d[p] = s[p];
+      
+      return d
+    }
+  };
   
-  isArray : function( v ) { return typeof v === 'object' && v instanceof Array }
-};
-
-(function() {
-  var de = true, ug, has_debug = typeof debug === "function";
+  var de = true, ug;
   
-  if ( has_debug || console.log ) {
-    ug = has_debug ?
-        function( m ) { debug( "Ico, " + m ); }
-      : function( m ) {
-          var date = new Date;
-          
-          console.log(
-              digits( date.getMinutes(), 2 )
-            + ':' + digits( date.getSeconds(), 2 )
-            + '.' + digits( date.getMilliseconds(), 3 )
-            + ' - ' + "Ico, " + m
-          );
-          
-          function digits( n, d ) {
-            n = "000" + n;
-            
-            return n.substr( n.length - d );
-          }
-        }
-    ;
+  if ( typeof debug === "function" ) { 
+    ug = function( m ) { debug( "Ico, " + m ) };
+  } else if ( console && typeof console.log === "function" ) {
+    ug = function( m ) {
+      var date = new Date;
+      
+      console.log(
+          digits( date.getMinutes(), 2 )
+        + ':' + digits( date.getSeconds(), 2 )
+        + '.' + digits( date.getMilliseconds(), 3 )
+        + ' - ' + "Ico, " + m
+      );
+      
+      function digits( n, d ) {
+        n = "000" + n;
+        
+        return n.substr( n.length - d );
+      }
+    };
   } else {
     de = false;
   }
   
-  Ico.extend( Ico, {
-    Class : {
-      add_methods : Ico.extend, // could be changed to implement additional features such as $super
+  Ico.extend( Ico, {  
+    isArray: function( v ) { return typeof v === 'object' && v instanceof Array },
+    
+    Class: {
+      add_methods: Ico.extend, // could be changed to implement additional features such as $super
       
-      create : function( p ) {
+      create: function( p ) {
         var C = function() { this.initialize.apply( this, arguments ) };
         C.subclasses = [];
         
@@ -194,7 +192,7 @@ var Ico = {
       }
       return ma;
     }
-  } );
+  } ); // Ico
 
   Ico.Base = Ico.Class.create( {
     initialize: function( element, series, o ) {
@@ -1286,4 +1284,4 @@ var Ico = {
   } );
 
   Ico.Component.components.axis = [Ico.Component.Axis, 4];
-} )();
+} )( this );
