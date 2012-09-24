@@ -8,7 +8,7 @@
 
 ( function( exports ) {
   var Ico = exports.Ico = {
-    Version: "0.98.22",
+    Version: "0.98.23",
     
     extend: function( d, s ) {
       for( var p in s ) d[p] = s[p];
@@ -21,7 +21,7 @@
   
   if ( typeof debug === "function" ) { 
     ug = function( m ) { debug( "Ico, " + m ) };
-  } else if ( console && typeof console.log === "function" ) {
+  } else if ( typeof console === "object" && typeof console.log === "function" ) {
     ug = function( m ) {
       var date = new Date;
       
