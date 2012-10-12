@@ -148,7 +148,7 @@
       <div id="graph9"  class="rightGraph"></div>
       
       <div class="clear"></div>
-      <h2 id='g10' style="color: blue; margin-top: 50px;">A line of two dependent graphs on the same value range and legend</h2>
+      <h2 style="color: blue; margin-top: 50px;">A line of two dependent graphs on the same value range and legend</h2>
       <p>Click legend labels bellow to toggle (show/hide) series:</p>
       <p id="legend">
         <span id="legend_this_year" class="legend">This Year Performance</span>
@@ -160,7 +160,7 @@
       <div id="graph11" class="rightGraph"></div>
       
       <div class="clear"></div>
-      <h2 id='g10' style="color: blue; margin-top: 50px;">6 Horinzontal Bar Graphs connected through their grids, the left-most holding only the labels</h2>
+      <h2 style="color: blue; margin-top: 50px;">6 Horinzontal Bar Graphs connected through their grids, the left-most holding only the labels</h2>
       <div class="clear"></div>
       <div id="graph12" class="left_6"></div>
       <div id="graph13" class="left_6"></div>
@@ -168,6 +168,10 @@
       <div id="graph15" class="left_6"></div>
       <div id="graph16" class="left_6"></div>
       <div id="graph17" class="left_6"></div>
+      
+      <div class="clear"></div>
+      <h2 style="color: blue; margin-top: 50px;">Three non-continuous lines with no curves</h2>
+      <div id="graph18" class="leftGraph"></div>
     </div>
     
     <script type="text/javascript">
@@ -380,7 +384,6 @@
       var serie3 = [18, -1, -9, 17, 15, 21, 1, 25, 3, 21, 16, 4];
       var serie4 = Ico.moving_average( serie3, 5, { previous_values: serie1 }  ); // 5 months moving average
       var serie5 = [null, 4, null, null, 17, 15, -2, null, 3, 7, null, -2];
-      
       var min_max = Ico.series_min_max( [serie1, serie2, serie3, serie4, serie5] );
       var min = min_max[0];
       var max = min_max[1];
@@ -496,6 +499,28 @@
       new Ico.HorizontalBarGraph( "graph15", data[ 2 ], options );
       new Ico.HorizontalBarGraph( "graph16", data[ 3 ], options );
       new Ico.HorizontalBarGraph( "graph17", data[ 4 ], options );
+      
+      var series = [
+        [20,40,60,null,80,100,20,null,130],
+        [15,100,150,100,120,null,160,200,100],
+        [null,30,20,60,100,100,120,70,50]
+      ];
+      
+      var g18 = new Ico.LineGraph( "graph18",
+        series,
+        {   font_size: 12
+          , labels: labels
+          , series_names: ['This Year', 'Last Year', 'Two Years Ago']
+          , value_labels: { add_padding: false }
+          , units: '$', units_position: 0
+          , x_padding_right: 15
+          , colors: ['#228899', '#339933', '#998822']
+          , mouseover_attributes: { stroke: 'green' }
+          , curve_amount: 0
+          , status_bar : status_bar
+          , grid: true
+        }
+      );
       
       /*
       new Ico.LineGraph(

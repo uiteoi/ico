@@ -8,7 +8,7 @@
 
 ( function( exports ) {
   var Ico = exports.Ico = {
-    Version: "0.98.23",
+    Version: "0.98.24",
     
     extend: function( d, s ) {
       for( var p in s ) d[p] = s[p];
@@ -121,10 +121,9 @@
       return v * Math.pow( 10, p10 );
     },
 
-      
     root: function( v, p ) {
       return Math.floor( Math.log( Math.abs( v ) ) / Math.log( p ) );
-    },
+    }, // root()
 
     svg_path: function( a ) {
       var path = '', previous_isNumber = false;
@@ -138,8 +137,11 @@
           previous_isNumber = false;
         }
       } );
+      
+      // de&&ug( "svg_path(), path=" + path );
+      
       return path;
-    },
+    }, // svg_path()
     
     adjust_min_max: function( min, max ) {
       de&&ug( "adjust_min_max(), min: " + min + ", max: " + max );
@@ -643,13 +645,15 @@
         x += this.y_direction * this.graph.x.step;
       };
       if ( path != '' ) { // only for line graphs
+        de&&ug( "draw_serie(), path: " + path );
+        
         p.attr( { path: path } ).attr( o.series_attributes[index] ||
           { stroke: o.colors[index], 'stroke-width': o.stroke_width || 3 }
         );
         set.push( p )
       }
       return set;
-    }  
+    } // draw_serie() 
   } );
 
   Ico.LineGraph = Ico.Class.create( Ico.BaseGraph, {
@@ -714,7 +718,8 @@
       }
       
       var p, w = o.curve_amount, last = this.last;
-      if ( i == 0 || ( w && !last ) ) {
+      
+      if ( i === 0 || !last ) {
         p = ['M', x, y];
       } else if ( w ) {
         serie = this.series[serie];
@@ -746,9 +751,10 @@
         p = ['L', x, y];
       }
       
-      w && ( this.last = [x, y] );
+      this.last = [x, y];
+      
       return Ico.svg_path( p );
-    }
+    } // draw_value()
   } );
 
   Ico.BarGraph = Ico.Class.create( Ico.BaseGraph, {
