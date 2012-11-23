@@ -8,7 +8,7 @@
 
 ( function( exports ) {
   var Ico = exports.Ico = {
-    Version: "0.98.24",
+    Version: "0.98.25",
     
     extend: function( d, s ) {
       for( var p in s ) d[p] = s[p];
@@ -1079,42 +1079,74 @@
     
     draw_labels_grid: function( d, o ) {
       var t = this, dx = d.direction[0], dy = d.direction[1], step = d.step,
-          x = this.x.start + this.x.start_offset * dx,
-          y = this.y.start - this.y.start_offset * dy,
+          x = t.x.start + t.x.start_offset * dx,
+          y = t.y.start - t.y.start_offset * dy,
           marker = o.marker_size, fx = d.f[0], fy = d.f[1], angle = d.angle,
-          paper = this.p.paper,
-          grid = o.grid, grid_len = ( dx ? 'v-' + t.y.len : 'h' + t.x.len ), grid_x = 0, grid_y = 0
+          paper = this.p.paper, grid = o.grid, path = []
       ;
-      if ( grid && grid.through ) {
-        grid_len += d.padding[ 1 ] + 10;
+      
+      if ( grid ) {
+        var grid_len = t[ dx ? "y" : "x" ].len
+          , grid_x = 0, grid_y = 0
+          , labels = d.labels
+          , grid_path = []
+        ;
         
-        var offset = -d.padding[ 0 ] - this.bbox[ 0 ] - marker - 20;
-        dx ? grid_y = offset : grid_x = offset;
+        if ( grid.through ) {
+          grid_len += d.padding[ 1 ] + 10;
+          
+          var offset = -d.padding[ 0 ] - this.bbox[ 0 ] - marker - 20;
+          
+          dx ? grid_y = offset : grid_x = offset;
+        }
       }
       
-      if ( dy ) angle += 90;
-      var path = [], grid_path = [];
-      this.labels || this.get_labels_bounding_boxes( d );
-      this.labels.forEach( function( label, i ) {
-        marker &&    path.push( 'M', x, y, dx ? 'v' : 'h-', marker );
-        grid && grid_path.push( 'M', x + ( d.labels[ i ] ? 0 : grid_x ), y + ( d.labels[ i ] ? 0 : grid_y ), grid_len );
+      if ( dx ) {
+        marker = 'v' + marker;
+        grid_len = 'v-' + grid_len;
+      } else {
+        marker = 'h-' + marker;
+        grid_len = 'h'+ grid_len;
+        angle += 90;
+      }
+      
+      t.labels || this.get_labels_bounding_boxes( d );
+      
+      for ( var i = -1, l = t.labels.length; ++i < l; ) {
+        var label = t.labels[ i ];
+        
+        marker && path.push( 'M', x, y, marker );
+        
+        if ( grid ) {
+          if ( labels[ i ] ) {
+            grid_path.push( 'M', x, y, grid_len );
+          } else {
+            grid_path.push( 'M', x + grid_x, y + grid_y, grid_len );
+          }
+        }
+        
         var x_anchor = x + fx;
         var y_anchor = y + fy;
+        
         // label is already drawn, only anchor then rotate here
         label.attr( { x: x_anchor, y: y_anchor, 'text-anchor': d.anchor } ).toFront();
         // !!! set 'text-anchor' attribute before rotation
         angle && label.rotate( angle, x_anchor, y_anchor );  // !!! then rotate around anchor
+        
         dx && ( x += step );
         dy && ( y -= step );
-      } );
+      }
+      
       marker && paper.path( Ico.svg_path( path ) ).attr( this.markers_attributes );
+      
       if ( grid ) {
         dx && grid_path.push( 'M', this.x.start, ' ', this.y.stop, 'h', this.x.len, 'v', this.y.len );
+        
         paper.path( Ico.svg_path( grid_path ) ).attr( grid );
       }
     }
   } );
-
+  
   Ico.Component.components.labels = [Ico.Component.Labels, 3];
 
   Ico.Component.ValueLabels = Ico.Class.create( Ico.Component.Labels, {
