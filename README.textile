@@ -20,7 +20,7 @@ The original version of Ico was written by "Alex Young":http://github.com/alexyo
 
 h1. Demonstration, test suite
 
-To see a demonstration of the capabilities of the current version, check <a href="http://reverserisk.com/ico/">the current test suite</a> which is a rendering of "index.html":http://github.com/uiteoi/ico/blob/master/index.html.
+To see a demonstration of the capabilities of the current version, check the current test suite in "index.html":http://github.com/uiteoi/ico/blob/master/index.html.
 
 Unfortunatly tests cannot be automated because it is primaraly about rendering in supported web browsers, most of which do not provide an API suitable for test suites. The test suite is a set of graphs showing most of Ico features. This test suite is meant to be viewed in all supported web browsers where the following tests are performed:
 * scroll up and down, mouse over graphs

@@ -1,14 +1,16 @@
 /* Ico Graph Prototype/Raphael library
  *
- * Copyright (c) 2009-2012 Jean Vincent, ReverseRisk
  * Copyright (c) 2009, Alex R. Young
+ * Copyright (c) 2009-2012 Reverse Risk
+ * Copyright (c) 2009-2013 Jean Vincent
+ *
  * Licensed under the MIT license: http://github.com/uiteoi/ico/blob/master/MIT-LICENSE
  */
 "use strict";
 
 ( function( exports ) {
   var Ico = exports.Ico = {
-    Version: "0.98.25",
+    Version: "0.98.26",
     
     extend: function( d, s ) {
       for( var p in s ) d[p] = s[p];
@@ -165,15 +167,20 @@
     
     series_min_max: function( series, dont_adjust ) {
       de&&ug( "series_min_max: series length: " + series.length );
-      var values = Array.prototype.concat.apply( [], series ).map( function( v ) { return v === undefined ? null : v } );
-      
-      de&&ug( "series_min_max: values length: " + values.length );
-      if ( values.length == 0 ) throw "Series must have at least one value";
-      var min_max = [
-          Ico.significant_digits_round( Math.min.apply( Math, values ), 2, Math.floor ),
-          Ico.significant_digits_round( Math.max.apply( Math, values ), 2, Math.ceil )
-        ]
+      var u, no_null_values = []
+        , values = Array.prototype.concat.apply( [], series ).map( function( v ) {
+            if ( v === u || v === null ) return null;
+            no_null_values.push( v );
+            return v
+          } )
+        , l = no_null_values.length
       ;
+      
+      de&&ug( "series_min_max: no_null_values length: " + l );
+      var min_max = l ? [
+        Ico.significant_digits_round( Math.min.apply( Math, no_null_values ), 2, Math.floor ),
+        Ico.significant_digits_round( Math.max.apply( Math, no_null_values ), 2, Math.ceil  )
+      ] : [0, 0];
       dont_adjust || ( min_max = Ico.adjust_min_max.apply( Ico, min_max ) );
       min_max.push( values );
       return min_max;
